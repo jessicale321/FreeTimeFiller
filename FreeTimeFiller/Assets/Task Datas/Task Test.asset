@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a101af5d56ee3b4ab558bb3de1b5968, type: 3}
   m_Name: Task Test
   m_EditorClassIdentifier: 
-  name: Brush Teeth
+  taskName: Brush Teeth
   category: 4
-  difficultyLevel: 1
+  difficultyLevel: 3
   description: Some sort of description?
