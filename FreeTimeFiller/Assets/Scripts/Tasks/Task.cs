@@ -7,13 +7,16 @@ using UnityEngine.UI;
 
 public class Task : MonoBehaviour
 {
+    // Data that this task is currently using
     [SerializeField] private TaskData taskData;
 
     [Header("UI Components")] 
     [SerializeField] private TMP_Text taskName;
-
+    // Panel that stars are parented by
     [SerializeField] private GameObject difficultyLevelPanel;
+    // Star that will spawn on the screen
     [SerializeField] private GameObject difficultyStar;
+    // All stars currently spawned in
     private List<GameObject> _allStars = new List<GameObject>();
     
     private void Start()
