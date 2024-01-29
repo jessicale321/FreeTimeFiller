@@ -14,6 +14,7 @@ public class Task : MonoBehaviour
 
     [SerializeField] private GameObject difficultyLevelPanel;
     [SerializeField] private GameObject difficultyStar;
+    private List<GameObject> _allStars = new List<GameObject>();
     
     private void Start()
     {
@@ -23,11 +24,33 @@ public class Task : MonoBehaviour
 
     private void UpdateTask(TaskData data)
     {
+        // Change task name
         taskName.text = data.taskName;
 
-        for (int i = 0; i < data.difficultyLevel; i++)
+        int starCount = _allStars.Count;
+        
+        // Remove excess stars
+        if (starCount > data.difficultyLevel)
         {
-            Instantiate(difficultyStar, difficultyLevelPanel.transform, false);
+            Debug.Log("Remove stars!");
+            for (int i = 0; i < starCount - data.difficultyLevel; i++)
+            {
+                Destroy(_allStars[0]);
+                _allStars.Remove(_allStars[0]);
+
+            }
         }
+        // Add missing stars
+        else if (starCount < data.difficultyLevel)
+        {
+            Debug.Log("Add stars!");
+            for (int i = 0; i < data.difficultyLevel - starCount; i++)
+            {
+                GameObject newStar =  Instantiate(difficultyStar, difficultyLevelPanel.transform, false);
+                _allStars.Add(newStar);
+
+            }
+        }
+
     }
 }
