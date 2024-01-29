@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Task Data", menuName = "ScriptableObjects/Task Data")]
 public class TaskData : ScriptableObject
 {
-    public string name;
+    public string taskName;
 
     [Space(10)]
     public Category category;
