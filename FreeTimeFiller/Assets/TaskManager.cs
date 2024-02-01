@@ -21,7 +21,7 @@ public class TaskManager : MonoBehaviour
      * Value: Is currently displayed? True or false
      */
     private Dictionary<TaskData, bool> activeTaskDatas = new Dictionary<TaskData, bool>();
-   
+
     // Task that will be instaniated and placed on the canvas
     [SerializeField] private GameObject taskPrefab;
     [SerializeField] private Transform taskPanel;
@@ -93,13 +93,18 @@ public class TaskManager : MonoBehaviour
         Debug.Log("Could not find a non-active task data!");
         return null;
     }
-
-    // TODO: Need to figure out how we can refresh all displayed tasks with new data
-    private void RefreshAllTasks()
+    
+    /* TODO: Need to figure out how we can refresh all displayed tasks after completing a set. 
+     * Also should not place back tasks that were previously completed */
+    private void RefreshAllTasksOnCompletion()
     {
-        foreach (TaskData data in activeTaskDatas.Keys)
-        {
-            activeTaskDatas[data] = false;
-        }
+        
+    }
+    
+    /* TODO: Need to figure out how we can refresh all displayed tasks after a certain 
+     amount of time. Also should not place back tasks that were previously completed */
+    private void RefreshAllTasksAfterTime()
+    {
+        
     }
 }
