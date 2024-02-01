@@ -5,13 +5,16 @@ using UnityEngine;
 
 public class TaskManager : MonoBehaviour
 {
-    public static TaskManager instance;
+    public static TaskManager Instance;
 
     // Tasks that will show up in the pool
-    [SerializeField] private List<TaskData> taskDatas = new List<TaskData>();
+    [SerializeField] private List<TaskData> taskPool = new List<TaskData>();
 
-    // How many tasks should be created and displayed?
-    [SerializeField, Range(1, 8)] private int taskCount;
+    /* How many tasks should be created and displayed?
+     * If taskCount is greater than the number of inactive TaskData's, 
+     * then we will get an error in the console
+     */
+    [SerializeField, Range(1, 8)] private int taskAmount;
 
     /* Tasks that are currently being displayed
      * Key: The TaskData (ex. Brushing Teeth)
@@ -27,24 +30,27 @@ public class TaskManager : MonoBehaviour
     private void Awake()
     {
         // Create singleton instance for TaskManager
-        instance = this;
+        Instance = this;
     }
 
     private void Start()
     {
         InitializeActiveTasks();
     }
+    // Add all tasks that we want to use to the activeTaskDatas dictionary, then
+    // start displaying some
     private void InitializeActiveTasks()
     {
         // If we have some tasks to spawn in...
-        if (taskDatas.Count > 0)
+        if (taskPool.Count > 0)
         {
-            foreach (TaskData taskData in taskDatas)
+            foreach (TaskData taskData in taskPool)
             {
                 if (activeTaskDatas.TryAdd(taskData, false) == false)
                     Debug.Log($"{taskData} is a duplicate in the taskDatas list!");
             }
 
+            // Once all TaskData's have been added to the dictionary, start displaying them
             DisplayAllTasks();
         }
         else
@@ -53,9 +59,11 @@ public class TaskManager : MonoBehaviour
         }
     }
 
+    // Find a TaskData that is not being displayed currently, and create
+    // a new task using its values
     private void DisplayAllTasks()
     {
-        for(int i = 0; i < taskCount; i++)
+        for(int i = 0; i < taskAmount; i++)
         {
             TaskData inactiveData = GetInactiveTask();
 
@@ -69,6 +77,7 @@ public class TaskManager : MonoBehaviour
         }
     }
 
+    // Return a TaskData that is not being displayed currently
     private TaskData GetInactiveTask()
     {
         foreach(TaskData data in activeTaskDatas.Keys)
@@ -83,5 +92,14 @@ public class TaskManager : MonoBehaviour
 
         Debug.Log("Could not find a non-active task data!");
         return null;
+    }
+
+    // TODO: Need to figure out how we can refresh all displayed tasks with new data
+    private void RefreshAllTasks()
+    {
+        foreach (TaskData data in activeTaskDatas.Keys)
+        {
+            activeTaskDatas[data] = false;
+        }
     }
 }
