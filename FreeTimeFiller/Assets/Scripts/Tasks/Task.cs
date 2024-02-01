@@ -18,14 +18,8 @@ public class Task : MonoBehaviour
     [SerializeField] private GameObject difficultyStar;
     // All stars currently spawned in
     private List<GameObject> _allStars = new List<GameObject>();
-    
-    private void Start()
-    {
-        if(taskData != null)
-            UpdateTask(taskData);
-    }
 
-    private void UpdateTask(TaskData data)
+    public void UpdateTask(TaskData data)
     {
         // Change task name
         taskName.text = data.taskName;
