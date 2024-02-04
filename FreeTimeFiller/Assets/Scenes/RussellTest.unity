@@ -244,11 +244,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2808742a61c7a3042a1ad819c3c3c433, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  taskPool:
-  - {fileID: 11400000, guid: ad8ccc89090b0a34d9d03a85ea1f4529, type: 2}
-  - {fileID: 11400000, guid: 597c67363051e704cad1f9ff81e84099, type: 2}
-  - {fileID: 11400000, guid: 2ab120da770a0e4419a2a6ebc6677ef2, type: 2}
-  taskAmount: 3
+  taskPool: []
+  taskAmount: 7
   taskPrefab: {fileID: 7422696577987121108, guid: ebd48ffe12d1aaf4e8d245fff3b33d79, type: 3}
   taskPanel: {fileID: 2021687173}
 --- !u!4 &699011345

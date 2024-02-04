@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor.U2D.Aseprite;
 using UnityEngine;
 
@@ -35,32 +37,43 @@ public class TaskManager : MonoBehaviour
 
     private void Start()
     {
-        InitializeActiveTasks();
+        FindPremadeTasks();
     }
-    // Add all tasks that we want to use to the activeTaskDatas dictionary, then
-    // start displaying some
-    private void InitializeActiveTasks()
+
+    /* Load all pre-made tasks found under the resources folder */
+    private void FindPremadeTasks()
     {
-        // If we have some tasks to spawn in...
-        if (taskPool.Count > 0)
+        TaskData[] tasks =  Resources.LoadAll<TaskData>("TaskDatas/Premade");
+
+        foreach (TaskData data in tasks)
         {
-            foreach (TaskData taskData in taskPool)
+            // Don't add any duplicate task datas
+            if (activeTaskDatas.TryAdd(data, false) == false)
             {
-                if (activeTaskDatas.TryAdd(taskData, false) == false)
-                    Debug.Log($"{taskData} is a duplicate in the taskDatas list!");
+                Debug.Log($"{data} is a duplicate in the taskDatas list!");
+            }
+            else
+            {
+                taskPool.Add(data);
             }
 
+        }
+
+        // If we found any tasks, start displaying them
+        if (taskPool.Count > 0)
+        {
             // Once all TaskData's have been added to the dictionary, start displaying them
             DisplayAllTasks();
         }
         else
         {
-            Debug.Log("Please enter atleast one task data in the list!");
+            Debug.Log("There were no tasks found under Resources/TaskDatas/Premade");
         }
+        
     }
 
-    // Find a TaskData that is not being displayed currently, and create
-    // a new task using its values
+    /* Find a TaskData that is not being displayed currently, and create
+     a new task using its values */
     private void DisplayAllTasks()
     {
         for(int i = 0; i < taskAmount; i++)
