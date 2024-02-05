@@ -2,9 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.U2D.Aseprite;
 using UnityEngine;
-using UnityEngine.Serialization;
+using Random = System.Random;
 
 public class TaskManager : MonoBehaviour
 {
@@ -69,6 +68,9 @@ public class TaskManager : MonoBehaviour
         // If we found any tasks, start displaying them
         if (_taskPool.Count > 0)
         {
+            // Randomize all elements in the task pool
+            ShuffleTaskList(_taskPool);
+            
             // Once all TaskData's have been added to the dictionary, start displaying them
             DisplayAllTasks();
         }
@@ -99,10 +101,25 @@ public class TaskManager : MonoBehaviour
         }
     }
 
+    void ShuffleTaskList(List<TaskData> list)
+    {
+        Random rng = new Random();
+        
+        int n = list.Count;
+
+        // Fisher-Yates shuffle algorithm
+        while (n > 1)
+        {
+            n--;
+            int k = rng.Next(n + 1);
+            (list[k], list[n]) = (list[n], list[k]);
+        }
+    }
+
     // Return a TaskData that is not being displayed currently
     private TaskData GetInactiveTask()
     {
-        foreach(TaskData data in _activeTaskData.Keys)
+        foreach(TaskData data in _taskPool)
         {
             if (_activeTaskData[data] == false)
             {
