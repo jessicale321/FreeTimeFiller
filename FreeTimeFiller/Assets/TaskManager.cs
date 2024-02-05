@@ -4,31 +4,37 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.U2D.Aseprite;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class TaskManager : MonoBehaviour
 {
     public static TaskManager Instance;
 
     // Tasks that will show up in the pool
-    [SerializeField] private List<TaskData> taskPool = new List<TaskData>();
+    private List<TaskData> _taskPool = new List<TaskData>();
+
+    private string _taskDataFolderPath = "Task Data/Premade";
 
     /* How many tasks should be created and displayed?
      * If taskCount is greater than the number of inactive TaskData's, 
      * then we will get an error in the console
      */
-    [SerializeField, Range(1, 8)] private int taskAmount;
+    [SerializeField, Range(1, 8)] private int taskAmountToDisplay = 1;
+
+    private int _taskAmountCurrentlyDisplayed = 0;
 
     /* Tasks that are currently being displayed
      * Key: The TaskData (ex. Brushing Teeth)
      * Value: Is currently displayed? True or false
      */
-    private Dictionary<TaskData, bool> activeTaskDatas = new Dictionary<TaskData, bool>();
+    private Dictionary<TaskData, bool> _activeTaskData = new Dictionary<TaskData, bool>();
 
-    // Task that will be instaniated and placed on the canvas
+    private List<Task> _completedTasks = new List<Task>();
+
+    // Task that will be instantiated and placed on the canvas
     [SerializeField] private GameObject taskPrefab;
     [SerializeField] private Transform taskPanel;
-
-
+    
     private void Awake()
     {
         // Create singleton instance for TaskManager
@@ -43,31 +49,32 @@ public class TaskManager : MonoBehaviour
     /* Load all pre-made tasks found under the resources folder */
     private void FindPremadeTasks()
     {
-        TaskData[] tasks =  Resources.LoadAll<TaskData>("TaskDatas/Premade");
+        TaskData[] tasks =  Resources.LoadAll<TaskData>(_taskDataFolderPath);
 
         foreach (TaskData data in tasks)
         {
-            // Don't add any duplicate task datas
-            if (activeTaskDatas.TryAdd(data, false) == false)
+            // Don't add any duplicate task data
+            if (_activeTaskData.TryAdd(data, false) == false)
             {
-                Debug.Log($"{data} is a duplicate in the taskDatas list!");
+                Debug.Log($"{data} is a duplicate in the taskData list!");
             }
             else
             {
-                taskPool.Add(data);
+                _taskPool.Add(data);
+                Debug.Log($"$Task Manager has loaded in: {data.taskName}");
             }
 
         }
 
         // If we found any tasks, start displaying them
-        if (taskPool.Count > 0)
+        if (_taskPool.Count > 0)
         {
             // Once all TaskData's have been added to the dictionary, start displaying them
             DisplayAllTasks();
         }
         else
         {
-            Debug.Log("There were no tasks found under Resources/TaskDatas/Premade");
+            Debug.Log($"There were no tasks found under Resources/{_taskDataFolderPath}");
         }
         
     }
@@ -76,7 +83,7 @@ public class TaskManager : MonoBehaviour
      a new task using its values */
     private void DisplayAllTasks()
     {
-        for(int i = 0; i < taskAmount; i++)
+        for(int i = 0; i < taskAmountToDisplay; i++)
         {
             TaskData inactiveData = GetInactiveTask();
 
@@ -85,6 +92,8 @@ public class TaskManager : MonoBehaviour
                 // Spawn a new task and give it data
                 GameObject newTask = Instantiate(taskPrefab, taskPanel);
                 newTask.GetComponent<Task>().UpdateTask(inactiveData);
+
+                _taskAmountCurrentlyDisplayed++;
             }
            
         }
@@ -93,11 +102,11 @@ public class TaskManager : MonoBehaviour
     // Return a TaskData that is not being displayed currently
     private TaskData GetInactiveTask()
     {
-        foreach(TaskData data in activeTaskDatas.Keys)
+        foreach(TaskData data in _activeTaskData.Keys)
         {
-            if (activeTaskDatas[data] == false)
+            if (_activeTaskData[data] == false)
             {
-                activeTaskDatas[data] = true;
+                _activeTaskData[data] = true;
 
                 return data;
             }
@@ -106,18 +115,37 @@ public class TaskManager : MonoBehaviour
         Debug.Log("Could not find a non-active task data!");
         return null;
     }
-    
-    /* TODO: Need to figure out how we can refresh all displayed tasks after completing a set. 
-     * Also should not place back tasks that were previously completed */
-    private void RefreshAllTasksOnCompletion()
+
+    public void CompleteTask(Task task)
     {
+        //_activeTaskData[task.GetCurrentTaskData()] = false;
+        
+        _completedTasks.Add(task);
+
+        // Once the user has completed all tasks that could be displayed on screen...
+        if (_completedTasks.Count >= _taskAmountCurrentlyDisplayed)
+        {
+
+            RefreshAllTasks();
+        }
         
     }
     
-    /* TODO: Need to figure out how we can refresh all displayed tasks after a certain 
-     amount of time. Also should not place back tasks that were previously completed */
-    private void RefreshAllTasksAfterTime()
+    private void RefreshAllTasks()
     {
+        foreach (Task task in _completedTasks)
+        {
+            Destroy(task.gameObject);
+        }
+        
+        Debug.Log("All displayed tasks have been completed!");
+
+        // All tasks on screen were deleted, so reset this back to 0
+        _taskAmountCurrentlyDisplayed = 0;
+        
+        _completedTasks.Clear();
+        
+        DisplayAllTasks();
         
     }
 }
