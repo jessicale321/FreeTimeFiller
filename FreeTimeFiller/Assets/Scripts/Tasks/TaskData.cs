@@ -12,6 +12,9 @@ public class TaskData : ScriptableObject
     
     [Range(0, 5)]
     public int difficultyLevel;
+
+    [Range(1, 5)] 
+    public int refreshCountdown = 1;
     
     [TextArea(2,3), Space(10)]
     public string description;

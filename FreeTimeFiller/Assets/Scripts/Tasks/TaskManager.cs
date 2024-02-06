@@ -27,6 +27,12 @@ public class TaskManager : MonoBehaviour
      * Value: Is currently displayed? True or false
      */
     private Dictionary<TaskData, bool> _activeTaskData = new Dictionary<TaskData, bool>();
+    
+    /* Task Data that have been previously completed
+     * Key: The TaskData (ex. Brushing Teeth)
+     * Value: Number of refreshes left until it reappears
+     */
+    private Dictionary<TaskData, int> _taskDataOnHold = new Dictionary<TaskData, int>();
 
     private List<Task> _completedTasks = new List<Task>();
 
@@ -60,7 +66,7 @@ public class TaskManager : MonoBehaviour
             else
             {
                 _taskPool.Add(data);
-                Debug.Log($"$Task Manager has loaded in: {data.taskName}");
+                Debug.Log($"Task Manager has loaded in: {data.taskName}");
             }
 
         }
@@ -101,13 +107,13 @@ public class TaskManager : MonoBehaviour
         }
     }
 
+    // Move elements around in taskPool list
     void ShuffleTaskList(List<TaskData> list)
     {
         Random rng = new Random();
         
         int n = list.Count;
-
-        // Fisher-Yates shuffle algorithm
+        
         while (n > 1)
         {
             n--;
@@ -130,15 +136,22 @@ public class TaskManager : MonoBehaviour
         }
 
         Debug.Log("Could not find a non-active task data!");
+        
         return null;
     }
 
     public void CompleteTask(Task task)
     {
-        //_activeTaskData[task.GetCurrentTaskData()] = false;
-        
         _completedTasks.Add(task);
 
+        TaskData dataOfCompletedTask = task.GetCurrentTaskData();
+        
+        if (!_taskDataOnHold.ContainsKey(dataOfCompletedTask))
+        {
+            Debug.Log("add");
+            _taskDataOnHold.Add(dataOfCompletedTask, dataOfCompletedTask.refreshCountdown);
+        }
+        
         // Once the user has completed all tasks that could be displayed on screen...
         if (_completedTasks.Count >= _taskAmountCurrentlyDisplayed)
         {
@@ -148,10 +161,27 @@ public class TaskManager : MonoBehaviour
         
     }
     
+    /* When all on screen are completed, remove them and place a new set of tasks */
     private void RefreshAllTasks()
     {
+        // Previously completed tasks (not this current refresh), can begin to reappear on the user's task list
+        foreach (TaskData taskData in _taskDataOnHold.Keys.Reverse())
+        {
+            if (_taskDataOnHold[taskData] <= 0)
+            {
+                _activeTaskData[taskData] = false;
+                _taskDataOnHold[taskData] = taskData.refreshCountdown;
+            }
+            else
+            {
+                _taskDataOnHold[taskData]--;
+            }
+        }
+
+        // Remove tasks on screen
         foreach (Task task in _completedTasks)
         {
+
             Destroy(task.gameObject);
         }
         
@@ -161,6 +191,9 @@ public class TaskManager : MonoBehaviour
         _taskAmountCurrentlyDisplayed = 0;
         
         _completedTasks.Clear();
+        
+        // Randomize all elements in the task pool
+        ShuffleTaskList(_taskPool);
         
         DisplayAllTasks();
         
