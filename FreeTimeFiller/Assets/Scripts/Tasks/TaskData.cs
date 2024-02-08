@@ -8,7 +8,7 @@ public class TaskData : ScriptableObject
     public string taskName;
 
     [Space(10)]
-    public Category category;
+    public TaskCategory category;
     
     [Range(0, 5)]
     public int difficultyLevel;
@@ -20,7 +20,7 @@ public class TaskData : ScriptableObject
     public string description;
 }
 
-public enum Category
+public enum TaskCategory
 {
     Sports,
     Chores,

@@ -5,10 +5,13 @@ using UnityEditor.PackageManager.UI;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class CustomTaskCreator : MonoBehaviour
 {
     [SerializeField] private TMP_InputField taskNameInputField;
+
+    [SerializeField] private TMP_Dropdown taskCategoryDropdown;
 
     [SerializeField] private Slider difficultySlider;
 
@@ -24,6 +27,21 @@ public class CustomTaskCreator : MonoBehaviour
         createButton.onClick.RemoveListener(AttemptCreation);
     }
 
+    private void Start()
+    {
+        PopulateDropdown();
+    }
+
+    // Add all TaskCategories to the dropdown list 
+    private void PopulateDropdown()
+    {
+        foreach (TaskCategory category in Enum.GetValues(typeof(TaskCategory)))
+        {
+            taskCategoryDropdown.options.Add(new TMP_Dropdown.OptionData(category.ToString(), null));
+        }
+    }
+
+    // Check that the values the user entered for their custom task are valid. If so, allow the creation
     private void AttemptCreation()
     {
         string taskName = taskNameInputField.text;
@@ -38,6 +56,7 @@ public class CustomTaskCreator : MonoBehaviour
         CreateCustomTask();
     }
 
+    // Make a new custom task based off the values the user entered. Save the custom task to the user's account
     private void CreateCustomTask()
     {
         string taskName = taskNameInputField.text;
