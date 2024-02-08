@@ -12,6 +12,7 @@ public class TaskManager : MonoBehaviour
     // Tasks that will show up in the pool
     private List<TaskData> _taskPool = new List<TaskData>();
 
+    // Folder path for location of Task Data
     private string _taskDataFolderPath = "Task Data/Premade";
 
     /* How many tasks should be created and displayed?
@@ -160,6 +161,12 @@ public class TaskManager : MonoBehaviour
         }
         
     }
+
+    public void UncompleteTask(Task task)
+    {
+        _completedTasks.Remove(task);
+
+    }
     
     /* When all on screen are completed, remove them and place a new set of tasks */
     private void RefreshAllTasks()
@@ -167,14 +174,20 @@ public class TaskManager : MonoBehaviour
         // Previously completed tasks (not this current refresh), can begin to reappear on the user's task list
         foreach (TaskData taskData in _taskDataOnHold.Keys.Reverse())
         {
+            // If a TaskData has 0 or less refreshes left to reappear
             if (_taskDataOnHold[taskData] <= 0)
             {
+                // TaskData is no longer "active" and can reappear 
                 _activeTaskData[taskData] = false;
+                // Reset counter
                 _taskDataOnHold[taskData] = taskData.refreshCountdown;
             }
             else
             {
+                // A refresh has occurred, so this TaskData should be closer to reappearing in pool again
                 _taskDataOnHold[taskData]--;
+
+                Debug.Log($"{taskData} is closer to reappearing!");
             }
         }
 

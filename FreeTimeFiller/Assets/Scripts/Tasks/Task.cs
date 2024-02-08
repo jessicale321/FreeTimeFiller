@@ -12,20 +12,25 @@ public class Task : MonoBehaviour
 
     [Header("UI Components")] 
     [SerializeField] private TMP_Text taskName;
+
     [SerializeField] private Button checkBoxButton;
+
     [SerializeField] private GameObject crossOutImage;
+
     // Panel that stars are parented by
     [SerializeField] private GameObject difficultyLevelPanel;
+
     // Star that will spawn on the screen
     [SerializeField] private GameObject difficultyStar;
     // All stars currently spawned in
     private List<GameObject> _allStars = new List<GameObject>();
 
+    private bool _isCompleted = false;
+
     private void OnEnable()
     {
         // Remove cross-out over this task, and enable its checkbox button
         crossOutImage.SetActive(false);
-        checkBoxButton.enabled = true;
         
         checkBoxButton.onClick.AddListener(Complete);
     }
@@ -37,14 +42,29 @@ public class Task : MonoBehaviour
     
     private void Complete()
     {
-        Debug.Log($"{taskData.taskName} has been completed!");
+        if (_isCompleted)
+        {
+            // Remove cross-out over this task, and enable its checkbox button
+            crossOutImage.SetActive(false);
 
-        // Show a cross-out over this task, and disable its checkbox button
-        crossOutImage.SetActive(true);
-        checkBoxButton.enabled = false;
-        
-        // Tell TaskManager that this task has been completed
-        TaskManager.Instance.CompleteTask(this);
+            TaskManager.Instance.UncompleteTask(this);
+
+            _isCompleted = false;
+        }
+        else
+        {
+            Debug.Log($"{taskData.taskName} has been completed!");
+
+            // Show a cross-out over this task, and disable its checkbox button
+            crossOutImage.SetActive(true);
+
+
+            // Tell TaskManager that this task has been completed
+            TaskManager.Instance.CompleteTask(this);
+
+            _isCompleted = true;
+        }
+      
     }
 
     public void UpdateTask(TaskData data)
@@ -90,6 +110,4 @@ public class Task : MonoBehaviour
         return taskData;
     }
 
-    
-    
 }
