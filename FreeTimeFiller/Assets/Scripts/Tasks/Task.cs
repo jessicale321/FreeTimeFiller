@@ -63,8 +63,7 @@ public class Task : MonoBehaviour
             TaskManager.Instance.CompleteTask(this);
 
             _isCompleted = true;
-        }
-      
+        }  
     }
 
     public void UpdateTask(TaskData data)
@@ -74,8 +73,7 @@ public class Task : MonoBehaviour
         // Change task name
         taskName.text = data.taskName;
         
-        DisplayStars(data);
-        
+        DisplayStars(data);     
     }
 
     /* Remove or add stars being displayed on top of a task */
@@ -109,5 +107,4 @@ public class Task : MonoBehaviour
     {
         return taskData;
     }
-
 }

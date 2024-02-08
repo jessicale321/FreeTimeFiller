@@ -85,7 +85,6 @@ public class TaskManager : MonoBehaviour
         {
             Debug.Log($"There were no tasks found under Resources/{_taskDataFolderPath}");
         }
-        
     }
 
     /* Find a TaskData that is not being displayed currently, and create
@@ -158,14 +157,12 @@ public class TaskManager : MonoBehaviour
         {
 
             RefreshAllTasks();
-        }
-        
+        }  
     }
 
     public void UncompleteTask(Task task)
     {
         _completedTasks.Remove(task);
-
     }
     
     /* When all on screen are completed, remove them and place a new set of tasks */
@@ -209,6 +206,5 @@ public class TaskManager : MonoBehaviour
         ShuffleTaskList(_taskPool);
         
         DisplayAllTasks();
-        
     }
 }
