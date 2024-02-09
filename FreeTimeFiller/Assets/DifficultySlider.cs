@@ -24,4 +24,10 @@ public class DifficultySlider : MonoBehaviour
         // Convert slider's value to an integer, then update text on screen
         difficultyText.text = "Difficulty: " + ((int) newValue).ToString();
     }
+
+    // Return the currently selected difficulty level
+    public int GetDifficultyValue()
+    {
+        return (int) difficultySlider.value;
+    }
 }

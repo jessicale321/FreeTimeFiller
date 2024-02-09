@@ -11,9 +11,8 @@ public class CustomTaskCreator : MonoBehaviour
 {
     [SerializeField] private TMP_InputField taskNameInputField;
 
-    [SerializeField] private TMP_Dropdown taskCategoryDropdown;
-
-    [SerializeField] private Slider difficultySlider;
+    [SerializeField] private CategoryDropdown categoryDropdown;
+    [SerializeField] private DifficultySlider difficultySlider;
 
     [SerializeField] private Button createButton;
 
@@ -27,19 +26,6 @@ public class CustomTaskCreator : MonoBehaviour
         createButton.onClick.RemoveListener(AttemptCreation);
     }
 
-    private void Start()
-    {
-        PopulateDropdown();
-    }
-
-    // Add all TaskCategories to the dropdown list 
-    private void PopulateDropdown()
-    {
-        foreach (TaskCategory category in Enum.GetValues(typeof(TaskCategory)))
-        {
-            taskCategoryDropdown.options.Add(new TMP_Dropdown.OptionData(category.ToString(), null));
-        }
-    }
 
     // Check that the values the user entered for their custom task are valid. If so, allow the creation
     private void AttemptCreation()
@@ -64,18 +50,22 @@ public class CustomTaskCreator : MonoBehaviour
         TaskData newCustomTask = ScriptableObject.CreateInstance<TaskData>();
 
         newCustomTask.taskName = taskName;
-        newCustomTask.difficultyLevel = ((int)difficultySlider.value);
+
+        newCustomTask.difficultyLevel = difficultySlider.GetDifficultyValue();
+
+        newCustomTask.category = categoryDropdown.GetSelectedTaskCategory();
 
 
 
         // TESTING CUSTOM TASK CREATION
-        Debug.Log($"User entered -> Name: {newCustomTask.taskName}, Difficulty: {newCustomTask.difficultyLevel}");
+        Debug.Log($"User entered -> Name: {newCustomTask.taskName}, Difficulty: {newCustomTask.difficultyLevel}, " +
+            $"{newCustomTask.category}");
 
-        string path = $"Assets/Resources/Task Data/Custom/{taskName} Custom.asset";
-        AssetDatabase.CreateAsset(newCustomTask, path);
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-        EditorUtility.FocusProjectWindow();
-        Selection.activeObject = newCustomTask;
+        //string path = $"Assets/Resources/Task Data/Custom/{taskName} Custom.asset";
+        //AssetDatabase.CreateAsset(newCustomTask, path);
+        //AssetDatabase.SaveAssets();
+        //AssetDatabase.Refresh();
+        //EditorUtility.FocusProjectWindow();
+        //Selection.activeObject = newCustomTask;
     }
 }
