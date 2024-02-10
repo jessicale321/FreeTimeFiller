@@ -19,13 +19,19 @@ public class DifficultySlider : MonoBehaviour
         difficultySlider.onValueChanged.RemoveListener(UpdateText);
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// When the slider's value has changed, update the text on screen to show the 
+    /// new difficulty level.
+    /// 
     private void UpdateText(float newValue)
     {
         // Convert slider's value to an integer, then update text on screen
         difficultyText.text = "Difficulty: " + ((int) newValue).ToString();
     }
 
-    // Return the currently selected difficulty level
+    ///-///////////////////////////////////////////////////////////
+    /// Return the currently selected difficulty level.
+    /// 
     public int GetDifficultyValue()
     {
         return (int) difficultySlider.value;

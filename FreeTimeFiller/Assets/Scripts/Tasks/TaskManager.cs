@@ -52,7 +52,9 @@ public class TaskManager : MonoBehaviour
         FindPremadeTasks();
     }
 
-    /* Load all pre-made tasks found under the resources folder */
+    ///-///////////////////////////////////////////////////////////
+    /// Load all pre-made tasks found under the resources folder
+    /// 
     private void FindPremadeTasks()
     {
         TaskData[] tasks =  Resources.LoadAll<TaskData>(_taskDataFolderPath);
@@ -87,8 +89,10 @@ public class TaskManager : MonoBehaviour
         }
     }
 
-    /* Find a TaskData that is not being displayed currently, and create
-     a new task using its values */
+    ///-///////////////////////////////////////////////////////////
+    /// Find a TaskData that is not being displayed currently, and create
+    /// a new task using its values
+    /// 
     private void DisplayAllTasks()
     {
         for(int i = 0; i < taskAmountToDisplay; i++)
@@ -107,7 +111,9 @@ public class TaskManager : MonoBehaviour
         }
     }
 
-    // Move elements around in taskPool list
+    ///-///////////////////////////////////////////////////////////
+    /// Move elements around in taskPool list
+    /// 
     void ShuffleTaskList(List<TaskData> list)
     {
         Random rng = new Random();
@@ -122,7 +128,9 @@ public class TaskManager : MonoBehaviour
         }
     }
 
-    // Return a TaskData that is not being displayed currently
+    ///-///////////////////////////////////////////////////////////
+    /// Return a TaskData that is not being displayed currently
+    /// 
     private TaskData GetInactiveTask()
     {
         foreach(TaskData data in _taskPool)
@@ -140,6 +148,11 @@ public class TaskManager : MonoBehaviour
         return null;
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// Add a Task to a list of completed tasks. When all tasks displayed on screen
+    /// have been completed, refresh all the tasks. TaskData that were completed are temporarily
+    /// removed from the task pool.
+    /// 
     public void CompleteTask(Task task)
     {
         _completedTasks.Add(task);
@@ -160,12 +173,18 @@ public class TaskManager : MonoBehaviour
         }  
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// Remove a task from the list of completed tasks
+    /// 
     public void UncompleteTask(Task task)
     {
         _completedTasks.Remove(task);
     }
-    
-    /* When all on screen are completed, remove them and place a new set of tasks */
+
+    ///-///////////////////////////////////////////////////////////
+    /// When all on screen are completed, remove them and place a new set of tasks.
+    /// TaskData that were temporarily removed from the pool can start returning.
+    /// 
     private void RefreshAllTasks()
     {
         // Previously completed tasks (not this current refresh), can begin to reappear on the user's task list

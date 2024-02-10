@@ -27,14 +27,18 @@ public class CategoryDropdown : MonoBehaviour
         PopulateDropdown();
     }
 
-    // Set the currently selected task category to dropdown element the user has clicked on
+    ///-///////////////////////////////////////////////////////////
+    /// Set the currently selected task category to dropdown element the user has clicked on
+    /// 
     private void UpdateSelectedCategory(int index)
     {
         // The selected category is located at the index of the selected dropdown element
         selectedCategory = categoryToIndex.ElementAt(index).Key;
     }
 
-    // Add all TaskCategories to the dropdown lists
+    ///-///////////////////////////////////////////////////////////
+    /// Add all TaskCategories to the dropdown lists
+    /// 
     private void PopulateDropdown()
     {
         taskCategoryDropdown.ClearOptions();
@@ -55,7 +59,9 @@ public class CategoryDropdown : MonoBehaviour
         taskCategoryDropdown.AddOptions(options);
     }
 
-    // Return the currently selected task category
+    ///-///////////////////////////////////////////////////////////
+    /// Return the currently selected task category
+    /// 
     public TaskCategory GetSelectedTaskCategory()
     {
         return selectedCategory;

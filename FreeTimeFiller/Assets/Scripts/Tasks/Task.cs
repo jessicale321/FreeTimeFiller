@@ -39,7 +39,11 @@ public class Task : MonoBehaviour
     {
         checkBoxButton.onClick.RemoveListener(Complete);
     }
-    
+
+    ///-///////////////////////////////////////////////////////////
+    /// Place a cross-out image on top of this task if the task hasn't been completed yet.
+    /// If the task was already completed, then uncomplete the task.
+    /// 
     private void Complete()
     {
         if (_isCompleted)
@@ -66,6 +70,9 @@ public class Task : MonoBehaviour
         }  
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// Change displayed values of the task.
+    /// 
     public void UpdateTask(TaskData data)
     {
         taskData = data;
@@ -76,7 +83,9 @@ public class Task : MonoBehaviour
         DisplayStars(data);     
     }
 
-    /* Remove or add stars being displayed on top of a task */
+    ///-///////////////////////////////////////////////////////////
+    /// Remove or add stars being displayed on top of a task.
+    /// 
     private void DisplayStars(TaskData data)
     {
         int starCount = _allStars.Count;
@@ -103,6 +112,9 @@ public class Task : MonoBehaviour
         }
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// Return the TaskData of this Task.
+    /// 
     public TaskData GetCurrentTaskData()
     {
         return taskData;
