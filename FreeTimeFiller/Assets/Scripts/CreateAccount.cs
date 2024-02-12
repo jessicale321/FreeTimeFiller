@@ -8,9 +8,10 @@ using TMPro;
 
 public class TestScript : MonoBehaviour
 {
-    public TMP_InputField registerUsername;
-    public TMP_InputField registerPassword;
-    public TMP_InputField registerConfirmedPassword;
+    // Create fields to grab username, password, and confirmed password for registration
+    [SerializeField] private TMP_InputField registerUsername;
+    [SerializeField] private TMP_InputField registerPassword;
+    [SerializeField] private TMP_InputField registerConfirmedPassword;
 
     [SerializeField] private TMP_Text logMessage;
     async void Start()
@@ -18,6 +19,11 @@ public class TestScript : MonoBehaviour
         await UnityServices.InitializeAsync();
     }
 
+    /// <summary>
+    /// CreateAccount() Will be activated when the user presses the create account button.
+    /// It will take the data typed by the user, make sure the passwords match, and call 
+    /// SignUpWithUsernamePassword
+    /// </summary>
     public async void CreateAccount()
     {
         string username = registerUsername.text;
@@ -33,6 +39,13 @@ public class TestScript : MonoBehaviour
             Debug.Log("Passwords do not match.");
         }
     }
+
+    /// <summary>
+    /// SignUpWithUsernamePassword() takes the username and password typed by the user and attempts to create an account
+    /// in the database with that data. If the password is invalid it will tell the user how to create a password that 
+    /// fits the requirements. It the user is already logged in it will not create an account and tell the user they are 
+    /// already logged in.
+    /// </summary>
     public async Task SignUpWithUsernamePassword(string username, string password)
     {
         try

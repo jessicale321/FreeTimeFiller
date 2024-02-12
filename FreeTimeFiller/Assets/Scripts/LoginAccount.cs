@@ -8,14 +8,22 @@ using System.Threading.Tasks;
 
 public class LoginAccount : MonoBehaviour
 {
-    public TMP_InputField loginUsername;
-    public TMP_InputField loginPassword;
+    // create input fields to grab the username and password from user
+    [SerializeField] private TMP_InputField loginUsername;
+    [SerializeField] private TMP_InputField loginPassword;
+
+    // text field that will be updated with information for the user if their account username or password are incorrect
+    [SerializeField] private TMP_Text logMessage;
 
     async void Start()
     {
         await UnityServices.InitializeAsync();
     }
 
+    /// <summary>
+    /// Login() is called when the user presses the login button. It will grab the username and password
+    /// that was typed and then call SignInWithUsernamePassowrdAsync() to talk to database
+    /// </summary>
     public async void Login()
     {
         string username = loginUsername.text;
@@ -23,6 +31,11 @@ public class LoginAccount : MonoBehaviour
 
         await SignInWithUsernamePasswordAsync(username, password);
     }
+
+    /// <summary>
+    /// SignInWithUsernamePassword() 
+    /// Attempts to loggin with username and password, notifies user if username and/or login were incorrect
+    /// </summary>
     async Task SignInWithUsernamePasswordAsync(string username, string password)
     {
         try
@@ -41,6 +54,8 @@ public class LoginAccount : MonoBehaviour
             // Compare error code to CommonErrorCodes
             // Notify the player with the proper error message
             Debug.LogException(ex);
+
+            logMessage.text = "Username or Password was incorrect";
         }
     }
 }
