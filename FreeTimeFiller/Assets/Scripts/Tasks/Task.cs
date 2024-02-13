@@ -5,118 +5,123 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Task : MonoBehaviour
+namespace UserTask
 {
-    // Data that this task is currently using
-    [SerializeField] private TaskData taskData;
-
-    [Header("UI Components")] 
-    [SerializeField] private TMP_Text taskName;
-
-    [SerializeField] private Button checkBoxButton;
-
-    [SerializeField] private GameObject crossOutImage;
-
-    // Panel that stars are parented by
-    [SerializeField] private GameObject difficultyLevelPanel;
-
-    // Star that will spawn on the screen
-    [SerializeField] private GameObject difficultyStar;
-    // All stars currently spawned in
-    private List<GameObject> _allStars = new List<GameObject>();
-
-    private bool _isCompleted = false;
-
-    private void OnEnable()
+    public class Task : MonoBehaviour
     {
-        // Remove cross-out over this task, and enable its checkbox button
-        crossOutImage.SetActive(false);
-        
-        checkBoxButton.onClick.AddListener(Complete);
-    }
+        // Data that this task is currently using
+        [SerializeField] private TaskData taskData;
 
-    private void OnDisable()
-    {
-        checkBoxButton.onClick.RemoveListener(Complete);
-    }
+        [Header("UI Components")]
+        [SerializeField] private TMP_Text taskName;
 
-    ///-///////////////////////////////////////////////////////////
-    /// Place a cross-out image on top of this task if the task hasn't been completed yet.
-    /// If the task was already completed, then uncomplete the task.
-    /// 
-    private void Complete()
-    {
-        if (_isCompleted)
+        [SerializeField] private Button checkBoxButton;
+
+        [SerializeField] private GameObject crossOutImage;
+
+        // Panel that stars are parented by
+        [SerializeField] private GameObject difficultyLevelPanel;
+
+        // Star that will spawn on the screen
+        [SerializeField] private GameObject difficultyStar;
+        // All stars currently spawned in
+        private List<GameObject> _allStars = new List<GameObject>();
+
+        private bool _isCompleted = false;
+
+        private void OnEnable()
         {
             // Remove cross-out over this task, and enable its checkbox button
             crossOutImage.SetActive(false);
 
-            TaskManager.Instance.UncompleteTask(this);
-
-            _isCompleted = false;
+            checkBoxButton.onClick.AddListener(Complete);
         }
-        else
+
+        private void OnDisable()
         {
-            Debug.Log($"{taskData.taskName} has been completed!");
+            checkBoxButton.onClick.RemoveListener(Complete);
+        }
 
-            // Show a cross-out over this task, and disable its checkbox button
-            crossOutImage.SetActive(true);
-
-
-            // Tell TaskManager that this task has been completed
-            TaskManager.Instance.CompleteTask(this);
-
-            _isCompleted = true;
-        }  
-    }
-
-    ///-///////////////////////////////////////////////////////////
-    /// Change displayed values of the task.
-    /// 
-    public void UpdateTask(TaskData data)
-    {
-        taskData = data;
-        
-        // Change task name
-        taskName.text = data.taskName;
-        
-        DisplayStars(data);     
-    }
-
-    ///-///////////////////////////////////////////////////////////
-    /// Remove or add stars being displayed on top of a task.
-    /// 
-    private void DisplayStars(TaskData data)
-    {
-        int starCount = _allStars.Count;
-        
-        // Remove excess stars
-        if (starCount > data.difficultyLevel)
+        ///-///////////////////////////////////////////////////////////
+        /// Place a cross-out image on top of this task if the task hasn't been completed yet.
+        /// If the task was already completed, then uncomplete the task.
+        /// 
+        private void Complete()
         {
-            for (int i = 0; i < starCount - data.difficultyLevel; i++)
+            if (_isCompleted)
             {
-                Destroy(_allStars[0]);
-                _allStars.Remove(_allStars[0]);
+                // Remove cross-out over this task, and enable its checkbox button
+                crossOutImage.SetActive(false);
 
+                TaskManager.Instance.UncompleteTask(this);
+
+                _isCompleted = false;
+            }
+            else
+            {
+                Debug.Log($"{taskData.taskName} has been completed!");
+
+                // Show a cross-out over this task, and disable its checkbox button
+                crossOutImage.SetActive(true);
+
+
+                // Tell TaskManager that this task has been completed
+                TaskManager.Instance.CompleteTask(this);
+
+                _isCompleted = true;
             }
         }
-        // Add missing stars
-        else if (starCount < data.difficultyLevel)
-        {
-            for (int i = 0; i < data.difficultyLevel - starCount; i++)
-            {
-                GameObject newStar =  Instantiate(difficultyStar, difficultyLevelPanel.transform, false);
-                _allStars.Add(newStar);
 
+        ///-///////////////////////////////////////////////////////////
+        /// Change displayed values of the task.
+        /// 
+        public void UpdateTask(TaskData data)
+        {
+            taskData = data;
+
+            // Change task name
+            taskName.text = data.taskName;
+
+            DisplayStars(data);
+        }
+
+        ///-///////////////////////////////////////////////////////////
+        /// Remove or add stars being displayed on top of a task.
+        /// 
+        private void DisplayStars(TaskData data)
+        {
+            int starCount = _allStars.Count;
+
+            // Remove excess stars
+            if (starCount > data.difficultyLevel)
+            {
+                for (int i = 0; i < starCount - data.difficultyLevel; i++)
+                {
+                    Destroy(_allStars[0]);
+                    _allStars.Remove(_allStars[0]);
+
+                }
             }
+            // Add missing stars
+            else if (starCount < data.difficultyLevel)
+            {
+                for (int i = 0; i < data.difficultyLevel - starCount; i++)
+                {
+                    GameObject newStar = Instantiate(difficultyStar, difficultyLevelPanel.transform, false);
+                    _allStars.Add(newStar);
+
+                }
+            }
+        }
+
+        ///-///////////////////////////////////////////////////////////
+        /// Return the TaskData of this Task.
+        /// 
+        public TaskData GetCurrentTaskData()
+        {
+            return taskData;
         }
     }
 
-    ///-///////////////////////////////////////////////////////////
-    /// Return the TaskData of this Task.
-    /// 
-    public TaskData GetCurrentTaskData()
-    {
-        return taskData;
-    }
 }
+

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Random = System.Random;
+using UserTask;
 
 public class TaskManager : MonoBehaviour
 {
@@ -13,7 +14,7 @@ public class TaskManager : MonoBehaviour
     private List<TaskData> _taskPool = new List<TaskData>();
 
     // Folder path for location of Task Data
-    private string _taskDataFolderPath = "Task Data/Premade";
+    private string _taskDataFolderPath = "Task Data";
 
     /* How many tasks should be created and displayed?
      * If taskCount is greater than the number of inactive TaskData's, 
@@ -61,17 +62,7 @@ public class TaskManager : MonoBehaviour
 
         foreach (TaskData data in tasks)
         {
-            // Don't add any duplicate task data
-            if (_activeTaskData.TryAdd(data, false) == false)
-            {
-                Debug.Log($"{data} is a duplicate in the taskData list!");
-            }
-            else
-            {
-                _taskPool.Add(data);
-                Debug.Log($"Task Manager has loaded in: {data.taskName}");
-            }
-
+            TryAddTask(data);
         }
 
         // If we found any tasks, start displaying them
@@ -86,6 +77,28 @@ public class TaskManager : MonoBehaviour
         else
         {
             Debug.Log($"There were no tasks found under Resources/{_taskDataFolderPath}");
+        }
+    }
+    
+    public void AddNewTaskToPool(TaskData newTaskData)
+    {
+        TryAddTask(newTaskData);
+        
+        // Randomize all elements in the task pool
+        ShuffleTaskList(_taskPool);
+    }
+    
+    private void TryAddTask(TaskData data)
+    {
+        // Don't add any duplicate task data
+        if (_activeTaskData.TryAdd(data, false) == false)
+        {
+            Debug.Log($"{data} is a duplicate in the taskData list!");
+        }
+        else
+        {
+            _taskPool.Add(data);
+            Debug.Log($"Task Manager has loaded in: {data.taskName}");
         }
     }
 
@@ -147,6 +160,7 @@ public class TaskManager : MonoBehaviour
         
         return null;
     }
+    
 
     ///-///////////////////////////////////////////////////////////
     /// Add a Task to a list of completed tasks. When all tasks displayed on screen
