@@ -18,7 +18,7 @@ public class TaskData : ScriptableObject
 
     [Range(1, 5)] 
     // How many refreshes (after this task is completed) until this task reappears in the pool
-    public int refreshCountdown = 2;
+    public int refreshCountdown = 1;
     
     [TextArea(2,3), Space(10)]
     public string description;
