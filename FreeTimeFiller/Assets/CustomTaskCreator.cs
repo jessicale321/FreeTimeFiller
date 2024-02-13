@@ -9,11 +9,14 @@ using System;
 
 public class CustomTaskCreator : MonoBehaviour
 {
+    [Header("Input Fields")]
     [SerializeField] private TMP_InputField taskNameInputField;
     [SerializeField] private TMP_InputField taskDescriptionInputField;
+    [Header("Dropdown")]
     [SerializeField] private CategoryDropdown categoryDropdown;
+    [Header("Sliders")]
     [SerializeField] private DifficultySlider difficultySlider;
-
+    [Header("Buttons")]
     [SerializeField] private Button createButton;
     
     // Folder path for location of Task Data
@@ -55,13 +58,9 @@ public class CustomTaskCreator : MonoBehaviour
         {
             if (nameToCheck == data.taskName)
             {
-                Debug.Log("Don't create!!! NAME EXISTS");
                 return false;
             }
-            else
-            {
-                Debug.Log("nah this is fine " + data.taskName);
-            }
+
         }
         return true;
     }
