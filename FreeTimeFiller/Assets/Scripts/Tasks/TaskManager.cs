@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEngine;
 using Random = System.Random;
 using UserTask;
+using UnityEditor.U2D.Aseprite;
 
 public class TaskManager : MonoBehaviour
 {
@@ -175,14 +176,18 @@ public class TaskManager : MonoBehaviour
         
         if (!_taskDataOnHold.ContainsKey(dataOfCompletedTask))
         {
-            Debug.Log("add");
+            //Debug.Log("add");
             _taskDataOnHold.Add(dataOfCompletedTask, dataOfCompletedTask.refreshCountdown);
         }
-        
+        else
+        {
+            // Reset counter
+            _taskDataOnHold[dataOfCompletedTask] = dataOfCompletedTask.refreshCountdown;
+        }
+
         // Once the user has completed all tasks that could be displayed on screen...
         if (_completedTasks.Count >= _taskAmountCurrentlyDisplayed)
         {
-
             RefreshAllTasks();
         }  
     }
@@ -217,8 +222,9 @@ public class TaskManager : MonoBehaviour
                 // A refresh has occurred, so this TaskData should be closer to reappearing in pool again
                 _taskDataOnHold[taskData]--;
 
-                Debug.Log($"{taskData} is closer to reappearing!");
+                //Debug.Log($"{taskData} is closer to reappearing!");
             }
+            Debug.Log(taskData.taskName + " has " + _taskDataOnHold[taskData] + " refreshes left!");
         }
 
         // Remove tasks on screen

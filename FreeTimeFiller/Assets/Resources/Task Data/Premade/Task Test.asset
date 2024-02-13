@@ -15,4 +15,5 @@ MonoBehaviour:
   taskName: Brush Teeth
   category: 4
   difficultyLevel: 1
+  refreshCountdown: 1
   description: Some sort of description?

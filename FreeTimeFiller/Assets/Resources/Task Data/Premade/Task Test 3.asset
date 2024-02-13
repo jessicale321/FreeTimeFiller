@@ -15,4 +15,5 @@ MonoBehaviour:
   taskName: Run a mile
   category: 6
   difficultyLevel: 4
+  refreshCountdown: 1
   description: Some sort of description?
