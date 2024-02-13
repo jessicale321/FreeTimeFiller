@@ -3,18 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+//-/////////////////////////////////////////////////////////////////////
+///
 public class ScreenController : MonoBehaviour
 {
-    public GameObject homeScreen;
-    public GameObject searchScreen;
-    public GameObject profileScreen;
+    [SerializeField] private GameObject homeScreen;
+    [SerializeField] private GameObject searchScreen;
+    [SerializeField] private GameObject profileScreen;
 
-    public Button homeButton;
-    public Button searchButton;
-    public Button profileButton;
+    [SerializeField] private Button homeButton;
+    [SerializeField] private Button searchButton;
+    [SerializeField] private Button profileButton;
 
-
-    void Start()
+    //-/////////////////////////////////////////////////////////////////////
+    ///
+    public void Start()
     {
         homeScreen.SetActive(true);
         searchScreen.SetActive(false);
@@ -24,7 +27,9 @@ public class ScreenController : MonoBehaviour
         searchButton.onClick.AddListener(OnSearchButtonClicked);
         profileButton.onClick.AddListener(OnProfileButtonClicked);
     }
-    
+
+    //-/////////////////////////////////////////////////////////////////////
+    ///
     public void OnHomeButtonClicked()
     {
         homeScreen.SetActive(true);
@@ -32,6 +37,8 @@ public class ScreenController : MonoBehaviour
         profileScreen.SetActive(false);
     }
 
+    //-/////////////////////////////////////////////////////////////////////
+    ///
     public void OnSearchButtonClicked()
     {
         homeScreen.SetActive(false);
@@ -39,6 +46,8 @@ public class ScreenController : MonoBehaviour
         profileScreen.SetActive(false);
     }
 
+    //-/////////////////////////////////////////////////////////////////////
+    ///
     public void OnProfileButtonClicked()
     {
         homeScreen.SetActive(false);
