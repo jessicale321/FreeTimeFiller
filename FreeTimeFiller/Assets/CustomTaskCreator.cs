@@ -26,14 +26,16 @@ public class CustomTaskCreator : MonoBehaviour
     // Folder path for location of Task Data
     private string _taskDataFolderPath = "Task Data";
 
+    // The list of custom tasks that the user has created 
     private List<string> _customTasks = new List<string>();
 
     private async void Awake()
     {
-        // Sign in to account annoymously (* should use actual account login *)
+        // Sign in to account anonymously (* should use actual account login *)
         await UnityServices.InitializeAsync();
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
         
+        // Load and then give all existing custom tasks to the TaskManager
         LoadAllCustomTasks();
     }
 
@@ -42,7 +44,7 @@ public class CustomTaskCreator : MonoBehaviour
         // Add button functionality
         createButton.onClick.AddListener(AttemptCreation);
         loadButton.onClick.AddListener(LoadAllCustomTasks);
-        deleteButton.onClick.AddListener(DeleteData);
+        deleteButton.onClick.AddListener(ClearAllCustomTaskData);
     }
 
     private void OnDisable()
@@ -50,7 +52,7 @@ public class CustomTaskCreator : MonoBehaviour
         // Remove button functionality
         createButton.onClick.RemoveListener(AttemptCreation);
         loadButton.onClick.RemoveListener(LoadAllCustomTasks);
-        deleteButton.onClick.RemoveListener(DeleteData);
+        deleteButton.onClick.RemoveListener(ClearAllCustomTaskData);
     }
 
     // Check that the values the user entered for their custom task are valid. If so, allow the creation
@@ -64,7 +66,7 @@ public class CustomTaskCreator : MonoBehaviour
             Debug.Log("Task name is empty or already exists!");
             return;
         }
-
+        
         CreateCustomTask();
     }
 
@@ -77,6 +79,7 @@ public class CustomTaskCreator : MonoBehaviour
 
         foreach (TaskData data in tasks)
         {
+            // If we find a duplicate task name, don't allow the creation
             if (nameToCheck == data.taskName)
             {
                 return false;
@@ -104,6 +107,7 @@ public class CustomTaskCreator : MonoBehaviour
         // Convert the contents of the new TaskData to a json string
         string json = JsonUtility.ToJson(newCustomTask);
 
+        // Add the new task to the task pool
         TaskManager.Instance.AddNewTaskToPool(newCustomTask);
 
         SaveToAssetFolder(newCustomTask);
@@ -116,8 +120,12 @@ public class CustomTaskCreator : MonoBehaviour
     /// 
     public async void SaveData(string jsonText)
     {
+        // Don't add duplicates
+        if (_customTasks.Contains(jsonText)) return;
+        
         _customTasks.Add(jsonText);
 
+        // Save list of custom tasks to the user's account
         await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
             { "customTasks", _customTasks} });
     }
@@ -127,6 +135,7 @@ public class CustomTaskCreator : MonoBehaviour
     /// 
     public async void LoadAllCustomTasks()
     {
+        // Load the list of custom tasks created by the user from their cloud account
         var savedList = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string>
         {
             "customTasks"
@@ -135,13 +144,16 @@ public class CustomTaskCreator : MonoBehaviour
         // If there's data loaded, deserialize it back into a list of strings
         if (savedList.TryGetValue("customTasks", out var data))
         {
+            // Don't allow duplicates to load in
+            if (_customTasks.Contains(data.Value.GetAsString())) return;
+            
             List<string> stringList = data.Value.GetAs<List<string>>();
 
             // Append the loaded list to the existing list
             _customTasks.AddRange(stringList);
         }
 
-        // Create an asset (temporary) for each custom task the user made
+        // Create an asset (temporary, will disappear when app is closed) for each custom task the user made
         foreach (string str in _customTasks)
         {
             TaskData newCustomTask = ScriptableObject.CreateInstance<TaskData>();
@@ -152,10 +164,12 @@ public class CustomTaskCreator : MonoBehaviour
 
             SaveToAssetFolder(newCustomTask);
         }
-
-        
     }
-    private async void DeleteData()
+
+    ///-///////////////////////////////////////////////////////////
+    /// Delete all custom task data from the user's account.
+    /// 
+    private async void ClearAllCustomTaskData()
     {
         _customTasks.Clear();
         
@@ -168,10 +182,11 @@ public class CustomTaskCreator : MonoBehaviour
     }
 
     ///-///////////////////////////////////////////////////////////
-    /// Add custom task to the asset folder (will dissappear when builds are closed).
+    /// Add custom task to the asset folder (will disappear when builds are closed).
     /// 
     private void SaveToAssetFolder(TaskData dataToSave)
     {
+        // Find location of where Task Data are saved, then place the data inside
         string path = $"Assets/Resources/Task Data/Custom/{dataToSave.taskName} Custom.asset";
         AssetDatabase.CreateAsset(dataToSave, path);
         AssetDatabase.SaveAssets();
