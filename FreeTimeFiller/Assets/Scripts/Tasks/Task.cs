@@ -31,15 +31,18 @@ namespace UserTask
 
         private void OnEnable()
         {
-            // Remove cross-out over this task, and enable its checkbox button
-            crossOutImage.SetActive(false);
-
             checkBoxButton.onClick.AddListener(Complete);
         }
 
         private void OnDisable()
         {
             checkBoxButton.onClick.RemoveListener(Complete);
+        }
+
+        private void Start()
+        {
+            // Remove cross-out over this task
+            crossOutImage.SetActive(false);
         }
 
         ///-///////////////////////////////////////////////////////////
@@ -82,7 +85,11 @@ namespace UserTask
             // Change task name
             taskName.text = data.taskName;
 
+            // Remove cross-out over this task
+            crossOutImage.SetActive(false);
+
             DisplayStars(data);
+
         }
 
         ///-///////////////////////////////////////////////////////////
