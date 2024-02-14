@@ -11,6 +11,7 @@ using Unity.Services.CloudSave;
 using Unity.Services.CloudSave.Models;
 using Unity.Services.Core;
 using System.Xml.Linq;
+using Unity.Collections.LowLevel.Unsafe;
 
 public class CustomTaskCreator : MonoBehaviour
 {
@@ -24,26 +25,36 @@ public class CustomTaskCreator : MonoBehaviour
     [Header("Buttons")]
     [SerializeField] private Button createButton;
     [SerializeField] private Button loadButton;
-    
+    [SerializeField] private Button deleteButton;
+
     // Folder path for location of Task Data
     private string _taskDataFolderPath = "Task Data";
 
+    private List<string> _customTasks = new List<string>();
+
     private async void Awake()
     {
+        // Sign in to account annoymously (* should use actual account login *)
         await UnityServices.InitializeAsync();
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
+
+        LoadAllCustomTasks();
     }
 
     private void OnEnable()
     {
+        // Add button functionality
         createButton.onClick.AddListener(AttemptCreation);
-        loadButton.onClick.AddListener(LoadData);
+        loadButton.onClick.AddListener(LoadAllCustomTasks);
+        deleteButton.onClick.AddListener(DeleteData);
     }
 
     private void OnDisable()
     {
+        // Remove button functionality
         createButton.onClick.RemoveListener(AttemptCreation);
-        loadButton.onClick.RemoveListener(LoadData);
+        loadButton.onClick.RemoveListener(LoadAllCustomTasks);
+        deleteButton.onClick.RemoveListener(DeleteData);
     }
 
     // Check that the values the user entered for their custom task are valid. If so, allow the creation
@@ -110,34 +121,55 @@ public class CustomTaskCreator : MonoBehaviour
     /// 
     public async void SaveData(string jsonText)
     {
-        var playerData = new Dictionary<string, object>{
-          {"customTask", jsonText}
-        };
-        await CloudSaveService.Instance.Data.Player.SaveAsync(playerData);
-        Debug.Log($"Saved data {string.Join(',', playerData)}");
+        _customTasks.Add(jsonText);
+
+        await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
+            { "customTasks", _customTasks} });
     }
 
     ///-///////////////////////////////////////////////////////////
     /// Load all custom tasks and add them back to the task pool.
     /// 
-    public async void LoadData()
+    public async void LoadAllCustomTasks()
     {
-        var playerData = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string> { "customTask" });
-
-        string keyValue = "";
-
-        if (playerData.TryGetValue("customTask", out var keyName))
+        var savedList = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string>
         {
-            keyValue = keyName.Value.GetAs<string>();
+            "customTasks"
+        });
+
+        List<string> loadedStringList = new List<string>();
+
+        // If there's data loaded, deserialize it back into a list of strings
+        if (savedList.TryGetValue("customTasks", out var data))
+        {
+            List<string> stringList = data.Value.GetAs<List<string>>();
+
+            // Append the loaded list to the existing list
+            _customTasks.AddRange(stringList);
         }
 
-        TaskData newCustomTask = ScriptableObject.CreateInstance<TaskData>();
+        // Use the loaded list of strings
+        foreach (string str in _customTasks)
+        {
+            TaskData newCustomTask = ScriptableObject.CreateInstance<TaskData>();
 
-        JsonUtility.FromJsonOverwrite(keyValue, newCustomTask);
+            JsonUtility.FromJsonOverwrite(str, newCustomTask);
 
-        TaskManager.Instance.AddNewTaskToPool(newCustomTask);
+            // TODO: duplicates can be added when loaded in more than once
+            TaskManager.Instance.AddNewTaskToPool(newCustomTask);
 
-        SaveToAssetFolder(newCustomTask);
+            SaveToAssetFolder(newCustomTask);
+        }
+
+        
+    }
+    private async void DeleteData()
+    {
+        // Overwrite the data with an empty string to "delete" it
+        await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
+        { "customTasks", "" }
+    });
+        Debug.Log("Delete attempted");
     }
 
     ///-///////////////////////////////////////////////////////////
