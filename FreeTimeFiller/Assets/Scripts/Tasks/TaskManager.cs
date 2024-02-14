@@ -30,7 +30,9 @@ public class TaskManager : MonoBehaviour
      * Value: Is currently displayed? True or false
      */
     private Dictionary<TaskData, bool> _activeTaskData = new Dictionary<TaskData, bool>();
-    
+
+    private HashSet<string> _allTaskByName = new HashSet<string>();
+
     /* Task Data that have been previously completed
      * Key: The TaskData (ex. Brushing Teeth)
      * Value: Number of refreshes left until it reappears
@@ -92,13 +94,14 @@ public class TaskManager : MonoBehaviour
     private void TryAddTask(TaskData data)
     {
         // Don't add any duplicate task data
-        if (_activeTaskData.TryAdd(data, false) == false)
+        if (_activeTaskData.TryAdd(data, false) == false || IsTaskInPool(data))
         {
-            Debug.Log($"{data} is a duplicate in the taskData list!");
+            Debug.Log($"{data.taskName} is a duplicate in the taskData list!");
         }
         else
         {
             _taskPool.Add(data);
+            _allTaskByName.Add(data.taskName);
             Debug.Log($"Task Manager has loaded in: {data.taskName}");
         }
     }
@@ -160,6 +163,14 @@ public class TaskManager : MonoBehaviour
         Debug.Log("Could not find a non-active task data!");
         
         return null;
+    }
+    
+    ///-///////////////////////////////////////////////////////////
+    /// Check if this task is already in the pool. We check by name since the scriptableObjects don't always exist.
+    /// 
+    public bool IsTaskInPool(TaskData taskData)
+    {
+        return _allTaskByName.Contains(taskData.taskName);
     }
     
 
@@ -230,7 +241,6 @@ public class TaskManager : MonoBehaviour
         // Remove tasks on screen
         foreach (Task task in _completedTasks)
         {
-
             Destroy(task.gameObject);
         }
         
@@ -246,4 +256,5 @@ public class TaskManager : MonoBehaviour
         
         DisplayAllTasks();
     }
+    
 }

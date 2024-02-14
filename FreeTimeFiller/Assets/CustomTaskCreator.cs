@@ -1,17 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using UnityEditor.PackageManager.UI;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
 using Unity.Services.Authentication;
 using Unity.Services.CloudSave;
-using Unity.Services.CloudSave.Models;
 using Unity.Services.Core;
-using System.Xml.Linq;
-using Unity.Collections.LowLevel.Unsafe;
 
 public class CustomTaskCreator : MonoBehaviour
 {
@@ -37,8 +33,6 @@ public class CustomTaskCreator : MonoBehaviour
         // Sign in to account annoymously (* should use actual account login *)
         await UnityServices.InitializeAsync();
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
-
-        LoadAllCustomTasks();
     }
 
     private void OnEnable()
@@ -108,7 +102,6 @@ public class CustomTaskCreator : MonoBehaviour
         // Convert the contents of the new TaskData to a json string
         string json = JsonUtility.ToJson(newCustomTask);
 
-        // The new task will start appearing in the task pool
         TaskManager.Instance.AddNewTaskToPool(newCustomTask);
 
         SaveToAssetFolder(newCustomTask);
@@ -136,9 +129,7 @@ public class CustomTaskCreator : MonoBehaviour
         {
             "customTasks"
         });
-
-        List<string> loadedStringList = new List<string>();
-
+        
         // If there's data loaded, deserialize it back into a list of strings
         if (savedList.TryGetValue("customTasks", out var data))
         {
@@ -148,14 +139,13 @@ public class CustomTaskCreator : MonoBehaviour
             _customTasks.AddRange(stringList);
         }
 
-        // Use the loaded list of strings
+        // Create an asset (temporary) for each custom task the user made
         foreach (string str in _customTasks)
         {
             TaskData newCustomTask = ScriptableObject.CreateInstance<TaskData>();
 
             JsonUtility.FromJsonOverwrite(str, newCustomTask);
 
-            // TODO: duplicates can be added when loaded in more than once
             TaskManager.Instance.AddNewTaskToPool(newCustomTask);
 
             SaveToAssetFolder(newCustomTask);
@@ -165,11 +155,14 @@ public class CustomTaskCreator : MonoBehaviour
     }
     private async void DeleteData()
     {
+        _customTasks.Clear();
+        
         // Overwrite the data with an empty string to "delete" it
-        await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
+            await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
         { "customTasks", "" }
     });
-        Debug.Log("Delete attempted");
+
+            Debug.Log("Delete attempted");
     }
 
     ///-///////////////////////////////////////////////////////////
