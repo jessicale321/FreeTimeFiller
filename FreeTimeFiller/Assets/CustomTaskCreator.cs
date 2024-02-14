@@ -33,6 +33,8 @@ public class CustomTaskCreator : MonoBehaviour
         // Sign in to account annoymously (* should use actual account login *)
         await UnityServices.InitializeAsync();
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
+        
+        LoadAllCustomTasks();
     }
 
     private void OnEnable()

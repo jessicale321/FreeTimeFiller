@@ -15,7 +15,7 @@ public class TaskManager : MonoBehaviour
     private List<TaskData> _taskPool = new List<TaskData>();
 
     // Folder path for location of Task Data
-    private string _taskDataFolderPath = "Task Data";
+    private string _taskDataFolderPath = "Task Data/Premade";
 
     /* How many tasks should be created and displayed?
      * If taskCount is greater than the number of inactive TaskData's, 
@@ -71,9 +71,6 @@ public class TaskManager : MonoBehaviour
         // If we found any tasks, start displaying them
         if (_taskPool.Count > 0)
         {
-            // Randomize all elements in the task pool
-            ShuffleTaskList(_taskPool);
-            
             // Once all TaskData's have been added to the dictionary, start displaying them
             DisplayAllTasks();
         }
@@ -86,9 +83,6 @@ public class TaskManager : MonoBehaviour
     public void AddNewTaskToPool(TaskData newTaskData)
     {
         TryAddTask(newTaskData);
-        
-        // Randomize all elements in the task pool
-        ShuffleTaskList(_taskPool);
     }
     
     private void TryAddTask(TaskData data)
@@ -112,6 +106,9 @@ public class TaskManager : MonoBehaviour
     /// 
     private void DisplayAllTasks()
     {
+        // Randomize all elements in the task pool
+        ShuffleTaskList(_taskPool);
+        
         for(int i = 0; i < taskAmountToDisplay; i++)
         {
             TaskData inactiveData = GetInactiveTask();
