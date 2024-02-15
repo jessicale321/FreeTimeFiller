@@ -16,4 +16,4 @@ MonoBehaviour:
   category: 6
   difficultyLevel: 3
   refreshCountdown: 1
-  description: Some sort of description?
+  description: Perform 10 pushups (or more if you can). Use proper form!

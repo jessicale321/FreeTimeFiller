@@ -14,7 +14,7 @@ public class ChooseTaskPool : MonoBehaviour
     // The button to spawn and put text inside of
     [SerializeField] private GameObject taskCategoryButton;
 
-    private List<Button> taskButtonsDisplayed = new List<Button>();
+    private Dictionary<CategoryButton, TaskCategory> taskButtons = new Dictionary<CategoryButton, TaskCategory>();
 
     private List<TaskCategory> chosenTaskCategories = new List<TaskCategory>();
 
@@ -31,9 +31,28 @@ public class ChooseTaskPool : MonoBehaviour
         // For each Task Category we have created, add a drop down element for it
         foreach (TaskCategory category in Enum.GetValues(typeof(TaskCategory)))
         {
-            GameObject categoryButton =  Instantiate(taskCategoryButton, categoryPanel);
+            GameObject newButton =  Instantiate(taskCategoryButton, categoryPanel);
 
-            categoryButton.GetComponent<CategoryButton>().UpdateDisplayedCategory(category);
+            CategoryButton categoryButtonComponent = newButton.GetComponent<CategoryButton>();
+
+            categoryButtonComponent.UpdateDisplayedCategory(category);
+            categoryButtonComponent.SetCustomTaskCreator(this);
+
+            taskButtons.Add(categoryButtonComponent, category);
         }
+    }
+
+    public void AddClickedButton(CategoryButton categoryButtonClicked)
+    {
+        chosenTaskCategories.Add(taskButtons[categoryButtonClicked]);
+
+        Debug.Log($"User has chosen: {taskButtons[categoryButtonClicked]}");
+    }
+
+    public void RemoveClickedButton(CategoryButton categoryButtonClicked)
+    {
+        chosenTaskCategories.Remove(taskButtons[categoryButtonClicked]);
+
+        Debug.Log($"User has removed: {taskButtons[categoryButtonClicked]}");
     }
 }
