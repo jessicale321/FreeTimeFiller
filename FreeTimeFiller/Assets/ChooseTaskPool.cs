@@ -2,7 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.Services.Authentication;
+using Unity.Services.Core;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ChooseTaskPool : MonoBehaviour
 {
@@ -11,8 +14,12 @@ public class ChooseTaskPool : MonoBehaviour
     // The button to spawn and put text inside of
     [SerializeField] private GameObject taskCategoryButton;
 
+    private List<Button> taskButtonsDisplayed = new List<Button>();
+
+    private List<TaskCategory> chosenTaskCategories = new List<TaskCategory>();
+
     private void Start()
-    {
+    {    
         CreateButtons();
     }
 
@@ -25,7 +32,8 @@ public class ChooseTaskPool : MonoBehaviour
         foreach (TaskCategory category in Enum.GetValues(typeof(TaskCategory)))
         {
             GameObject categoryButton =  Instantiate(taskCategoryButton, categoryPanel);
-            categoryButton.GetComponentInChildren<TMP_Text>().text = category.ToString();
+
+            categoryButton.GetComponent<CategoryButton>().UpdateDisplayedCategory(category);
         }
     }
 }
