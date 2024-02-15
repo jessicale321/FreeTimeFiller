@@ -12,6 +12,8 @@ public class CategoryButton : MonoBehaviour
     private Button _buttonComponent;
     private TMP_Text _textBox;
 
+    [SerializeField] private GameObject _selectedBox;
+
     // Did the user already click on this button (they want this category to show in the task pool)
     private bool _selected;
 
@@ -20,6 +22,11 @@ public class CategoryButton : MonoBehaviour
         // Get reference to text component
         _textBox = GetComponentInChildren<TMP_Text>();
         _buttonComponent = GetComponent<Button>();
+    }
+
+    private void Start()
+    {
+        _selectedBox.SetActive(false);
     }
 
     private void OnEnable()
@@ -49,13 +56,27 @@ public class CategoryButton : MonoBehaviour
         if (!_selected)
         {
             _selected = true;
+            _selectedBox.SetActive(true);
             myCreator.AddClickedButton(this);
         }
 
         else
         {
             _selected = false;
+            _selectedBox.SetActive(false);
             myCreator.RemoveClickedButton(this);
         }
+    }
+
+    public void SelectButtonOnCommand()
+    {
+        _selected = true;
+        _selectedBox.SetActive(true);
+        myCreator.AddClickedButton(this);
+    }
+
+    public TaskCategory GetTaskCategory()
+    {
+        return displayedCategory;
     }
 }

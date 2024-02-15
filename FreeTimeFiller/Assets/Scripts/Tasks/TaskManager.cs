@@ -19,10 +19,12 @@ public class TaskManager : MonoBehaviour
 
     /* How many tasks should be created and displayed?
      * If taskCount is greater than the number of inactive TaskData's, 
-     * then we will get an error in the console
+     * then we will get an error in the console (STATIC)
      */
-    [SerializeField, Range(1, 8)] private int taskAmountToDisplay = 1;
+    [SerializeField, Range(1, 8)] private int maxTaskDisplay;
+    private int _currentAmountToDisplay;
 
+    // How many should we display (this is number decrements by 1 on each refresh)
     private int _taskAmountCurrentlyDisplayed = 0;
 
     /* Tasks that are currently being displayed
@@ -53,6 +55,8 @@ public class TaskManager : MonoBehaviour
 
     private void Start()
     {
+        _currentAmountToDisplay = maxTaskDisplay;
+
         FindPremadeTasks();
     }
 
@@ -109,7 +113,7 @@ public class TaskManager : MonoBehaviour
         // Randomize all elements in the task pool
         ShuffleTaskList(_taskPool);
         
-        for(int i = 0; i < taskAmountToDisplay; i++)
+        for(int i = 0; i < _currentAmountToDisplay; i++)
         {
             TaskData inactiveData = GetInactiveTask();
 
@@ -245,6 +249,11 @@ public class TaskManager : MonoBehaviour
 
         // All tasks on screen were deleted, so reset this back to 0
         _taskAmountCurrentlyDisplayed = 0;
+
+        // Lower amount of tasks to display on screen, on each refresh
+        _currentAmountToDisplay--;
+
+        Debug.Log(_currentAmountToDisplay);
         
         _completedTasks.Clear();
         
