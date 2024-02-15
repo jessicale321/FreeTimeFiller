@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class CategoryButton : MonoBehaviour
 {
-    private ChooseTaskPool myCreator;
+    private TaskPool myCreator;
     private TaskCategory displayedCategory;
 
     private Button _buttonComponent;
@@ -39,6 +39,9 @@ public class CategoryButton : MonoBehaviour
         _buttonComponent.onClick.RemoveListener(ChooseTaskCategory);
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// Set the TaskCategory that this button will display on screen.
+    /// 
     public void UpdateDisplayedCategory(TaskCategory category)
     {
         displayedCategory = category;
@@ -46,11 +49,19 @@ public class CategoryButton : MonoBehaviour
         _textBox.text = category.ToString();
     }
 
-    public void SetCustomTaskCreator(ChooseTaskPool taskPoolCreator)
+    ///-///////////////////////////////////////////////////////////
+    /// Set a reference to the TaskPool script
+    /// 
+    public void SetCustomTaskCreator(TaskPool taskPoolCreator)
     {
         myCreator = taskPoolCreator;
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// When this button is clicked on, select it and tell the TaskPool script
+    /// that the user might want this task category. If this button was already selected,
+    /// tell the TaskPool script that the user no longer wants this task category.
+    /// 
     private void ChooseTaskCategory()
     {
         if (!_selected)
@@ -68,6 +79,9 @@ public class CategoryButton : MonoBehaviour
         }
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// Call this method to select the button without clicking on it.
+    /// 
     public void SelectButtonOnCommand()
     {
         _selected = true;
@@ -75,6 +89,9 @@ public class CategoryButton : MonoBehaviour
         myCreator.AddClickedButton(this);
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// Return the task category that is displayed by this button
+    /// 
     public TaskCategory GetTaskCategory()
     {
         return displayedCategory;

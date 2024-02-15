@@ -8,17 +8,23 @@ using Unity.Services.Core;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ChooseTaskPool : MonoBehaviour
+public class TaskPool : MonoBehaviour
 {
+    [Header("UI Components")]
     // Where to place buttons under
     [SerializeField] private Transform categoryPanel;
     // The button to spawn and put text inside of
     [SerializeField] private GameObject taskCategoryButton;
-
+    // The button that save the list of chosen task categories to the user's cloud account
     [SerializeField] private Button finishChoosingButton;
 
+    /* A dictionary that stores a category and a button along with it
+     * Key: The task category (ex. Chores)
+     * Value: The button that was created for the category
+     */
     private Dictionary<TaskCategory, CategoryButton> taskButtons = new Dictionary<TaskCategory, CategoryButton>();
 
+    // The list of task categories that the user has picked out and saved
     private List<TaskCategory> _chosenTaskCategories = new List<TaskCategory>();
 
     private async void Awake()
@@ -27,11 +33,13 @@ public class ChooseTaskPool : MonoBehaviour
         await UnityServices.InitializeAsync();
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
 
+        // Load the user's task categories
         LoadCategoriesFromCloud();
     }
 
     private void Start()
     {    
+        // Spawn in buttons for each task category at the start
         CreateButtons();
     }
 
@@ -53,10 +61,12 @@ public class ChooseTaskPool : MonoBehaviour
         // For each Task Category we have created, add a drop down element for it
         foreach (TaskCategory category in Enum.GetValues(typeof(TaskCategory)))
         {
+            // Spawn in a new button
             GameObject newButton =  Instantiate(taskCategoryButton, categoryPanel);
 
             CategoryButton categoryButtonComponent = newButton.GetComponent<CategoryButton>();
 
+            // In the new button, give it a reference for this TaskPool and give it a TaskCategory
             categoryButtonComponent.SetCustomTaskCreator(this);
             categoryButtonComponent.UpdateDisplayedCategory(category);
 
@@ -64,8 +74,13 @@ public class ChooseTaskPool : MonoBehaviour
         }
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// When the user has clicked the "Finish" button, call the method to save the categories to the
+    /// user's cloud account.
+    /// 
     private void FinishChoosing()
     {
+        // Only attempt to save the task categories if the list isn't empty
         if (_chosenTaskCategories.Count > 0)
         {
             Debug.Log("User finished picking categories!");
@@ -78,7 +93,11 @@ public class ChooseTaskPool : MonoBehaviour
         }       
     }
 
-    public async void SaveCategoriesToCloud()
+    ///-///////////////////////////////////////////////////////////
+    /// Take the list of categories that the user chose and convert to a json string.
+    /// Then save that string to a user's cloud acccount.
+    /// 
+    private async void SaveCategoriesToCloud()
     {
         JsonUtility.ToJson(_chosenTaskCategories);
 
@@ -89,7 +108,11 @@ public class ChooseTaskPool : MonoBehaviour
         Debug.Log("Saved chosen task categories");
     }
 
-    public async void LoadCategoriesFromCloud()
+    ///-///////////////////////////////////////////////////////////
+    /// Find the list of task categories that the user saved in the past.
+    /// Re-select any buttons on the screen if the user selected them in the past.
+    /// 
+    private async void LoadCategoriesFromCloud()
     {
         // Load the list of custom tasks created by the user from their cloud account
         var savedList = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string>
@@ -122,6 +145,10 @@ public class ChooseTaskPool : MonoBehaviour
         }
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// When a task category button is clicked, it will call this method to tell this script
+    /// that the user has a task category they might want in their preferences.
+    /// 
     public void AddClickedButton(CategoryButton categoryButtonClicked)
     {
         TaskCategory clickedCategory = categoryButtonClicked.GetTaskCategory();
@@ -134,6 +161,10 @@ public class ChooseTaskPool : MonoBehaviour
         Debug.Log($"User has chosen: {clickedCategory}");
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// When a task category is clicked (after already being clicked), it will call this method
+    /// to tell this script that the user no longer wants that task category in their preferences.
+    /// 
     public void RemoveClickedButton(CategoryButton categoryButtonClicked)
     {
         TaskCategory clickedCategory = categoryButtonClicked.GetTaskCategory();
