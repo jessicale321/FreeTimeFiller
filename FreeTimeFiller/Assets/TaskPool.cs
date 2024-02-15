@@ -10,13 +10,16 @@ using UnityEngine.UI;
 
 public class TaskPool : MonoBehaviour
 {
+    public static TaskPool Instance;
+
     [Header("UI Components")]
     // Where to place buttons under
     [SerializeField] private Transform categoryPanel;
     // The button to spawn and put text inside of
     [SerializeField] private GameObject taskCategoryButton;
     // The button that save the list of chosen task categories to the user's cloud account
-    [SerializeField] private Button finishChoosingButton;
+    [SerializeField] private Button finalizeChoicesButton;
+    [SerializeField] private Button resetChoicesButton;
 
     /* A dictionary that stores a category and a button along with it
      * Key: The task category (ex. Chores)
@@ -25,13 +28,19 @@ public class TaskPool : MonoBehaviour
     private Dictionary<TaskCategory, CategoryButton> taskButtons = new Dictionary<TaskCategory, CategoryButton>();
 
     // The list of task categories that the user has picked out and saved
-    private List<TaskCategory> _chosenTaskCategories = new List<TaskCategory>();
+    public List<TaskCategory> _chosenTaskCategories { get; private set; }
+
+    public event Action<List<TaskCategory>> TaskCategoriesChanged;
 
     private async void Awake()
     {
+        Instance = this;
+
         // Sign in to account anonymously (* should use actual account login *)
         await UnityServices.InitializeAsync();
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
+
+        _chosenTaskCategories = new List<TaskCategory>();
 
         // Load the user's task categories
         LoadCategoriesFromCloud();
@@ -45,12 +54,14 @@ public class TaskPool : MonoBehaviour
 
     private void OnEnable()
     {
-        finishChoosingButton.onClick.AddListener(FinishChoosing);
+        finalizeChoicesButton.onClick.AddListener(FinishChoosing);
+        resetChoicesButton.onClick.AddListener(ClearAllCategoryChoicesData);
     }
 
     private void OnDisable()
     {
-        finishChoosingButton.onClick.RemoveListener(FinishChoosing);
+        finalizeChoicesButton.onClick.RemoveListener(FinishChoosing);
+        resetChoicesButton.onClick.RemoveListener(ClearAllCategoryChoicesData);
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -105,6 +116,9 @@ public class TaskPool : MonoBehaviour
         await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
             { "chosenTaskCategories", _chosenTaskCategories} });
 
+        // Tell listeners that the user has changed their task category preferences
+        TaskCategoriesChanged?.Invoke(_chosenTaskCategories);
+
         Debug.Log("Saved chosen task categories");
     }
 
@@ -123,6 +137,7 @@ public class TaskPool : MonoBehaviour
         // If there's data loaded, deserialize it back into a list of strings
         if (savedList.TryGetValue("chosenTaskCategories", out var data))
         {
+
             List<string> listLoaded = data.Value.GetAs<List<string>>();
 
             foreach (string categoryAsJson in listLoaded)
@@ -142,7 +157,24 @@ public class TaskPool : MonoBehaviour
                     Debug.LogWarning($"Failed to parse task category: {categoryAsJson}");
                 }
             }
+            // Tell listeners that the user has changed their task category preferences
+            TaskCategoriesChanged?.Invoke(_chosenTaskCategories);
         }
+    }
+
+    ///-///////////////////////////////////////////////////////////
+    /// Delete all task category preferences made by the user.
+    /// 
+    private async void ClearAllCategoryChoicesData()
+    {
+        _chosenTaskCategories.Clear();
+
+        // Overwrite the data with an empty string to "delete" it
+        await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
+        { "chosenTaskCategories", "" }
+    });
+
+        Debug.Log("Delete attempted");
     }
 
     ///-///////////////////////////////////////////////////////////

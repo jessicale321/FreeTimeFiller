@@ -51,25 +51,35 @@ public class TaskManager : MonoBehaviour
     {
         // Create singleton instance for TaskManager
         Instance = this;
+
+        TaskPool.Instance.TaskCategoriesChanged += FindPremadeTasks;
     }
+
 
     private void Start()
     {
         _currentAmountToDisplay = maxTaskDisplay;
+    }
 
-        FindPremadeTasks();
+    private void OnDestroy()
+    {
+        TaskPool.Instance.TaskCategoriesChanged -= FindPremadeTasks;
     }
 
     ///-///////////////////////////////////////////////////////////
     /// Load all pre-made tasks found under the resources folder
     /// 
-    private void FindPremadeTasks()
+    private void FindPremadeTasks(List<TaskCategory> userChosenCategories)
     {
         TaskData[] tasks =  Resources.LoadAll<TaskData>(_taskDataFolderPath);
 
         foreach (TaskData data in tasks)
         {
-            TryAddTask(data);
+            // Only add tasks based on the user's Task Category preferences
+            if (userChosenCategories.Contains(data.category))
+            {
+                TryAddTask(data);
+            }
         }
 
         // If we found any tasks, start displaying them
