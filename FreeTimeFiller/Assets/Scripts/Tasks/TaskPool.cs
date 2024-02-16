@@ -10,8 +10,6 @@ using UnityEngine.UI;
 
 public class TaskPool : MonoBehaviour
 {
-    public static TaskPool Instance;
-
     [Header("UI Components")]
     // Where to place buttons under
     [SerializeField] private Transform categoryPanel;
@@ -34,16 +32,10 @@ public class TaskPool : MonoBehaviour
 
     private async void Awake()
     {
-        Instance = this;
-
         // Sign in to account anonymously (* should use actual account login *)
         await UnityServices.InitializeAsync();
-        await AuthenticationService.Instance.SignInAnonymouslyAsync();
 
         _chosenTaskCategories = new List<TaskCategory>();
-
-        // Load the user's task categories
-        LoadCategoriesFromCloud();
     }
 
     private void Start()
@@ -126,7 +118,7 @@ public class TaskPool : MonoBehaviour
     /// Find the list of task categories that the user saved in the past.
     /// Re-select any buttons on the screen if the user selected them in the past.
     /// 
-    private async void LoadCategoriesFromCloud()
+    public async void LoadCategoriesFromCloud()
     {
         // Load the list of custom tasks created by the user from their cloud account
         var savedList = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string>

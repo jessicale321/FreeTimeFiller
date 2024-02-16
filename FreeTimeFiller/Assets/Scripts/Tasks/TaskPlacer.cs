@@ -9,8 +9,6 @@ using UnityEditor.U2D.Aseprite;
 
 public class TaskPlacer : MonoBehaviour
 {
-    public static TaskPlacer Instance;
-
     // Tasks that will show up in the pool
     private List<TaskData> _taskPool = new List<TaskData>();
 
@@ -49,37 +47,20 @@ public class TaskPlacer : MonoBehaviour
     
     private void Awake()
     {
-        // Create singleton instance for TaskManager
-        Instance = this;
-
-        TaskPool.Instance.TaskCategoriesChanged += FindPremadeTasks;
-    }
-
-
-    private void Start()
-    {
         _currentAmountToDisplay = maxTaskDisplay;
     }
-
-    private void OnDestroy()
-    {
-        TaskPool.Instance.TaskCategoriesChanged -= FindPremadeTasks;
-    }
-
+    
     ///-///////////////////////////////////////////////////////////
     /// Load all pre-made tasks found under the resources folder
     /// 
-    private void FindPremadeTasks(List<TaskCategory> userChosenCategories)
+    public void FindPremadeTasks(List<TaskCategory> userChosenCategories)
     {
         TaskData[] tasks =  Resources.LoadAll<TaskData>(_taskDataFolderPath);
 
         foreach (TaskData data in tasks)
         {
             // Only add tasks based on the user's Task Category preferences
-            if (userChosenCategories.Contains(data.category))
-            {
-                TryAddTask(data);
-            }
+            TryAddTask(data, userChosenCategories);
         }
 
         // If we found any tasks, start displaying them
@@ -94,13 +75,16 @@ public class TaskPlacer : MonoBehaviour
         }
     }
     
-    public void AddNewTaskToPool(TaskData newTaskData)
+    public void AddNewTaskToPool(TaskData newTaskData, List<TaskCategory> userChosenCategories)
     {
-        TryAddTask(newTaskData);
+        TryAddTask(newTaskData, userChosenCategories);
     }
     
-    private void TryAddTask(TaskData data)
+    private void TryAddTask(TaskData data, List<TaskCategory> userChosenCategories)
     {
+        // Filter out TaskData that the user doesn't prefer to see
+        if (!userChosenCategories.Contains(data.category)) return;
+        
         // Don't add any duplicate task data
         if (_activeTaskData.TryAdd(data, false) == false || CheckTaskNameUniqueness(data))
         {
@@ -131,7 +115,7 @@ public class TaskPlacer : MonoBehaviour
             {
                 // Spawn a new task and give it data
                 GameObject newTask = Instantiate(taskPrefab, taskPanel);
-                newTask.GetComponent<Task>().UpdateTask(inactiveData);
+                newTask.GetComponent<Task>().UpdateTask(inactiveData, this);
 
                 _taskAmountCurrentlyDisplayed++;
             }
@@ -195,16 +179,8 @@ public class TaskPlacer : MonoBehaviour
 
         TaskData dataOfCompletedTask = task.GetCurrentTaskData();
         
-        if (!_taskDataOnHold.ContainsKey(dataOfCompletedTask))
-        {
-            //Debug.Log("add");
-            _taskDataOnHold.Add(dataOfCompletedTask, dataOfCompletedTask.refreshCountdown);
-        }
-        else
-        {
-            // Reset counter
-            _taskDataOnHold[dataOfCompletedTask] = dataOfCompletedTask.refreshCountdown;
-        }
+        // Reset counter
+        _taskDataOnHold[dataOfCompletedTask] = dataOfCompletedTask.refreshCountdown;
 
         // Once the user has completed all tasks that could be displayed on screen...
         if (_completedTasks.Count >= _taskAmountCurrentlyDisplayed)

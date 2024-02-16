@@ -29,15 +29,13 @@ public class CustomTaskCreator : MonoBehaviour
     // The list of custom tasks that the user has created 
     private List<string> _customTasks = new List<string>();
 
+    public event Action<List<TaskData>> AllCustomTaskWereLoaded; 
+    public event Action<TaskData> CustomTaskWasCreatedWithoutLoad; 
+
     private async void Awake()
     {
         // Sign in to account anonymously (* should use actual account login *)
         await UnityServices.InitializeAsync();
-        //await AuthenticationService.Instance.SignInAnonymouslyAsync();
-        
-        // Load and then give all existing custom tasks to the TaskManager
-        AuthenticationService.Instance.SignedIn +=  LoadAllCustomTasks;
-        
     }
 
     private void OnEnable()
@@ -108,7 +106,7 @@ public class CustomTaskCreator : MonoBehaviour
         string json = JsonUtility.ToJson(newCustomTask);
 
         // Add the new task to the task pool
-        //TaskManager.Instance.AddNewTaskToPool(newCustomTask);
+        CustomTaskWasCreatedWithoutLoad?.Invoke(newCustomTask);
 
         SaveToAssetFolder(newCustomTask);
 
@@ -153,6 +151,8 @@ public class CustomTaskCreator : MonoBehaviour
             _customTasks.AddRange(stringList);
         }
 
+        List<TaskData> taskDatas = new List<TaskData>();
+        
         // Create an asset (temporary, will disappear when app is closed) for each custom task the user made
         foreach (string str in _customTasks)
         {
@@ -161,9 +161,13 @@ public class CustomTaskCreator : MonoBehaviour
             JsonUtility.FromJsonOverwrite(str, newCustomTask);
 
             //TaskManager.Instance.AddNewTaskToPool(newCustomTask);
+            
+            taskDatas.Add(newCustomTask);
 
             SaveToAssetFolder(newCustomTask);
         }
+        
+        AllCustomTaskWereLoaded?.Invoke(taskDatas);
     }
 
     ///-///////////////////////////////////////////////////////////
