@@ -102,7 +102,7 @@ public class TaskManager : MonoBehaviour
     private void TryAddTask(TaskData data)
     {
         // Don't add any duplicate task data
-        if (_activeTaskData.TryAdd(data, false) == false || IsTaskInPool(data))
+        if (_activeTaskData.TryAdd(data, false) == false || CheckTaskNameUniqueness(data))
         {
             Debug.Log($"{data.taskName} is a duplicate in the taskData list!");
         }
@@ -179,7 +179,7 @@ public class TaskManager : MonoBehaviour
     ///-///////////////////////////////////////////////////////////
     /// Check if this task is already in the pool. We check by name since the scriptableObjects don't always exist.
     /// 
-    public bool IsTaskInPool(TaskData taskData)
+    public bool CheckTaskNameUniqueness(TaskData taskData)
     {
         return _allTaskByName.Contains(taskData.taskName);
     }

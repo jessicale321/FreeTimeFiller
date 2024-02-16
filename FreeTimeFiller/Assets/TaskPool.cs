@@ -148,7 +148,10 @@ public class TaskPool : MonoBehaviour
                     _chosenTaskCategories.Add(category);
 
                     // Re-select all buttons that the user selected in the past
-                    taskButtons[category].SelectButtonOnCommand();
+                    if (taskButtons.TryGetValue(category, out CategoryButton button))
+                    {
+                        taskButtons[category].SelectButtonOnCommand();
+                    }                   
 
                     Debug.Log($"User loaded task category: {category}");
                 }
