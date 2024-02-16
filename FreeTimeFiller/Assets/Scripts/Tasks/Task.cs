@@ -56,7 +56,7 @@ namespace UserTask
                 // Remove cross-out over this task, and enable its checkbox button
                 crossOutImage.SetActive(false);
 
-                TaskManager.Instance.UncompleteTask(this);
+                TaskPlacer.Instance.UncompleteTask(this);
 
                 _isCompleted = false;
             }
@@ -69,7 +69,7 @@ namespace UserTask
 
 
                 // Tell TaskManager that this task has been completed
-                TaskManager.Instance.CompleteTask(this);
+                TaskPlacer.Instance.CompleteTask(this);
 
                 _isCompleted = true;
             }

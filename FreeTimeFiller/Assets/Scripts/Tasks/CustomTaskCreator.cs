@@ -37,6 +37,7 @@ public class CustomTaskCreator : MonoBehaviour
         
         // Load and then give all existing custom tasks to the TaskManager
         AuthenticationService.Instance.SignedIn +=  LoadAllCustomTasks;
+        
     }
 
     private void OnEnable()

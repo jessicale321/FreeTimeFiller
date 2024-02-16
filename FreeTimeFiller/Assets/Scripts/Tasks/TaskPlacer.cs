@@ -7,9 +7,9 @@ using Random = System.Random;
 using UserTask;
 using UnityEditor.U2D.Aseprite;
 
-public class TaskManager : MonoBehaviour
+public class TaskPlacer : MonoBehaviour
 {
-    public static TaskManager Instance;
+    public static TaskPlacer Instance;
 
     // Tasks that will show up in the pool
     private List<TaskData> _taskPool = new List<TaskData>();
@@ -135,7 +135,6 @@ public class TaskManager : MonoBehaviour
 
                 _taskAmountCurrentlyDisplayed++;
             }
-           
         }
     }
 
