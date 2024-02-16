@@ -100,13 +100,13 @@ public class TaskPool : MonoBehaviour
         }
         else
         {
-            Debug.Log("Please choose atleast 1 category");
+            Debug.Log("Please choose at least 1 category");
         }       
     }
 
     ///-///////////////////////////////////////////////////////////
     /// Take the list of categories that the user chose and convert to a json string.
-    /// Then save that string to a user's cloud acccount.
+    /// Then save that string to a user's cloud account.
     /// 
     private async void SaveCategoriesToCloud()
     {

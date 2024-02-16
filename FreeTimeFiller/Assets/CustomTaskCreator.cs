@@ -33,10 +33,10 @@ public class CustomTaskCreator : MonoBehaviour
     {
         // Sign in to account anonymously (* should use actual account login *)
         await UnityServices.InitializeAsync();
-        await AuthenticationService.Instance.SignInAnonymouslyAsync();
+        //await AuthenticationService.Instance.SignInAnonymouslyAsync();
         
         // Load and then give all existing custom tasks to the TaskManager
-        LoadAllCustomTasks();
+        AuthenticationService.Instance.SignedIn +=  LoadAllCustomTasks;
     }
 
     private void OnEnable()
@@ -84,7 +84,6 @@ public class CustomTaskCreator : MonoBehaviour
             {
                 return false;
             }
-
         }
         return true;
     }
@@ -108,7 +107,7 @@ public class CustomTaskCreator : MonoBehaviour
         string json = JsonUtility.ToJson(newCustomTask);
 
         // Add the new task to the task pool
-        TaskManager.Instance.AddNewTaskToPool(newCustomTask);
+        //TaskManager.Instance.AddNewTaskToPool(newCustomTask);
 
         SaveToAssetFolder(newCustomTask);
 
@@ -160,7 +159,7 @@ public class CustomTaskCreator : MonoBehaviour
 
             JsonUtility.FromJsonOverwrite(str, newCustomTask);
 
-            TaskManager.Instance.AddNewTaskToPool(newCustomTask);
+            //TaskManager.Instance.AddNewTaskToPool(newCustomTask);
 
             SaveToAssetFolder(newCustomTask);
         }
