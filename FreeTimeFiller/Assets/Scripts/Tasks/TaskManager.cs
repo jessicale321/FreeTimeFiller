@@ -37,7 +37,12 @@ public class TaskManager : MonoBehaviour
         // When the custom task creator has finished loading or has created a task, add a custom task
         _customTaskCreator.CustomTaskWasCreatedWithoutLoad += AddOneCustomTask;
     }
-    
+
+    private void OnDisable()
+    {
+        _taskPool.TaskCategoriesChanged -= AddAllTasks;
+    }
+
     ///-///////////////////////////////////////////////////////////
     /// Start the task placement process by loading the user's saved task category preferences and custom tasks
     /// 
@@ -53,24 +58,33 @@ public class TaskManager : MonoBehaviour
         // Wait for task categories and custom tasks to be loaded in before placement
         await Task.WhenAll(methodsToWait);
         
-        // All multiple custom tasks to the TaskPlacer and send it the category filter
-        foreach (TaskData data in _customTaskCreator.LoadedCustomTasks)
-        {
-            _taskPlacer.AddNewTaskToScreen(data, _taskPool._chosenTaskCategories);
-        }
-        
-        // Add pre-made tasks to TaskPlacer after all custom tasks have been added
-        _taskPlacer.FindPremadeTasks(_taskPool._chosenTaskCategories);
+        // Try to add all tasks (won't do anything if the user hasn't saved any task categories ever before)
+        AddAllTasks(_taskPool.ChosenTaskCategories);
+
+        // If task categories are changed again, add the tasks again
+        _taskPool.TaskCategoriesChanged += AddAllTasks;
         
         Debug.Log(("Finish loading custom tasks and categories"));
     }
-
+    
     ///-///////////////////////////////////////////////////////////
     /// When one custom task was created (not loaded in from cloud), add it on the screen.
     /// 
     private void AddOneCustomTask(TaskData customTask)
     {
-        _taskPlacer.AddNewTaskToScreen(customTask, _taskPool._chosenTaskCategories);
+        _taskPlacer.AddNewTaskToScreen(customTask, _taskPool.ChosenTaskCategories);
     }
-    
+
+    private void AddAllTasks(List<TaskCategory> chosenTaskCategories)
+    {
+        // All multiple custom tasks to the TaskPlacer and send it the category filter
+        foreach (TaskData data in _customTaskCreator.LoadedCustomTasks)
+        {
+            _taskPlacer.AddNewTaskToScreen(data, chosenTaskCategories);
+        }
+        
+        // Add pre-made tasks to TaskPlacer after all custom tasks have been added
+        _taskPlacer.FindPremadeTasks(chosenTaskCategories);
+    }
+
 }

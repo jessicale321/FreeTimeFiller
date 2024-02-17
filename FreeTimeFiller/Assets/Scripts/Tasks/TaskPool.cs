@@ -24,10 +24,10 @@ public class TaskPool : MonoBehaviour
      * Key: The task category (ex. Chores)
      * Value: The button that was created for the category
      */
-    private Dictionary<TaskCategory, CategoryButton> taskButtons = new Dictionary<TaskCategory, CategoryButton>();
+    private Dictionary<TaskCategory, CategoryButton> _taskButtons = new Dictionary<TaskCategory, CategoryButton>();
 
     // The list of task categories that the user has picked out and saved
-    public List<TaskCategory> _chosenTaskCategories { get; private set; }
+    public List<TaskCategory> ChosenTaskCategories { get; private set; }
 
     public event Action<List<TaskCategory>> TaskCategoriesChanged;
 
@@ -36,7 +36,7 @@ public class TaskPool : MonoBehaviour
         // Sign in to account anonymously (* should use actual account login *)
         await UnityServices.InitializeAsync();
 
-        _chosenTaskCategories = new List<TaskCategory>();
+        ChosenTaskCategories = new List<TaskCategory>();
     }
 
     private void Start()
@@ -74,7 +74,7 @@ public class TaskPool : MonoBehaviour
             categoryButtonComponent.SetCustomTaskCreator(this);
             categoryButtonComponent.UpdateDisplayedCategory(category);
 
-            taskButtons.Add(category, categoryButtonComponent);
+            _taskButtons.Add(category, categoryButtonComponent);
         }
     }
 
@@ -85,7 +85,7 @@ public class TaskPool : MonoBehaviour
     private void FinishChoosing()
     {
         // Only attempt to save the task categories if the list isn't empty
-        if (_chosenTaskCategories.Count > 0)
+        if (ChosenTaskCategories.Count > 0)
         {
             Debug.Log("User finished picking categories!");
 
@@ -103,14 +103,14 @@ public class TaskPool : MonoBehaviour
     /// 
     private async void SaveCategoriesToCloud()
     {
-        JsonUtility.ToJson(_chosenTaskCategories);
+        JsonUtility.ToJson(ChosenTaskCategories);
 
         // Save list of custom tasks to the user's account
         await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
-            { "chosenTaskCategories", _chosenTaskCategories} });
+            { "chosenTaskCategories", ChosenTaskCategories} });
 
         // Tell listeners that the user has changed their task category preferences
-        TaskCategoriesChanged?.Invoke(_chosenTaskCategories);
+        TaskCategoriesChanged?.Invoke(ChosenTaskCategories);
 
         Debug.Log("Saved chosen task categories");
     }
@@ -140,12 +140,12 @@ public class TaskPool : MonoBehaviour
                     // Parse each saved string back to the enum representation
                     if (Enum.TryParse(categoryAsJson, out TaskCategory category))
                     {
-                        _chosenTaskCategories.Add(category);
+                        ChosenTaskCategories.Add(category);
 
                         // Re-select all buttons that the user selected in the past
-                        if (taskButtons.TryGetValue(category, out CategoryButton button))
+                        if (_taskButtons.TryGetValue(category, out CategoryButton button))
                         {
-                            taskButtons[category].SelectButtonOnCommand();
+                            _taskButtons[category].SelectButtonOnCommand();
                         }
                         Debug.Log($"User loaded task category: {category}");
                     }
@@ -161,7 +161,7 @@ public class TaskPool : MonoBehaviour
             }
             
             // Tell listeners that the user has changed their task category preferences
-            TaskCategoriesChanged?.Invoke(_chosenTaskCategories);
+            TaskCategoriesChanged?.Invoke(ChosenTaskCategories);
         }
     }
 
@@ -170,7 +170,7 @@ public class TaskPool : MonoBehaviour
     /// 
     private async void ClearAllCategoryChoicesData()
     {
-        _chosenTaskCategories.Clear();
+        ChosenTaskCategories.Clear();
 
         // Overwrite the data with an empty string to "delete" it
         await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
@@ -189,9 +189,9 @@ public class TaskPool : MonoBehaviour
         TaskCategory clickedCategory = categoryButtonClicked.GetTaskCategory();
 
         // Don't add duplicates
-        if (_chosenTaskCategories.Contains(clickedCategory)) return;
+        if (ChosenTaskCategories.Contains(clickedCategory)) return;
 
-        _chosenTaskCategories.Add(clickedCategory);
+        ChosenTaskCategories.Add(clickedCategory);
 
         Debug.Log($"User has chosen: {clickedCategory}");
     }
@@ -205,9 +205,9 @@ public class TaskPool : MonoBehaviour
         TaskCategory clickedCategory = categoryButtonClicked.GetTaskCategory();
 
         // Don't remove a task category if it was never selected
-        if (!_chosenTaskCategories.Contains(clickedCategory)) return;
+        if (!ChosenTaskCategories.Contains(clickedCategory)) return;
 
-        _chosenTaskCategories.Remove(clickedCategory);
+        ChosenTaskCategories.Remove(clickedCategory);
 
         Debug.Log($"User has removed: {clickedCategory}");
     }

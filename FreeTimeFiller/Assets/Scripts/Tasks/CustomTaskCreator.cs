@@ -157,9 +157,10 @@ public class CustomTaskCreator : MonoBehaviour
             if (_customTasksAsJson.Contains(data.Value.GetAsString())) return;
             
             List<string> stringList = data.Value.GetAs<List<string>>();
-
+            
             // Append the loaded list to the existing list
-            _customTasksAsJson.AddRange(stringList);
+            if(stringList != null)
+                _customTasksAsJson.AddRange(stringList);
         }
 
         if (_customTasksAsJson.Count > 0)

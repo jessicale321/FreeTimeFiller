@@ -71,7 +71,7 @@ public class TaskPlacer : MonoBehaviour
         }
         else
         {
-            Debug.Log($"There were no tasks found under Resources/{_taskDataFolderPath}");
+            Debug.Log($"There were no tasks found under Resources/{_taskDataFolderPath}. Or no task categories were loaded in.");
         }
     }
     

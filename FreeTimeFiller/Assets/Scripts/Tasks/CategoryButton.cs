@@ -2,17 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class CategoryButton : MonoBehaviour
 {
-    private TaskPool myCreator;
-    private TaskCategory displayedCategory;
+    private TaskPool _myCreator;
+    private TaskCategory _displayedCategory;
 
     private Button _buttonComponent;
     private TMP_Text _textBox;
 
-    [SerializeField] private GameObject _selectedBox;
+    [SerializeField] private GameObject selectedBox;
 
     // Did the user already click on this button (they want this category to show in the task pool)
     private bool _selected;
@@ -26,7 +27,7 @@ public class CategoryButton : MonoBehaviour
 
     private void Start()
     {
-        _selectedBox.SetActive(false);
+        selectedBox.SetActive(false);
     }
 
     private void OnEnable()
@@ -44,7 +45,7 @@ public class CategoryButton : MonoBehaviour
     /// 
     public void UpdateDisplayedCategory(TaskCategory category)
     {
-        displayedCategory = category;
+        _displayedCategory = category;
 
         _textBox.text = category.ToString();
     }
@@ -54,7 +55,7 @@ public class CategoryButton : MonoBehaviour
     /// 
     public void SetCustomTaskCreator(TaskPool taskPoolCreator)
     {
-        myCreator = taskPoolCreator;
+        _myCreator = taskPoolCreator;
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -67,15 +68,15 @@ public class CategoryButton : MonoBehaviour
         if (!_selected)
         {
             _selected = true;
-            _selectedBox.SetActive(true);
-            myCreator.AddClickedButton(this);
+            selectedBox.SetActive(true);
+            _myCreator.AddClickedButton(this);
         }
 
         else
         {
             _selected = false;
-            _selectedBox.SetActive(false);
-            myCreator.RemoveClickedButton(this);
+            selectedBox.SetActive(false);
+            _myCreator.RemoveClickedButton(this);
         }
     }
 
@@ -85,8 +86,8 @@ public class CategoryButton : MonoBehaviour
     public void SelectButtonOnCommand()
     {
         _selected = true;
-        _selectedBox.SetActive(true);
-        myCreator.AddClickedButton(this);
+        selectedBox.SetActive(true);
+        _myCreator.AddClickedButton(this);
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -94,6 +95,6 @@ public class CategoryButton : MonoBehaviour
     /// 
     public TaskCategory GetTaskCategory()
     {
-        return displayedCategory;
+        return _displayedCategory;
     }
 }

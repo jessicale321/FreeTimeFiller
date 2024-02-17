@@ -646,7 +646,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1508308643
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -837,6 +837,10 @@ PrefabInstance:
       propertyPath: taskPanel
       value: 
       objectReference: {fileID: 2021687173}
+    - target: {fileID: 7393821257441908569, guid: 2373d6712405580488bed190e3758603, type: 3}
+      propertyPath: maxTaskDisplay
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 7651838313973276776, guid: 2373d6712405580488bed190e3758603, type: 3}
       propertyPath: m_Name
       value: TaskManager
@@ -870,10 +874,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Custom Task Screen
       objectReference: {fileID: 0}
-    - target: {fileID: 1420119392601781455, guid: c7031ed8c233d324ba58bd3dbd5869a1, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 1544110539882997205, guid: c7031ed8c233d324ba58bd3dbd5869a1, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -884,7 +884,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1544110539882997205, guid: c7031ed8c233d324ba58bd3dbd5869a1, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 320
+      value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 1544110539882997205, guid: c7031ed8c233d324ba58bd3dbd5869a1, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -908,7 +908,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3512078037536478413, guid: c7031ed8c233d324ba58bd3dbd5869a1, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 320
+      value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 3512078037536478413, guid: c7031ed8c233d324ba58bd3dbd5869a1, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -924,7 +924,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4424662884337538392, guid: c7031ed8c233d324ba58bd3dbd5869a1, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 320
+      value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 4424662884337538392, guid: c7031ed8c233d324ba58bd3dbd5869a1, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -1020,7 +1020,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7250693623759954468, guid: c7031ed8c233d324ba58bd3dbd5869a1, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 320
+      value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 7250693623759954468, guid: c7031ed8c233d324ba58bd3dbd5869a1, type: 3}
       propertyPath: m_AnchoredPosition.y

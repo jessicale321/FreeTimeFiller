@@ -195,7 +195,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 569bd57333cbc0c43b9e70d2b2ede827, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _selectedBox: {fileID: 6244964504891174077}
+  selectedBox: {fileID: 6244964504891174077}
 --- !u!114 &6309308365571430533
 MonoBehaviour:
   m_ObjectHideFlags: 0

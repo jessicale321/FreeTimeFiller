@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9a101af5d56ee3b4ab558bb3de1b5968, type: 3}
-  m_Name: asdasdasd Custom
+  m_Name: Wash the dishes Custom
   m_EditorClassIdentifier: 
-  taskName: asdasdasd
-  category: 0
+  taskName: Wash the dishes
+  category: 1
   difficultyLevel: 1
   refreshCountdown: 1
-  description: cfgsdf
+  description: asdasdad
