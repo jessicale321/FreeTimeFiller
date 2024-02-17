@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1031428903733010837}
+  - component: {fileID: 4496924817488256833}
   - component: {fileID: 7393821257441908569}
   - component: {fileID: 7073630200094953449}
   - component: {fileID: 8228962995760092030}
@@ -34,6 +35,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4496924817488256833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7651838313973276776}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc613e234f5f0f04cb389ffff408504e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &7393821257441908569
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46,7 +59,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2808742a61c7a3042a1ad819c3c3c433, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxTaskDisplay: 5
+  maxTaskDisplay: 6
   taskPrefab: {fileID: 7422696577987121108, guid: ebd48ffe12d1aaf4e8d245fff3b33d79, type: 3}
   taskPanel: {fileID: 0}
 --- !u!114 &7073630200094953449
@@ -82,3 +95,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   categoryPanel: {fileID: 0}
   taskCategoryButton: {fileID: 5826458050106275573, guid: f562d74845b9d4e40883c6d071608fe6, type: 3}
+  finalizeChoicesButton: {fileID: 0}
+  resetChoicesButton: {fileID: 0}

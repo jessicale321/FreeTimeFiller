@@ -484,7 +484,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &973351824
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -646,7 +646,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1508308643
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -730,23 +730,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!1 &1612856736 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7651838313973276776, guid: 2373d6712405580488bed190e3758603, type: 3}
-  m_PrefabInstance: {fileID: 70156757527226600}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1612856741
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1612856736}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc613e234f5f0f04cb389ffff408504e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1690574612 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6842614613773670586, guid: c7031ed8c233d324ba58bd3dbd5869a1, type: 3}
@@ -854,10 +837,6 @@ PrefabInstance:
       propertyPath: taskPanel
       value: 
       objectReference: {fileID: 2021687173}
-    - target: {fileID: 7393821257441908569, guid: 2373d6712405580488bed190e3758603, type: 3}
-      propertyPath: maxTaskDisplay
-      value: 6
-      objectReference: {fileID: 0}
     - target: {fileID: 7651838313973276776, guid: 2373d6712405580488bed190e3758603, type: 3}
       propertyPath: m_Name
       value: TaskManager
@@ -871,20 +850,13 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 62505044}
     - target: {fileID: 8228962995760092030, guid: 2373d6712405580488bed190e3758603, type: 3}
-      propertyPath: finishChoosingButton
-      value: 
-      objectReference: {fileID: 235644715}
-    - target: {fileID: 8228962995760092030, guid: 2373d6712405580488bed190e3758603, type: 3}
       propertyPath: finalizeChoicesButton
       value: 
       objectReference: {fileID: 235644715}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7651838313973276776, guid: 2373d6712405580488bed190e3758603, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1612856741}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2373d6712405580488bed190e3758603, type: 3}
 --- !u!1001 &84661450146575871
 PrefabInstance:
@@ -897,6 +869,10 @@ PrefabInstance:
     - target: {fileID: 1420119392601781455, guid: c7031ed8c233d324ba58bd3dbd5869a1, type: 3}
       propertyPath: m_Name
       value: Custom Task Screen
+      objectReference: {fileID: 0}
+    - target: {fileID: 1420119392601781455, guid: c7031ed8c233d324ba58bd3dbd5869a1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1544110539882997205, guid: c7031ed8c233d324ba58bd3dbd5869a1, type: 3}
       propertyPath: m_AnchorMax.y
@@ -1174,19 +1150,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4514139912691765797, guid: 346f36631cdfdc346ac12783aa89b8f0, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4514139912691765797, guid: 346f36631cdfdc346ac12783aa89b8f0, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4514139912691765797, guid: 346f36631cdfdc346ac12783aa89b8f0, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4514139912691765797, guid: 346f36631cdfdc346ac12783aa89b8f0, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4514139912691765797, guid: 346f36631cdfdc346ac12783aa89b8f0, type: 3}
       propertyPath: m_SizeDelta.x

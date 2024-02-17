@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TMPro;
 using Unity.Services.Authentication;
 using Unity.Services.CloudSave;
@@ -118,7 +119,7 @@ public class TaskPool : MonoBehaviour
     /// Find the list of task categories that the user saved in the past.
     /// Re-select any buttons on the screen if the user selected them in the past.
     /// 
-    public async void LoadCategoriesFromCloud()
+    public async Task LoadCategoriesFromCloud()
     {
         // Load the list of custom tasks created by the user from their cloud account
         var savedList = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string>
@@ -129,29 +130,36 @@ public class TaskPool : MonoBehaviour
         // If there's data loaded, deserialize it back into a list of strings
         if (savedList.TryGetValue("chosenTaskCategories", out var data))
         {
-
             List<string> listLoaded = data.Value.GetAs<List<string>>();
 
-            foreach (string categoryAsJson in listLoaded)
+            if (listLoaded != null)
             {
-                // Parse each saved string back to the enum representation
-                if (Enum.TryParse(categoryAsJson, out TaskCategory category))
+                // Loop through each serialized string and try to convert them back to TaskCategories
+                foreach (string categoryAsJson in listLoaded)
                 {
-                    _chosenTaskCategories.Add(category);
-
-                    // Re-select all buttons that the user selected in the past
-                    if (taskButtons.TryGetValue(category, out CategoryButton button))
+                    // Parse each saved string back to the enum representation
+                    if (Enum.TryParse(categoryAsJson, out TaskCategory category))
                     {
-                        taskButtons[category].SelectButtonOnCommand();
-                    }                   
+                        _chosenTaskCategories.Add(category);
 
-                    Debug.Log($"User loaded task category: {category}");
-                }
-                else
-                {
-                    Debug.LogWarning($"Failed to parse task category: {categoryAsJson}");
+                        // Re-select all buttons that the user selected in the past
+                        if (taskButtons.TryGetValue(category, out CategoryButton button))
+                        {
+                            taskButtons[category].SelectButtonOnCommand();
+                        }
+                        Debug.Log($"User loaded task category: {category}");
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Failed to parse task category: {categoryAsJson}");
+                    }
                 }
             }
+            else
+            {
+                Debug.Log("Could not find any saved Task Categories!");
+            }
+            
             // Tell listeners that the user has changed their task category preferences
             TaskCategoriesChanged?.Invoke(_chosenTaskCategories);
         }
@@ -169,7 +177,7 @@ public class TaskPool : MonoBehaviour
         { "chosenTaskCategories", "" }
     });
 
-        Debug.Log("Delete attempted");
+        Debug.Log("Task category preferences were reset!");
     }
 
     ///-///////////////////////////////////////////////////////////

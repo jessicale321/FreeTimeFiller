@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9a101af5d56ee3b4ab558bb3de1b5968, type: 3}
-  m_Name: Remember Me Custom
+  m_Name: asdasdasd Custom
   m_EditorClassIdentifier: 
-  taskName: Remember Me
-  category: 3
-  difficultyLevel: 4
+  taskName: asdasdasd
+  category: 0
+  difficultyLevel: 1
   refreshCountdown: 1
-  description: rm
+  description: cfgsdf

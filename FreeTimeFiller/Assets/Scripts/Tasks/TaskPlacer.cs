@@ -17,7 +17,7 @@ public class TaskPlacer : MonoBehaviour
 
     /* How many tasks should be created and displayed?
      * If taskCount is greater than the number of inactive TaskData's, 
-     * then we will get an error in the console (STATIC)
+     * then we will get an error in the console (CONSTANT value)
      */
     [SerializeField, Range(1, 8)] private int maxTaskDisplay;
     private int _currentAmountToDisplay;
@@ -75,7 +75,7 @@ public class TaskPlacer : MonoBehaviour
         }
     }
     
-    public void AddNewTaskToPool(TaskData newTaskData, List<TaskCategory> userChosenCategories)
+    public void AddNewTaskToScreen(TaskData newTaskData, List<TaskCategory> userChosenCategories)
     {
         TryAddTask(newTaskData, userChosenCategories);
     }
@@ -153,9 +153,7 @@ public class TaskPlacer : MonoBehaviour
                 return data;
             }
         }
-
         Debug.Log("Could not find a non-active task data!");
-        
         return null;
     }
     
@@ -218,8 +216,6 @@ public class TaskPlacer : MonoBehaviour
             {
                 // A refresh has occurred, so this TaskData should be closer to reappearing in pool again
                 _taskDataOnHold[taskData]--;
-
-                //Debug.Log($"{taskData} is closer to reappearing!");
             }
             Debug.Log(taskData.taskName + " has " + _taskDataOnHold[taskData] + " refreshes left!");
         }
@@ -247,5 +243,4 @@ public class TaskPlacer : MonoBehaviour
         
         DisplayAllTasks();
     }
-    
 }

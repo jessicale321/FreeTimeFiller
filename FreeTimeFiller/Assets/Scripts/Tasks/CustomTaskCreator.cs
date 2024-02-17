@@ -5,6 +5,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using System.Threading.Tasks;
 using Unity.Services.Authentication;
 using Unity.Services.CloudSave;
 using Unity.Services.Core;
@@ -27,7 +28,13 @@ public class CustomTaskCreator : MonoBehaviour
     private string _taskDataFolderPath = "Task Data";
 
     // The list of custom tasks that the user has created 
-    private List<string> _customTasks = new List<string>();
+    private List<string> _customTasksAsJson;
+
+    public List<TaskData> LoadedCustomTasks
+    {
+        get;
+        private set;
+    }
 
     public event Action<List<TaskData>> AllCustomTaskWereLoaded; 
     public event Action<TaskData> CustomTaskWasCreatedWithoutLoad; 
@@ -36,13 +43,17 @@ public class CustomTaskCreator : MonoBehaviour
     {
         // Sign in to account anonymously (* should use actual account login *)
         await UnityServices.InitializeAsync();
+
+        // Initialize lists
+        _customTasksAsJson = new List<string>();
+        LoadedCustomTasks = new List<TaskData>();
     }
 
     private void OnEnable()
     {
         // Add button functionality
         createButton.onClick.AddListener(AttemptCreation);
-        loadButton.onClick.AddListener(LoadAllCustomTasks);
+        //loadButton.onClick.AddListener(LoadAllCustomTasks);
         deleteButton.onClick.AddListener(ClearAllCustomTaskData);
     }
 
@@ -50,7 +61,7 @@ public class CustomTaskCreator : MonoBehaviour
     {
         // Remove button functionality
         createButton.onClick.RemoveListener(AttemptCreation);
-        loadButton.onClick.RemoveListener(LoadAllCustomTasks);
+        //loadButton.onClick.RemoveListener(LoadAllCustomTasks);
         deleteButton.onClick.RemoveListener(ClearAllCustomTaskData);
     }
 
@@ -116,22 +127,22 @@ public class CustomTaskCreator : MonoBehaviour
     ///-///////////////////////////////////////////////////////////
     /// Save the custom task to the user's account.
     /// 
-    public async void SaveData(string jsonText)
+    private async void SaveData(string jsonText)
     {
         // Don't add duplicates
-        if (_customTasks.Contains(jsonText)) return;
+        if (_customTasksAsJson.Contains(jsonText)) return;
         
-        _customTasks.Add(jsonText);
+        _customTasksAsJson.Add(jsonText);
 
         // Save list of custom tasks to the user's account
         await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
-            { "customTasks", _customTasks} });
+            { "customTasks", _customTasksAsJson} });
     }
 
     ///-///////////////////////////////////////////////////////////
     /// Load all custom tasks and add them back to the task pool.
     /// 
-    public async void LoadAllCustomTasks()
+    public async Task LoadAllCustomTasks()
     {
         // Load the list of custom tasks created by the user from their cloud account
         var savedList = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string>
@@ -143,31 +154,34 @@ public class CustomTaskCreator : MonoBehaviour
         if (savedList.TryGetValue("customTasks", out var data))
         {
             // Don't allow duplicates to load in
-            if (_customTasks.Contains(data.Value.GetAsString())) return;
+            if (_customTasksAsJson.Contains(data.Value.GetAsString())) return;
             
             List<string> stringList = data.Value.GetAs<List<string>>();
 
             // Append the loaded list to the existing list
-            _customTasks.AddRange(stringList);
+            _customTasksAsJson.AddRange(stringList);
         }
 
-        List<TaskData> taskDatas = new List<TaskData>();
-        
-        // Create an asset (temporary, will disappear when app is closed) for each custom task the user made
-        foreach (string str in _customTasks)
+        if (_customTasksAsJson.Count > 0)
         {
-            TaskData newCustomTask = ScriptableObject.CreateInstance<TaskData>();
+            // Create an asset (temporary, will disappear when app is closed) for each custom task the user made
+            foreach (string str in _customTasksAsJson)
+            {
+                TaskData newCustomTask = ScriptableObject.CreateInstance<TaskData>();
 
-            JsonUtility.FromJsonOverwrite(str, newCustomTask);
+                JsonUtility.FromJsonOverwrite(str, newCustomTask);
 
-            //TaskManager.Instance.AddNewTaskToPool(newCustomTask);
-            
-            taskDatas.Add(newCustomTask);
+                LoadedCustomTasks.Add(newCustomTask);
 
-            SaveToAssetFolder(newCustomTask);
+                SaveToAssetFolder(newCustomTask);
+            }
+        }
+        else
+        {
+            Debug.Log("Could not find any saved custom tasks.");
         }
         
-        AllCustomTaskWereLoaded?.Invoke(taskDatas);
+        AllCustomTaskWereLoaded?.Invoke(LoadedCustomTasks);
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -175,14 +189,15 @@ public class CustomTaskCreator : MonoBehaviour
     /// 
     private async void ClearAllCustomTaskData()
     {
-        _customTasks.Clear();
+        _customTasksAsJson.Clear();
+        LoadedCustomTasks.Clear();
         
         // Overwrite the data with an empty string to "delete" it
             await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
         { "customTasks", "" }
     });
 
-            Debug.Log("Delete attempted");
+            Debug.Log("Custom task data was reset!");
     }
 
     ///-///////////////////////////////////////////////////////////
