@@ -5,6 +5,7 @@ using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
 using System.Threading.Tasks;
+using UnityEngine.SceneManagement;
 
 public class LoginAccount : MonoBehaviour
 {
@@ -42,6 +43,7 @@ public class LoginAccount : MonoBehaviour
         {
             await AuthenticationService.Instance.SignInWithUsernamePasswordAsync(username, password);
             Debug.Log("SignIn is successful.");
+            SceneManager.LoadScene(1);
         }
         catch (AuthenticationException ex)
         {
@@ -54,8 +56,8 @@ public class LoginAccount : MonoBehaviour
             // Compare error code to CommonErrorCodes
             // Notify the player with the proper error message
             Debug.LogException(ex);
-
             logMessage.text = "Username or Password was incorrect";
+            logMessage.gameObject.SetActive(true);
         }
     }
 }
