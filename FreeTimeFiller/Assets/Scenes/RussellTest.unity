@@ -837,10 +837,6 @@ PrefabInstance:
       propertyPath: taskPanel
       value: 
       objectReference: {fileID: 2021687173}
-    - target: {fileID: 7393821257441908569, guid: 2373d6712405580488bed190e3758603, type: 3}
-      propertyPath: maxTaskDisplay
-      value: 4
-      objectReference: {fileID: 0}
     - target: {fileID: 7651838313973276776, guid: 2373d6712405580488bed190e3758603, type: 3}
       propertyPath: m_Name
       value: TaskManager
