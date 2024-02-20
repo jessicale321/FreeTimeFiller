@@ -40,6 +40,7 @@ public class TaskManager : MonoBehaviour
 
     private void OnDisable()
     {
+        _customTaskCreator.CustomTaskWasCreatedWithoutLoad -= AddOneCustomTask;
         _taskPool.TaskCategoriesChanged -= AddAllTasks;
     }
 
@@ -75,6 +76,10 @@ public class TaskManager : MonoBehaviour
         _taskPlacer.AddNewTaskToScreen(customTask, _taskPool.ChosenTaskCategories);
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// After all task categories and custom tasks have finished loading,
+    /// tell the TaskPlacer to place all custom tasks and pre-made tasks on the screen.
+    /// 
     private void AddAllTasks(List<TaskCategory> chosenTaskCategories)
     {
         // All multiple custom tasks to the TaskPlacer and send it the category filter
@@ -86,5 +91,4 @@ public class TaskManager : MonoBehaviour
         // Add pre-made tasks to TaskPlacer after all custom tasks have been added
         _taskPlacer.FindPremadeTasks(chosenTaskCategories);
     }
-
 }
