@@ -30,6 +30,15 @@ public class DifficultySlider : MonoBehaviour
     }
 
     ///-///////////////////////////////////////////////////////////
+    /// Set the difficulty slider's displayed value to the float value passed in.
+    /// 
+    public void SetDifficulty(float newValue)
+    {
+        difficultySlider.value = newValue;
+        UpdateText(newValue);
+    }
+
+    ///-///////////////////////////////////////////////////////////
     /// Return the currently selected difficulty level.
     /// 
     public int GetDifficultyValue()

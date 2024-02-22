@@ -21,8 +21,13 @@ public class CustomTaskCreator : MonoBehaviour
     [SerializeField] private DifficultySlider difficultySlider;
     [Header("Buttons")]
     [SerializeField] private Button createButton;
-    [SerializeField] private Button loadButton;
+    //[SerializeField] private Button loadButton;
+    [SerializeField] private Button editButton;
     [SerializeField] private Button deleteButton;
+
+    [SerializeField] private Transform creationPanel;
+    [SerializeField] private Transform editPanel;
+    [SerializeField] private GameObject existingCustomTaskButton;
 
     // Folder path for location of Task Data
     private string _taskDataFolderPath = "Task Data";
@@ -37,7 +42,8 @@ public class CustomTaskCreator : MonoBehaviour
     }
 
     public event Action<List<TaskData>> AllCustomTaskWereLoaded; 
-    public event Action<TaskData> CustomTaskWasCreatedWithoutLoad; 
+    public event Action<TaskData> CustomTaskWasCreatedWithoutLoad;
+    public event Action<TaskData> ExistingCustomTaskWasEdited;
 
     private async void Awake()
     {
@@ -52,6 +58,7 @@ public class CustomTaskCreator : MonoBehaviour
     {
         // Add button functionality
         createButton.onClick.AddListener(AttemptCreation);
+        editButton.onClick.AddListener(PlaceCustomTaskButtons);
         deleteButton.onClick.AddListener(ClearAllCustomTaskData);
     }
 
@@ -59,6 +66,7 @@ public class CustomTaskCreator : MonoBehaviour
     {
         // Remove button functionality
         createButton.onClick.RemoveListener(AttemptCreation);
+        editButton.onClick.RemoveListener(PlaceCustomTaskButtons);
         deleteButton.onClick.RemoveListener(ClearAllCustomTaskData);
     }
 
@@ -208,5 +216,28 @@ public class CustomTaskCreator : MonoBehaviour
         AssetDatabase.CreateAsset(dataToSave, path);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
+    }
+
+    private void PlaceCustomTaskButtons()
+    {
+        creationPanel.gameObject.SetActive(false);
+        editPanel.gameObject.SetActive(true);
+
+        foreach(TaskData customTaskData in LoadedCustomTasks)
+        {
+            GameObject newButton = Instantiate(existingCustomTaskButton, editPanel);
+            newButton.GetComponent<CustomTaskButton>().UpdateCustomTaskButton(customTaskData, this);
+        }
+    }
+
+    public void EditExistingTask(CustomTaskButton customTaskButton)
+    {
+        creationPanel.gameObject.SetActive(true);
+        editPanel.gameObject.SetActive(false);
+
+        taskNameInputField.text = customTaskButton.TaskData.taskName;
+        taskDescriptionInputField.text = customTaskButton.TaskData.description;
+        categoryDropdown.SetSelectedCategory(customTaskButton.TaskData.category);
+        difficultySlider.SetDifficulty(customTaskButton.TaskData.difficultyLevel);
     }
 }

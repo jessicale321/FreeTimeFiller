@@ -31,8 +31,13 @@ public class TaskPlacer : MonoBehaviour
      */
     private Dictionary<TaskData, bool> _activeTaskData = new Dictionary<TaskData, bool>();
 
+    /* Tasks that are currently in the pool, organized by their task category
+     * Key: A Task Category (ex. Chores)
+     * Value: A list of task data that are in the pool that belong to the key category (ex. Wash the dishes)
+     */
     private Dictionary<TaskCategory, List<TaskData>> _allDisplayableTaskDataByCategory = new Dictionary<TaskCategory, List<TaskData>>();
 
+    // A hash set of all of the names of the task datas in the current pool
     private HashSet<string> _allDisplayableTaskDataByName = new HashSet<string>();
 
     /* Task Data that have been previously completed
@@ -107,8 +112,6 @@ public class TaskPlacer : MonoBehaviour
                     data
                 };
             }
-
-
             Debug.Log($"Task Manager has loaded in: {data.taskName}");
         }
     }
@@ -118,7 +121,6 @@ public class TaskPlacer : MonoBehaviour
         {
             if (!userChosenCategories.Contains(category))
             {
-
                 Debug.Log($"{category} was removed! Remove all of its tasks from display!");
 
                 foreach (TaskData dataFromRemovedCategory in _allDisplayableTaskDataByCategory[category])
@@ -130,11 +132,9 @@ public class TaskPlacer : MonoBehaviour
 
                     Debug.Log($"Removed by category: {dataFromRemovedCategory.taskName}");
                 }
-
                 _allDisplayableTaskDataByCategory[category].Clear();
-
             }
-        }
+        } 
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -205,8 +205,7 @@ public class TaskPlacer : MonoBehaviour
     public bool CheckTaskNameUniqueness(TaskData taskData)
     {
         return _allDisplayableTaskDataByName.Contains(taskData.taskName);
-    }
-    
+    } 
 
     ///-///////////////////////////////////////////////////////////
     /// Add a Task to a list of completed tasks. When all tasks displayed on screen

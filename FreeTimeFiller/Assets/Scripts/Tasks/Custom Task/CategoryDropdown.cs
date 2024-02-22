@@ -37,6 +37,15 @@ public class CategoryDropdown : MonoBehaviour
     }
 
     ///-///////////////////////////////////////////////////////////
+    /// Force the dropdown to select the TaskCategory passed in.
+    /// 
+    public void SetSelectedCategory(TaskCategory category)
+    {
+        _selectedCategory = category;
+        taskCategoryDropdown.value = _categoryToIndex[category];
+    }
+
+    ///-///////////////////////////////////////////////////////////
     /// Add all TaskCategories to the dropdown lists
     /// 
     private void PopulateDropdown()
