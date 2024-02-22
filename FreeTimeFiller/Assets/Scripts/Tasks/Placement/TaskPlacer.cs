@@ -5,7 +5,6 @@ using System.Linq;
 using UnityEngine;
 using Random = System.Random;
 using UserTask;
-using UnityEditor.U2D.Aseprite;
 
 public class TaskPlacer : MonoBehaviour
 {
@@ -32,7 +31,9 @@ public class TaskPlacer : MonoBehaviour
      */
     private Dictionary<TaskData, bool> _activeTaskData = new Dictionary<TaskData, bool>();
 
-    private HashSet<string> _allTaskByName = new HashSet<string>();
+    private Dictionary<TaskCategory, List<TaskData>> _allDisplayableTaskDataByCategory = new Dictionary<TaskCategory, List<TaskData>>();
+
+    private HashSet<string> _allDisplayableTaskDataByName = new HashSet<string>();
 
     /* Task Data that have been previously completed
      * Key: The TaskData (ex. Brushing Teeth)
@@ -76,12 +77,7 @@ public class TaskPlacer : MonoBehaviour
         }
     }
     
-    public void AddNewTaskToScreen(TaskData newTaskData, List<TaskCategory> userChosenCategories)
-    {
-        TryAddTask(newTaskData, userChosenCategories);
-    }
-    
-    private void TryAddTask(TaskData data, List<TaskCategory> userChosenCategories)
+    public void TryAddTask(TaskData data, List<TaskCategory> userChosenCategories)
     {
         // Filter out TaskData that the user doesn't prefer to see
         if (!userChosenCategories.Contains(data.category)) return;
@@ -94,8 +90,50 @@ public class TaskPlacer : MonoBehaviour
         else
         {
             _taskPool.Add(data);
-            _allTaskByName.Add(data.taskName);
+            _allDisplayableTaskDataByName.Add(data.taskName);
+
+            // Check if the category already exists in the dictionary
+            if (_allDisplayableTaskDataByCategory.ContainsKey(data.category))
+            {
+                // If the category exists, add the task data to the existing list
+                _allDisplayableTaskDataByCategory[data.category].Add(data);
+            }
+            else
+            {
+                // If the category doesn't exist, create a new list and add it to the dictionary
+                // Then add the task data to the newly created list
+                _allDisplayableTaskDataByCategory[data.category] = new List<TaskData>
+                {
+                    data
+                };
+            }
+
+
             Debug.Log($"Task Manager has loaded in: {data.taskName}");
+        }
+    }
+    public void RemoveTaskDataByCategories(List<TaskCategory> userChosenCategories)
+    {
+        foreach (TaskCategory category in _allDisplayableTaskDataByCategory.Keys)
+        {
+            if (!userChosenCategories.Contains(category))
+            {
+
+                Debug.Log($"{category} was removed! Remove all of its tasks from display!");
+
+                foreach (TaskData dataFromRemovedCategory in _allDisplayableTaskDataByCategory[category])
+                {
+                    _taskPool.Remove(dataFromRemovedCategory);
+                    _allDisplayableTaskDataByName.Remove(dataFromRemovedCategory.taskName);
+                    _activeTaskData.Remove(dataFromRemovedCategory);
+                    _taskDataOnHold.Remove(dataFromRemovedCategory);
+
+                    Debug.Log($"Removed by category: {dataFromRemovedCategory.taskName}");
+                }
+
+                _allDisplayableTaskDataByCategory[category].Clear();
+
+            }
         }
     }
 
@@ -107,12 +145,12 @@ public class TaskPlacer : MonoBehaviour
     {
         // Randomize all elements in the task pool
         ShuffleTaskList(_taskPool);
-
-        // Don't allow more tasks to be displayed, if we reached the current max amount
-        if (_amountCurrentlyDisplayed >= _amountAllowedToDisplay) return;
         
         for(int i = 0; i < _amountAllowedToDisplay; i++)
         {
+            // Don't allow more tasks to be displayed, if we reached the current max amount
+            if (_amountCurrentlyDisplayed >= _amountAllowedToDisplay) return;
+
             TaskData inactiveData = GetInactiveTask();
 
             if(inactiveData != null)
@@ -166,7 +204,7 @@ public class TaskPlacer : MonoBehaviour
     /// 
     public bool CheckTaskNameUniqueness(TaskData taskData)
     {
-        return _allTaskByName.Contains(taskData.taskName);
+        return _allDisplayableTaskDataByName.Contains(taskData.taskName);
     }
     
 

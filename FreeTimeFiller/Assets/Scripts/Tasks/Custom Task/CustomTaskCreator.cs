@@ -41,7 +41,6 @@ public class CustomTaskCreator : MonoBehaviour
 
     private async void Awake()
     {
-        // Sign in to account anonymously (* should use actual account login *)
         await UnityServices.InitializeAsync();
 
         // Initialize lists
@@ -53,7 +52,6 @@ public class CustomTaskCreator : MonoBehaviour
     {
         // Add button functionality
         createButton.onClick.AddListener(AttemptCreation);
-        //loadButton.onClick.AddListener(LoadAllCustomTasks);
         deleteButton.onClick.AddListener(ClearAllCustomTaskData);
     }
 
@@ -61,7 +59,6 @@ public class CustomTaskCreator : MonoBehaviour
     {
         // Remove button functionality
         createButton.onClick.RemoveListener(AttemptCreation);
-        //loadButton.onClick.RemoveListener(LoadAllCustomTasks);
         deleteButton.onClick.RemoveListener(ClearAllCustomTaskData);
     }
 
