@@ -29,7 +29,7 @@ public class TaskManager : MonoBehaviour
         AuthenticationService.Instance.SignedIn += BeginTaskPlacementProcess;
         
         // TODO: REMOVE THIS SOON
-        //await AuthenticationService.Instance.SignInAnonymouslyAsync();
+        await AuthenticationService.Instance.SignInAnonymouslyAsync();
     }
 
     private void OnEnable()

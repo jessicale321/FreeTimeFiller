@@ -20,10 +20,11 @@ public class TaskPlacer : MonoBehaviour
      * then we will get an error in the console (CONSTANT value)
      */
     [SerializeField, Range(1, 8)] private int maxTaskDisplay;
-    private int _currentAmountToDisplay;
+
+    private int _amountAllowedToDisplay;
 
     // How many should we display (this is number decrements by 1 on each refresh)
-    private int _taskAmountCurrentlyDisplayed = 0;
+    private int _amountCurrentlyDisplayed = 0;
 
     /* Tasks that are currently being displayed
      * Key: The TaskData (ex. Brushing Teeth)
@@ -47,7 +48,7 @@ public class TaskPlacer : MonoBehaviour
     
     private void Awake()
     {
-        _currentAmountToDisplay = maxTaskDisplay;
+        _amountAllowedToDisplay = maxTaskDisplay;
     }
     
     ///-///////////////////////////////////////////////////////////
@@ -106,8 +107,11 @@ public class TaskPlacer : MonoBehaviour
     {
         // Randomize all elements in the task pool
         ShuffleTaskList(_taskPool);
+
+        // Don't allow more tasks to be displayed, if we reached the current max amount
+        if (_amountCurrentlyDisplayed >= _amountAllowedToDisplay) return;
         
-        for(int i = 0; i < _currentAmountToDisplay; i++)
+        for(int i = 0; i < _amountAllowedToDisplay; i++)
         {
             TaskData inactiveData = GetInactiveTask();
 
@@ -117,7 +121,7 @@ public class TaskPlacer : MonoBehaviour
                 GameObject newTask = Instantiate(taskPrefab, taskPanel);
                 newTask.GetComponent<Task>().UpdateTask(inactiveData, this);
 
-                _taskAmountCurrentlyDisplayed++;
+                _amountCurrentlyDisplayed++;
             }
         }
     }
@@ -181,7 +185,7 @@ public class TaskPlacer : MonoBehaviour
         _taskDataOnHold[dataOfCompletedTask] = dataOfCompletedTask.refreshCountdown;
 
         // Once the user has completed all tasks that could be displayed on screen...
-        if (_completedTasks.Count >= _taskAmountCurrentlyDisplayed)
+        if (_completedTasks.Count >= _amountCurrentlyDisplayed)
         {
             RefreshAllTasks();
         }  
@@ -229,12 +233,12 @@ public class TaskPlacer : MonoBehaviour
         Debug.Log("All displayed tasks have been completed!");
 
         // All tasks on screen were deleted, so reset this back to 0
-        _taskAmountCurrentlyDisplayed = 0;
+        _amountCurrentlyDisplayed = 0;
 
         // Lower amount of tasks to display on screen, on each refresh
-        _currentAmountToDisplay--;
+        _amountAllowedToDisplay--;
 
-        Debug.Log(_currentAmountToDisplay);
+        Debug.Log(_amountAllowedToDisplay);
         
         _completedTasks.Clear();
         
