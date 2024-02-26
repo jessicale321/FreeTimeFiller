@@ -64,7 +64,7 @@ public class CategoryDropdown : MonoBehaviour
 
             _categoryToIndex.Add(category,index++);
         }
-
+        
         taskCategoryDropdown.AddOptions(options);
     }
 

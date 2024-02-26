@@ -23,7 +23,7 @@ public class CustomTaskCreator : MonoBehaviour
         // User is editing an existing custom task to override it
         Edit
     }
-
+    
     private MenuMode _currentMenuMode;
     
     [Header("Input Fields")]
@@ -94,7 +94,11 @@ public class CustomTaskCreator : MonoBehaviour
         _currentMenuMode = MenuMode.Create;
     }
 
-    // Check that the values the user entered for their custom task are valid. If so, allow the creation
+    #region Creation
+
+    ///-///////////////////////////////////////////////////////////
+    /// Check that the values the user entered for their custom task are valid. If so, allow the creation.
+    /// 
     private void AttemptCreation()
     {
         string taskName = taskNameInputField.text;
@@ -109,11 +113,10 @@ public class CustomTaskCreator : MonoBehaviour
         {
             // Don't allow overriding when creating a new task
             case MenuMode.Create:
-                if (!TaskNameIsUnique(taskName)) return;
-                
-                CreateNewCustomTask();
-                
+                if (!TaskNameIsUnique(taskName)) return;     
+                CreateNewCustomTask();    
                 break;
+                
             // Allow overriding with the same name, but don't create a new task
             case MenuMode.Edit:
                 // TODO: Only allow overriding of the same name, not another task's name
@@ -126,7 +129,7 @@ public class CustomTaskCreator : MonoBehaviour
     }
 
     ///-///////////////////////////////////////////////////////////
-    /// Check if a task name does not already exist
+    /// Check if a task name does not already exist.
     /// 
     private bool TaskNameIsUnique(string nameToCheck)
     {
@@ -148,13 +151,10 @@ public class CustomTaskCreator : MonoBehaviour
     /// 
     private void CreateNewCustomTask()
     {
-        string taskName = taskNameInputField.text;
-        string taskDescription = taskDescriptionInputField.text;
-
         // Create a new TaskData and add user's input to it
         TaskData newCustomTask = ScriptableObject.CreateInstance<TaskData>();
-        newCustomTask.taskName = taskName;
-        newCustomTask.description = taskDescription;
+        newCustomTask.taskName = taskNameInputField.text;
+        newCustomTask.description = taskDescriptionInputField.text;
         newCustomTask.difficultyLevel = difficultySlider.GetDifficultyValue();
         newCustomTask.category = categoryDropdown.GetSelectedTaskCategory();
         
@@ -172,12 +172,9 @@ public class CustomTaskCreator : MonoBehaviour
     private void OverrideExistingCustomTask(TaskData newTaskData)
     {
         string oldTaskName = newTaskData.taskName;
-        
-        string taskName = taskNameInputField.text;
-        string taskDescription = taskDescriptionInputField.text;
-        
-        newTaskData.taskName = taskName;
-        newTaskData.description = taskDescription;
+
+        newTaskData.taskName = taskNameInputField.text;
+        newTaskData.description = taskDescriptionInputField.text;
         newTaskData.difficultyLevel = difficultySlider.GetDifficultyValue();
         newTaskData.category = categoryDropdown.GetSelectedTaskCategory();
         
@@ -187,25 +184,9 @@ public class CustomTaskCreator : MonoBehaviour
         UpdateCustomTaskData(oldTaskName, newTaskData);
     }
 
-    ///-///////////////////////////////////////////////////////////
-    /// Save the custom task to the user's account.
-    /// Override an existing custom task if the user is editing one, otherwise save a new one.
-    /// 
-    private async void SaveData(TaskData taskDataToSave)
-    {
-        // Convert the contents of the new TaskData to a json string
-        string jsonText = JsonUtility.ToJson(taskDataToSave);
-        
-        // Don't add duplicates
-        if (_customTasksAsJson.Contains(jsonText)) return;
+    #endregion
 
-        _customTasksAsJson.Add(jsonText);
-        LoadedCustomTasks.Add(taskDataToSave);
-
-        // Save list of custom tasks to the user's account
-        await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
-            { "customTasks", _customTasksAsJson} });
-    }
+    #region Loading
 
     ///-///////////////////////////////////////////////////////////
     /// Load all custom tasks and add them back to the task pool.
@@ -253,6 +234,30 @@ public class CustomTaskCreator : MonoBehaviour
         }
         AllCustomTaskWereLoaded?.Invoke(LoadedCustomTasks);
     }
+
+    #endregion
+
+    #region Saving
+
+    ///-///////////////////////////////////////////////////////////
+    /// Save the custom task to the user's account.
+    /// Override an existing custom task if the user is editing one, otherwise save a new one.
+    /// 
+    private async void SaveData(TaskData taskDataToSave)
+    {
+        // Convert the contents of the new TaskData to a json string
+        string jsonText = JsonUtility.ToJson(taskDataToSave);
+        
+        // Don't add duplicates
+        if (_customTasksAsJson.Contains(jsonText)) return;
+
+        _customTasksAsJson.Add(jsonText);
+        LoadedCustomTasks.Add(taskDataToSave);
+
+        // Save list of custom tasks to the user's account
+        await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
+            { "customTasks", _customTasksAsJson} });
+    }
     
     private async void UpdateCustomTaskData(string oldTaskName, TaskData newTaskData)
     {
@@ -286,24 +291,7 @@ public class CustomTaskCreator : MonoBehaviour
             Debug.Log("Couldn't find that custom task to update");
         }
     }
-
     
-    ///-///////////////////////////////////////////////////////////
-    /// Delete all custom task data from the user's account.
-    /// 
-    private async void ClearAllCustomTaskData()
-    {
-        _customTasksAsJson.Clear();
-        LoadedCustomTasks.Clear();
-        
-        // Overwrite the data with an empty string to "delete" it
-            await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
-        { "customTasks", "" }
-    });
-
-            Debug.Log("Custom task data was reset!");
-    }
-
     ///-///////////////////////////////////////////////////////////
     /// Add custom task to the asset folder (will disappear when builds are closed).
     /// 
@@ -315,6 +303,28 @@ public class CustomTaskCreator : MonoBehaviour
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
     }
+    
+    #endregion
+
+    #region Deleting
+
+    ///-///////////////////////////////////////////////////////////
+    /// Delete all custom task data from the user's account.
+    /// 
+    private async void ClearAllCustomTaskData()
+    {
+        _customTasksAsJson.Clear();
+        LoadedCustomTasks.Clear();
+        
+        // Overwrite the data with an empty string to "delete" it
+        await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
+            { "customTasks", "" }
+        });
+
+        Debug.Log("Custom task data was reset!");
+    }
+
+    #endregion
 
     private void ChangeMode()
     {

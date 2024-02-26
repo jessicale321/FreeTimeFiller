@@ -58,7 +58,9 @@ public class TaskPlacer : MonoBehaviour
     {
         _amountAllowedToDisplay = maxTaskDisplay;
     }
-    
+
+    #region Adding
+
     ///-///////////////////////////////////////////////////////////
     /// Load all pre-made tasks found under the resources folder
     /// 
@@ -117,6 +119,16 @@ public class TaskPlacer : MonoBehaviour
             Debug.Log($"Task Manager has loaded in: {data.taskName}");
         }
     }
+    
+    ///-///////////////////////////////////////////////////////////
+    /// Check if this task is already in the pool. We check by name since the scriptableObjects don't always exist.
+    /// 
+    private bool CheckTaskNameUniqueness(TaskData taskData)
+    {
+        return _allDisplayableTaskDataByName.Contains(taskData.taskName);
+    }
+
+    #endregion
     public void RemoveTaskDataByCategories(List<TaskCategory> userChosenCategories)
     {
         foreach (TaskCategory category in _allDisplayableTaskDataByCategory.Keys)
@@ -127,10 +139,7 @@ public class TaskPlacer : MonoBehaviour
 
                 foreach (TaskData dataFromRemovedCategory in _allDisplayableTaskDataByCategory[category])
                 {
-                    _displayableTasks.Remove(dataFromRemovedCategory);
-                    _allDisplayableTaskDataByName.Remove(dataFromRemovedCategory.taskName);
-                    _activeTaskData.Remove(dataFromRemovedCategory);
-                    _taskDataOnHold.Remove(dataFromRemovedCategory);
+                    RemoveTaskFromDisplay(dataFromRemovedCategory);
 
                     Debug.Log($"Removed by category: {dataFromRemovedCategory.taskName}");
                 }
@@ -152,13 +161,23 @@ public class TaskPlacer : MonoBehaviour
             // If the task was in the pool, but its category was changed to a category that the user doesn't use. Remove it from placement.
             if (!userChoseCategories.Contains(taskDataEdited.category))
             {
-                _displayableTasks.Remove(taskDataEdited);
-                _allDisplayableTaskDataByName.Remove(taskDataEdited.taskName);
-                _activeTaskData.Remove(taskDataEdited);
-                _taskDataOnHold.Remove(taskDataEdited);
+                RemoveTaskFromDisplay(taskDataEdited);
             }
         }
     }
+
+    ///-///////////////////////////////////////////////////////////
+    /// Remove a TaskData from any future displaying on the screen.
+    /// 
+    private void RemoveTaskFromDisplay(TaskData dataToRemove)
+    {
+        _displayableTasks.Remove(dataToRemove);
+        _allDisplayableTaskDataByName.Remove(dataToRemove.taskName);
+        _activeTaskData.Remove(dataToRemove);
+        _taskDataOnHold.Remove(dataToRemove);
+    }
+
+    #region Displaying
 
     ///-///////////////////////////////////////////////////////////
     /// Find a TaskData that is not being displayed currently, and create
@@ -206,7 +225,7 @@ public class TaskPlacer : MonoBehaviour
             (list[k], list[n]) = (list[n], list[k]);
         }
     }
-
+    
     ///-///////////////////////////////////////////////////////////
     /// Return a TaskData that is not being displayed currently
     /// 
@@ -224,14 +243,10 @@ public class TaskPlacer : MonoBehaviour
         Debug.Log("Could not find a non-active task data!");
         return null;
     }
-    
-    ///-///////////////////////////////////////////////////////////
-    /// Check if this task is already in the pool. We check by name since the scriptableObjects don't always exist.
-    /// 
-    public bool CheckTaskNameUniqueness(TaskData taskData)
-    {
-        return _allDisplayableTaskDataByName.Contains(taskData.taskName);
-    } 
+
+    #endregion
+
+    #region Completing
 
     ///-///////////////////////////////////////////////////////////
     /// Add a Task to a list of completed tasks. When all tasks displayed on screen
@@ -311,4 +326,6 @@ public class TaskPlacer : MonoBehaviour
         
         DisplayAllTasks();
     }
+
+    #endregion
 }

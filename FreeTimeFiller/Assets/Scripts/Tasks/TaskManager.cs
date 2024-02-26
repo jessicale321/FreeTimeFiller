@@ -82,7 +82,12 @@ public class TaskManager : MonoBehaviour
     {
         _taskPlacer.TryAddTask(customTask, _taskPool.ChosenTaskCategories);
     }
-    
+
+    ///-///////////////////////////////////////////////////////////
+    /// When the contents of a custom task has been updated, tell the TaskPlacer that 
+    /// one of its tasks (if its displayable) will need to change its text on screen and
+    /// may get removed depending on the category.
+    /// 
     private void UpdateExistingTaskOnScreen(TaskData customTaskUpdated){
         _taskPlacer.ExistingTaskDataWasUpdated(customTaskUpdated, _taskPool.ChosenTaskCategories);
     }
