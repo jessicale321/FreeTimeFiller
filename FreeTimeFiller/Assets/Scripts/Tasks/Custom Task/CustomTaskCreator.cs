@@ -190,6 +190,9 @@ public class CustomTaskCreator : MonoBehaviour
         CustomTaskWasCreatedWithoutLoad?.Invoke(newTaskData);
         
         UpdateCustomTaskData(oldTaskName, newTaskData);
+
+        // Update custom task button on screen to have a new name
+        SpawnCustomTaskButton(newTaskData);
     }
 
     #endregion
@@ -348,15 +351,7 @@ public class CustomTaskCreator : MonoBehaviour
                 // For each custom task that the user has saved, make a button for it that they can click on to edit
                 foreach(TaskData customTaskData in LoadedCustomTasks)
                 {
-                    if (!_loadedCustomTaskButtons.ContainsKey(customTaskData))
-                    {
-                        // Spawn a new button in, and place it on the edit panel
-                        GameObject newButton = Instantiate(existingCustomTaskButton, editPanel);
-                        CustomTaskButton customTaskButtonComponent = newButton.GetComponent<CustomTaskButton>();
-                        // Map the CustomTaskButton component to a TaskData (ex. Wash the dishes is mapped to a specific button)
-                        _loadedCustomTaskButtons[customTaskData] = customTaskButtonComponent;
-                        customTaskButtonComponent.UpdateCustomTaskButton(customTaskData, this);
-                    }
+                    SpawnCustomTaskButton(customTaskData);
                 }
                 break;
             // Switch to create mode, if in edit mode
@@ -385,6 +380,19 @@ public class CustomTaskCreator : MonoBehaviour
                 _changeModeButtonText.text = "Edit Mode";
                 break;
         }
+    }
+    
+    private void SpawnCustomTaskButton(TaskData customTaskData)
+    {
+        if (!_loadedCustomTaskButtons.ContainsKey(customTaskData))
+        {
+            // Spawn a new button in, and place it on the edit panel
+            GameObject newButton = Instantiate(existingCustomTaskButton, editPanel);
+            CustomTaskButton customTaskButtonComponent = newButton.GetComponent<CustomTaskButton>();
+            // Map the CustomTaskButton component to a TaskData (ex. Wash the dishes is mapped to a specific button)
+            _loadedCustomTaskButtons[customTaskData] = customTaskButtonComponent;
+        }
+        _loadedCustomTaskButtons[customTaskData].UpdateCustomTaskButton(customTaskData, this);
     }
 
     public void EditExistingTask(CustomTaskButton customTaskButton)

@@ -39,7 +39,10 @@ public class TaskPlacer : MonoBehaviour
 
     private Dictionary<TaskData, Task> _tasksDisplayed = new Dictionary<TaskData, Task>();
 
-    // A hash set of all of the names of the task datas in the current pool
+    /* Task Data that are displayable
+     * Key: The TaskData
+     * Value: The name of the TaskData (ex. Wash the dishes)
+     */
     private Dictionary<TaskData, string> _allDisplayableTaskDataByName = new Dictionary<TaskData, string>();
 
     /* Task Data that have been previously completed
