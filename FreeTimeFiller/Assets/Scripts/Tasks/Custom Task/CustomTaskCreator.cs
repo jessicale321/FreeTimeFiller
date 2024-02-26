@@ -165,7 +165,10 @@ public class CustomTaskCreator : MonoBehaviour
 
         SaveData(newCustomTask);
     }
-    
+
+    ///-///////////////////////////////////////////////////////////
+    /// Change the contents of the passed in TaskData. 
+    /// 
     private void OverrideExistingCustomTask(TaskData newTaskData)
     {
         string oldTaskName = newTaskData.taskName;
@@ -274,6 +277,9 @@ public class CustomTaskCreator : MonoBehaviour
             });
             
             LoadedCustomTasks.Add(newTaskData);
+            
+            // Tell all listeners that the contents of an existing custom task has been edited
+            ExistingCustomTaskWasEdited?.Invoke(newTaskData);
         }
         else
         {

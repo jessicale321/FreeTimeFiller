@@ -9,7 +9,7 @@ using UserTask;
 public class TaskPlacer : MonoBehaviour
 {
     // Tasks that will show up in the pool
-    private List<TaskData> _taskPool = new List<TaskData>();
+    private List<TaskData> _displayableTasks = new List<TaskData>();
 
     // Folder path for location of Task Data
     private string _taskDataFolderPath = "Task Data/Premade";
@@ -36,6 +36,8 @@ public class TaskPlacer : MonoBehaviour
      * Value: A list of task data that are in the pool that belong to the key category (ex. Wash the dishes)
      */
     private Dictionary<TaskCategory, List<TaskData>> _allDisplayableTaskDataByCategory = new Dictionary<TaskCategory, List<TaskData>>();
+
+    private Dictionary<TaskData, Task> _tasksDisplayed = new Dictionary<TaskData, Task>();
 
     // A hash set of all of the names of the task datas in the current pool
     private HashSet<string> _allDisplayableTaskDataByName = new HashSet<string>();
@@ -71,7 +73,7 @@ public class TaskPlacer : MonoBehaviour
         }
 
         // If we found any tasks, start displaying them
-        if (_taskPool.Count > 0)
+        if (_displayableTasks.Count > 0)
         {
             // Once all TaskData's have been added to the dictionary, start displaying them
             DisplayAllTasks();
@@ -94,7 +96,7 @@ public class TaskPlacer : MonoBehaviour
         }
         else
         {
-            _taskPool.Add(data);
+            _displayableTasks.Add(data);
             _allDisplayableTaskDataByName.Add(data.taskName);
 
             // Check if the category already exists in the dictionary
@@ -112,7 +114,7 @@ public class TaskPlacer : MonoBehaviour
                     data
                 };
             }
-            //Debug.Log($"Task Manager has loaded in: {data.taskName}");
+            Debug.Log($"Task Manager has loaded in: {data.taskName}");
         }
     }
     public void RemoveTaskDataByCategories(List<TaskCategory> userChosenCategories)
@@ -125,7 +127,7 @@ public class TaskPlacer : MonoBehaviour
 
                 foreach (TaskData dataFromRemovedCategory in _allDisplayableTaskDataByCategory[category])
                 {
-                    _taskPool.Remove(dataFromRemovedCategory);
+                    _displayableTasks.Remove(dataFromRemovedCategory);
                     _allDisplayableTaskDataByName.Remove(dataFromRemovedCategory.taskName);
                     _activeTaskData.Remove(dataFromRemovedCategory);
                     _taskDataOnHold.Remove(dataFromRemovedCategory);
@@ -138,13 +140,34 @@ public class TaskPlacer : MonoBehaviour
     }
 
     ///-///////////////////////////////////////////////////////////
+    /// When a task has been edited, check to see if its category is no longer apart of the user's chosen
+    /// task categories. If it's not, then remove it from all placements.
+    public void ExistingTaskDataWasUpdated(TaskData taskDataEdited, List<TaskCategory> userChoseCategories)
+    {
+        if (_activeTaskData.ContainsKey(taskDataEdited))
+        {
+            // Update Task button's information displayed
+            _tasksDisplayed[taskDataEdited].UpdateTask(taskDataEdited, this);
+            
+            // If the task was in the pool, but its category was changed to a category that the user doesn't use. Remove it from placement.
+            if (!userChoseCategories.Contains(taskDataEdited.category))
+            {
+                _displayableTasks.Remove(taskDataEdited);
+                _allDisplayableTaskDataByName.Remove(taskDataEdited.taskName);
+                _activeTaskData.Remove(taskDataEdited);
+                _taskDataOnHold.Remove(taskDataEdited);
+            }
+        }
+    }
+
+    ///-///////////////////////////////////////////////////////////
     /// Find a TaskData that is not being displayed currently, and create
     /// a new task using its values
     /// 
     private void DisplayAllTasks()
     {
         // Randomize all elements in the task pool
-        ShuffleTaskList(_taskPool);
+        ShuffleTaskList(_displayableTasks);
         
         for(int i = 0; i < _amountAllowedToDisplay; i++)
         {
@@ -157,7 +180,10 @@ public class TaskPlacer : MonoBehaviour
             {
                 // Spawn a new task and give it data
                 GameObject newTask = Instantiate(taskPrefab, taskPanel);
-                newTask.GetComponent<Task>().UpdateTask(inactiveData, this);
+                Task taskComponent = newTask.GetComponent<Task>();
+                taskComponent.UpdateTask(inactiveData, this);
+                
+                _tasksDisplayed.Add(inactiveData, taskComponent);
 
                 _amountCurrentlyDisplayed++;
             }
@@ -186,7 +212,7 @@ public class TaskPlacer : MonoBehaviour
     /// 
     private TaskData GetInactiveTask()
     {
-        foreach(TaskData data in _taskPool)
+        foreach(TaskData data in _displayableTasks)
         {
             if (_activeTaskData[data] == false)
             {
@@ -264,6 +290,7 @@ public class TaskPlacer : MonoBehaviour
         // Remove tasks on screen
         foreach (Task task in _completedTasks)
         {
+            _tasksDisplayed.Remove(task.GetCurrentTaskData());
             Destroy(task.gameObject);
         }
         
@@ -280,7 +307,7 @@ public class TaskPlacer : MonoBehaviour
         _completedTasks.Clear();
         
         // Randomize all elements in the task pool
-        ShuffleTaskList(_taskPool);
+        ShuffleTaskList(_displayableTasks);
         
         DisplayAllTasks();
     }

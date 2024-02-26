@@ -36,6 +36,7 @@ public class TaskManager : MonoBehaviour
     {
         // When the custom task creator has finished loading or has created a task, add a custom task
         _customTaskCreator.CustomTaskWasCreatedWithoutLoad += AddOneCustomTask;
+        _customTaskCreator.ExistingCustomTaskWasEdited += UpdateExistingTaskOnScreen;
     }
 
     private void OnDisable()
@@ -81,6 +82,10 @@ public class TaskManager : MonoBehaviour
     {
         _taskPlacer.TryAddTask(customTask, _taskPool.ChosenTaskCategories);
     }
+    
+    private void UpdateExistingTaskOnScreen(TaskData customTaskUpdated){
+        _taskPlacer.ExistingTaskDataWasUpdated(customTaskUpdated, _taskPool.ChosenTaskCategories);
+    }
 
     ///-///////////////////////////////////////////////////////////
     /// After all task categories and custom tasks have finished loading,
@@ -94,4 +99,5 @@ public class TaskManager : MonoBehaviour
         // When task categories have changed, 
         _taskPlacer.RemoveTaskDataByCategories(chosenTaskCategories);
     }
+    
 }
