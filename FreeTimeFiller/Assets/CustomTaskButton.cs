@@ -10,14 +10,14 @@ public class CustomTaskButton : MonoBehaviour
 
     [Header("Required Components")]
     private Button _buttonComponent;
-    private TMP_Text taskNameDisplayed;
+    private TMP_Text _taskNameDisplayed;
 
     public TaskData TaskData { get; private set; }
 
     private void Awake()
     {
         _buttonComponent = GetComponent<Button>();
-        taskNameDisplayed = GetComponentInChildren<TMP_Text>();
+        _taskNameDisplayed = GetComponentInChildren<TMP_Text>();
     }
 
     private void OnEnable()
@@ -30,14 +30,13 @@ public class CustomTaskButton : MonoBehaviour
         _buttonComponent.onClick.RemoveListener(SelectButton);
     }
 
-    public void SelectButton()
+    private void SelectButton()
     {
         if(_myCreator != null)
         {
             _myCreator.EditExistingTask(this);
         }
-
-        Debug.Log(taskNameDisplayed.text + " was selected! Begin editing this custom task.");
+        Debug.Log(_taskNameDisplayed.text + " was selected! Begin editing this custom task.");
     }
 
     public void UpdateCustomTaskButton(TaskData taskData, CustomTaskCreator customTaskCreator)
@@ -46,6 +45,6 @@ public class CustomTaskButton : MonoBehaviour
 
         _myCreator = customTaskCreator;
 
-        taskNameDisplayed.text = taskData.taskName;
+        _taskNameDisplayed.text = taskData.taskName;
     }
 }

@@ -79,8 +79,11 @@ MonoBehaviour:
   categoryDropdown: {fileID: 0}
   difficultySlider: {fileID: 0}
   createButton: {fileID: 0}
-  loadButton: {fileID: 0}
+  editButton: {fileID: 0}
   deleteButton: {fileID: 0}
+  creationPanel: {fileID: 0}
+  editPanel: {fileID: 0}
+  existingCustomTaskButton: {fileID: 3012048613870247459, guid: 1ca4d215ea96c5046a35128fb0b8b2c8, type: 3}
 --- !u!114 &8228962995760092030
 MonoBehaviour:
   m_ObjectHideFlags: 0

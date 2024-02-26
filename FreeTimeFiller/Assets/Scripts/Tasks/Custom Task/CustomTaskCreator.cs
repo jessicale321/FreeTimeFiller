@@ -5,13 +5,27 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Unity.Services.Authentication;
 using Unity.Services.CloudSave;
 using Unity.Services.Core;
+using UnityEngine.Serialization;
 
 public class CustomTaskCreator : MonoBehaviour
 {
+    // Two different modes that the user can interact with, when dealing with custom tasks
+    public enum MenuMode
+    {
+        // User is writing information to create a new, unique custom task
+        Create,
+        
+        // User is editing an existing custom task to override it
+        Edit
+    }
+
+    private MenuMode _currentMenuMode;
+    
     [Header("Input Fields")]
     [SerializeField] private TMP_InputField taskNameInputField;
     [SerializeField] private TMP_InputField taskDescriptionInputField;
@@ -21,13 +35,15 @@ public class CustomTaskCreator : MonoBehaviour
     [SerializeField] private DifficultySlider difficultySlider;
     [Header("Buttons")]
     [SerializeField] private Button createButton;
-    //[SerializeField] private Button loadButton;
-    [SerializeField] private Button editButton;
+    [SerializeField] private Button changeModeButton;
     [SerializeField] private Button deleteButton;
 
     [SerializeField] private Transform creationPanel;
     [SerializeField] private Transform editPanel;
     [SerializeField] private GameObject existingCustomTaskButton;
+
+    // The current custom task the user is editing
+    private CustomTaskButton _currentCustomTaskEditing;
 
     // Folder path for location of Task Data
     private string _taskDataFolderPath = "Task Data";
@@ -41,6 +57,9 @@ public class CustomTaskCreator : MonoBehaviour
         private set;
     }
 
+    private Dictionary<TaskData, CustomTaskButton> _loadedCustomTaskButtons =
+        new Dictionary<TaskData, CustomTaskButton>();
+    
     public event Action<List<TaskData>> AllCustomTaskWereLoaded; 
     public event Action<TaskData> CustomTaskWasCreatedWithoutLoad;
     public event Action<TaskData> ExistingCustomTaskWasEdited;
@@ -58,7 +77,7 @@ public class CustomTaskCreator : MonoBehaviour
     {
         // Add button functionality
         createButton.onClick.AddListener(AttemptCreation);
-        editButton.onClick.AddListener(PlaceCustomTaskButtons);
+        changeModeButton.onClick.AddListener(ChangeMode);
         deleteButton.onClick.AddListener(ClearAllCustomTaskData);
     }
 
@@ -66,23 +85,44 @@ public class CustomTaskCreator : MonoBehaviour
     {
         // Remove button functionality
         createButton.onClick.RemoveListener(AttemptCreation);
-        editButton.onClick.RemoveListener(PlaceCustomTaskButtons);
+        changeModeButton.onClick.RemoveListener(ChangeMode);
         deleteButton.onClick.RemoveListener(ClearAllCustomTaskData);
+    }
+
+    private void Start()
+    {
+        _currentMenuMode = MenuMode.Create;
     }
 
     // Check that the values the user entered for their custom task are valid. If so, allow the creation
     private void AttemptCreation()
     {
         string taskName = taskNameInputField.text;
-
-        // Don't allow task names that have no actual text, or already exist
-        if ((string.IsNullOrEmpty(taskName) || taskName == "") || !TaskNameIsUnique(taskName))
+        
+        if (string.IsNullOrEmpty(taskName) || taskName == "")
         {
-            Debug.Log("Task name is empty or already exists!");
+            Debug.Log("Task name is empty!");
             return;
         }
         
-        CreateCustomTask();
+        switch (_currentMenuMode)
+        {
+            // Don't allow overriding when creating a new task
+            case MenuMode.Create:
+                if (!TaskNameIsUnique(taskName)) return;
+                
+                CreateNewCustomTask();
+                
+                break;
+            // Allow overriding with the same name, but don't create a new task
+            case MenuMode.Edit:
+                // TODO: Only allow overriding of the same name, not another task's name
+                if (_currentCustomTaskEditing != null)
+                    OverrideExistingCustomTask(_currentCustomTaskEditing.TaskData);
+                else
+                    Debug.Log("There is no custom task currently being edited! Please select one!");
+                break;
+        }
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -106,7 +146,7 @@ public class CustomTaskCreator : MonoBehaviour
     ///-///////////////////////////////////////////////////////////
     /// Make a new custom task based off the values the user entered.
     /// 
-    private void CreateCustomTask()
+    private void CreateNewCustomTask()
     {
         string taskName = taskNameInputField.text;
         string taskDescription = taskDescriptionInputField.text;
@@ -117,27 +157,47 @@ public class CustomTaskCreator : MonoBehaviour
         newCustomTask.description = taskDescription;
         newCustomTask.difficultyLevel = difficultySlider.GetDifficultyValue();
         newCustomTask.category = categoryDropdown.GetSelectedTaskCategory();
-    
-        // Convert the contents of the new TaskData to a json string
-        string json = JsonUtility.ToJson(newCustomTask);
-
+        
         // Add the new task to the task pool
         CustomTaskWasCreatedWithoutLoad?.Invoke(newCustomTask);
 
         SaveToAssetFolder(newCustomTask);
 
-        SaveData(json);
+        SaveData(newCustomTask);
+    }
+    
+    private void OverrideExistingCustomTask(TaskData newTaskData)
+    {
+        string oldTaskName = newTaskData.taskName;
+        
+        string taskName = taskNameInputField.text;
+        string taskDescription = taskDescriptionInputField.text;
+        
+        newTaskData.taskName = taskName;
+        newTaskData.description = taskDescription;
+        newTaskData.difficultyLevel = difficultySlider.GetDifficultyValue();
+        newTaskData.category = categoryDropdown.GetSelectedTaskCategory();
+        
+        // Add the new task to the task pool
+        CustomTaskWasCreatedWithoutLoad?.Invoke(newTaskData);
+        
+        UpdateCustomTaskData(oldTaskName, newTaskData);
     }
 
     ///-///////////////////////////////////////////////////////////
     /// Save the custom task to the user's account.
+    /// Override an existing custom task if the user is editing one, otherwise save a new one.
     /// 
-    private async void SaveData(string jsonText)
+    private async void SaveData(TaskData taskDataToSave)
     {
+        // Convert the contents of the new TaskData to a json string
+        string jsonText = JsonUtility.ToJson(taskDataToSave);
+        
         // Don't add duplicates
         if (_customTasksAsJson.Contains(jsonText)) return;
-        
+
         _customTasksAsJson.Add(jsonText);
+        LoadedCustomTasks.Add(taskDataToSave);
 
         // Save list of custom tasks to the user's account
         await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
@@ -178,6 +238,8 @@ public class CustomTaskCreator : MonoBehaviour
                 JsonUtility.FromJsonOverwrite(str, newCustomTask);
 
                 LoadedCustomTasks.Add(newCustomTask);
+                
+                Debug.Log($"Custom Task Loaded: {newCustomTask.taskName}");
 
                 SaveToAssetFolder(newCustomTask);
             }
@@ -186,10 +248,40 @@ public class CustomTaskCreator : MonoBehaviour
         {
             Debug.Log("Could not find any saved custom tasks.");
         }
-        
         AllCustomTaskWereLoaded?.Invoke(LoadedCustomTasks);
     }
+    
+    private async void UpdateCustomTaskData(string oldTaskName, TaskData newTaskData)
+    {
+        // Find the index of the JSON element containing the specified string
+        int index = _customTasksAsJson.FindIndex(json => json.Contains(oldTaskName));
 
+        // Check if the JSON element was found
+        if (index != -1)
+        {
+            // Convert the new TaskData to a JSON string
+            string updatedJsonText = JsonUtility.ToJson(newTaskData);
+
+            // Update the JSON element at the found index with the new JSON data
+            _customTasksAsJson[index] = updatedJsonText;
+
+            Debug.Log($"Updated custom task data: {oldTaskName} to {newTaskData.taskName}");
+
+            // Save the updated custom tasks list to Unity Cloud
+            await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object>
+            {
+                { "customTasks", _customTasksAsJson }
+            });
+            
+            LoadedCustomTasks.Add(newTaskData);
+        }
+        else
+        {
+            Debug.Log("Couldn't find that custom task to update");
+        }
+    }
+
+    
     ///-///////////////////////////////////////////////////////////
     /// Delete all custom task data from the user's account.
     /// 
@@ -218,26 +310,54 @@ public class CustomTaskCreator : MonoBehaviour
         AssetDatabase.Refresh();
     }
 
-    private void PlaceCustomTaskButtons()
+    private void ChangeMode()
     {
-        creationPanel.gameObject.SetActive(false);
-        editPanel.gameObject.SetActive(true);
-
-        foreach(TaskData customTaskData in LoadedCustomTasks)
+        switch (_currentMenuMode)
         {
-            GameObject newButton = Instantiate(existingCustomTaskButton, editPanel);
-            newButton.GetComponent<CustomTaskButton>().UpdateCustomTaskButton(customTaskData, this);
+            // Switch to edit mode, if in create mode
+            case MenuMode.Create:
+                _currentMenuMode = MenuMode.Edit;
+                
+                creationPanel.gameObject.SetActive(false);
+                editPanel.gameObject.SetActive(true);
+                
+                // For each custom task that the user has saved, make a button for it that they can click on to edit
+                foreach(TaskData customTaskData in LoadedCustomTasks)
+                {
+                    if (!_loadedCustomTaskButtons.ContainsKey(customTaskData))
+                    {
+                        // Spawn a new button in, and place it on the edit panel
+                        GameObject newButton = Instantiate(existingCustomTaskButton, editPanel);
+                        CustomTaskButton customTaskButtonComponent = newButton.GetComponent<CustomTaskButton>();
+                        // Map the CustomTaskButton component to a TaskData (ex. Wash the dishes is mapped to a specific button)
+                        _loadedCustomTaskButtons[customTaskData] = customTaskButtonComponent;
+                        customTaskButtonComponent.UpdateCustomTaskButton(customTaskData, this);
+                    }
+                }
+                break;
+            // Switch to create mode, if in edit mode
+            case MenuMode.Edit:
+                _currentMenuMode = MenuMode.Create;
+                
+                creationPanel.gameObject.SetActive(true);
+                editPanel.gameObject.SetActive(false);
+                taskNameInputField.text = string.Empty;
+                taskDescriptionInputField.text = string.Empty;
+                break;
         }
     }
 
     public void EditExistingTask(CustomTaskButton customTaskButton)
     {
+        _currentCustomTaskEditing = customTaskButton;
+        TaskData currentCustomTaskDataEditing = customTaskButton.TaskData;
+        
         creationPanel.gameObject.SetActive(true);
         editPanel.gameObject.SetActive(false);
 
-        taskNameInputField.text = customTaskButton.TaskData.taskName;
-        taskDescriptionInputField.text = customTaskButton.TaskData.description;
-        categoryDropdown.SetSelectedCategory(customTaskButton.TaskData.category);
-        difficultySlider.SetDifficulty(customTaskButton.TaskData.difficultyLevel);
+        taskNameInputField.text = currentCustomTaskDataEditing.taskName;
+        taskDescriptionInputField.text = currentCustomTaskDataEditing.description;
+        categoryDropdown.SetSelectedCategory(currentCustomTaskDataEditing.category);
+        difficultySlider.SetDifficulty(currentCustomTaskDataEditing.difficultyLevel);
     }
 }

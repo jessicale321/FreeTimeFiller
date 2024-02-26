@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9a101af5d56ee3b4ab558bb3de1b5968, type: 3}
-  m_Name: Something else Custom
+  m_Name: Yo my man Custom
   m_EditorClassIdentifier: 
-  taskName: Something else
-  category: 3
-  difficultyLevel: 3
+  taskName: Yo my man
+  category: 1
+  difficultyLevel: 5
   refreshCountdown: 1
-  description: dish washing
+  description: how we doing

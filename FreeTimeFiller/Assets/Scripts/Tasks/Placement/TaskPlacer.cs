@@ -112,7 +112,7 @@ public class TaskPlacer : MonoBehaviour
                     data
                 };
             }
-            Debug.Log($"Task Manager has loaded in: {data.taskName}");
+            //Debug.Log($"Task Manager has loaded in: {data.taskName}");
         }
     }
     public void RemoveTaskDataByCategories(List<TaskCategory> userChosenCategories)
