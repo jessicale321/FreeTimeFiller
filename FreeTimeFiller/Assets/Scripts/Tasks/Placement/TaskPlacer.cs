@@ -40,7 +40,7 @@ public class TaskPlacer : MonoBehaviour
     private Dictionary<TaskData, Task> _tasksDisplayed = new Dictionary<TaskData, Task>();
 
     // A hash set of all of the names of the task datas in the current pool
-    private HashSet<string> _allDisplayableTaskDataByName = new HashSet<string>();
+    private Dictionary<TaskData, string> _allDisplayableTaskDataByName = new Dictionary<TaskData, string>();
 
     /* Task Data that have been previously completed
      * Key: The TaskData (ex. Brushing Teeth)
@@ -99,7 +99,7 @@ public class TaskPlacer : MonoBehaviour
         else
         {
             _displayableTasks.Add(data);
-            _allDisplayableTaskDataByName.Add(data.taskName);
+            _allDisplayableTaskDataByName.Add(data, data.taskName);
 
             // Check if the category already exists in the dictionary
             if (_allDisplayableTaskDataByCategory.ContainsKey(data.category))
@@ -125,10 +125,15 @@ public class TaskPlacer : MonoBehaviour
     /// 
     private bool CheckTaskNameUniqueness(TaskData taskData)
     {
-        return _allDisplayableTaskDataByName.Contains(taskData.taskName);
+        return _allDisplayableTaskDataByName.ContainsValue(taskData.taskName);
     }
 
     #endregion
+
+    ///-///////////////////////////////////////////////////////////
+    /// When TaskCategory preferences have changed, check if any displayable tasks need to be removed. The user 
+    /// may have decided they don't want to see certain tasks anymore.
+    /// 
     public void RemoveTaskDataByCategories(List<TaskCategory> userChosenCategories)
     {
         foreach (TaskCategory category in _allDisplayableTaskDataByCategory.Keys)
@@ -161,6 +166,7 @@ public class TaskPlacer : MonoBehaviour
             // If the task was in the pool, but its category was changed to a category that the user doesn't use. Remove it from placement.
             if (!userChoseCategories.Contains(taskDataEdited.category))
             {
+                _allDisplayableTaskDataByCategory[taskDataEdited.category].Remove(taskDataEdited);
                 RemoveTaskFromDisplay(taskDataEdited);
             }
         }
@@ -172,7 +178,7 @@ public class TaskPlacer : MonoBehaviour
     private void RemoveTaskFromDisplay(TaskData dataToRemove)
     {
         _displayableTasks.Remove(dataToRemove);
-        _allDisplayableTaskDataByName.Remove(dataToRemove.taskName);
+        _allDisplayableTaskDataByName.Remove(dataToRemove);
         _activeTaskData.Remove(dataToRemove);
         _taskDataOnHold.Remove(dataToRemove);
     }

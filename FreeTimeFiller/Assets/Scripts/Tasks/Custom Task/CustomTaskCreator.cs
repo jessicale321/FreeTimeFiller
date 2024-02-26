@@ -36,6 +36,7 @@ public class CustomTaskCreator : MonoBehaviour
     [Header("Buttons")]
     [SerializeField] private Button createButton;
     [SerializeField] private Button changeModeButton;
+    private TMP_Text _changeModeButtonText;
     [SerializeField] private Button deleteButton;
 
     [SerializeField] private Transform creationPanel;
@@ -68,6 +69,8 @@ public class CustomTaskCreator : MonoBehaviour
     {
         await UnityServices.InitializeAsync();
 
+        _changeModeButtonText = changeModeButton.GetComponentInChildren<TMP_Text>();
+
         // Initialize lists
         _customTasksAsJson = new List<string>();
         LoadedCustomTasks = new List<TaskData>();
@@ -92,6 +95,8 @@ public class CustomTaskCreator : MonoBehaviour
     private void Start()
     {
         _currentMenuMode = MenuMode.Create;
+        
+        ChangeModeText();
     }
 
     #region Creation
@@ -113,17 +118,21 @@ public class CustomTaskCreator : MonoBehaviour
         {
             // Don't allow overriding when creating a new task
             case MenuMode.Create:
-                if (!TaskNameIsUnique(taskName)) return;     
+                if (!TaskNameIsUnique(taskName, null)) return;     
                 CreateNewCustomTask();    
                 break;
                 
             // Allow overriding with the same name, but don't create a new task
             case MenuMode.Edit:
-                // TODO: Only allow overriding of the same name, not another task's name
-                if (_currentCustomTaskEditing != null)
-                    OverrideExistingCustomTask(_currentCustomTaskEditing.TaskData);
-                else
+                if (_currentCustomTaskEditing == null)
+                {
                     Debug.Log("There is no custom task currently being edited! Please select one!");
+                    return;
+                }
+                
+                if (!TaskNameIsUnique(taskName, _currentCustomTaskEditing.TaskData)) return;    
+                
+                OverrideExistingCustomTask(_currentCustomTaskEditing.TaskData);
                 break;
         }
     }
@@ -131,21 +140,20 @@ public class CustomTaskCreator : MonoBehaviour
     ///-///////////////////////////////////////////////////////////
     /// Check if a task name does not already exist.
     /// 
-    private bool TaskNameIsUnique(string nameToCheck)
+    private bool TaskNameIsUnique(string nameToCheck, TaskData taskData)
     {
-        TaskData[] tasks =  Resources.LoadAll<TaskData>(_taskDataFolderPath);
+        TaskData[] tasks = Resources.LoadAll<TaskData>(_taskDataFolderPath);
 
         foreach (TaskData data in tasks)
         {
-            // If we find a duplicate task name, don't allow the creation
-            if (nameToCheck == data.taskName)
+            if (nameToCheck == data.taskName && taskData != data)
             {
                 return false;
             }
         }
         return true;
     }
-
+    
     ///-///////////////////////////////////////////////////////////
     /// Make a new custom task based off the values the user entered.
     /// 
@@ -359,6 +367,22 @@ public class CustomTaskCreator : MonoBehaviour
                 editPanel.gameObject.SetActive(false);
                 taskNameInputField.text = string.Empty;
                 taskDescriptionInputField.text = string.Empty;
+                break;
+        }
+        ChangeModeText();
+    }
+
+    private void ChangeModeText()
+    {
+        switch (_currentMenuMode)
+        {
+            // Switch to edit mode, if in create mode
+            case MenuMode.Create:
+                _changeModeButtonText.text = "Creation Mode";
+                break;
+            // Switch to create mode, if in edit mode
+            case MenuMode.Edit:
+                _changeModeButtonText.text = "Edit Mode";
                 break;
         }
     }
