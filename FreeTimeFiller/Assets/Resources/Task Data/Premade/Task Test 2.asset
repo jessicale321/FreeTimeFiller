@@ -15,4 +15,5 @@ MonoBehaviour:
   taskName: Do 10 pushups
   category: 6
   difficultyLevel: 3
-  description: Some sort of description?
+  refreshCountdown: 1
+  description: Perform 10 pushups (or more if you can). Use proper form!

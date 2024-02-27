@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9a101af5d56ee3b4ab558bb3de1b5968, type: 3}
-  m_Name: Go out for bike ride Custom
+  m_Name: Task Test 8
   m_EditorClassIdentifier: 
-  taskName: Go out for bike ride
-  category: 4
-  difficultyLevel: 3
+  taskName: Shoot for hoops
+  category: 0
+  difficultyLevel: 4
   refreshCountdown: 1
-  description: Riding my bike in the park for 30 minutes.
+  description: Head to your local park and play basketball!

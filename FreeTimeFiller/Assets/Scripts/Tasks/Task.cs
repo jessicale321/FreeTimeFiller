@@ -12,6 +12,8 @@ namespace UserTask
         // Data that this task is currently using
         [SerializeField] private TaskData taskData;
 
+        private TaskPlacer _myTaskPlacer;
+
         [Header("UI Components")]
         [SerializeField] private TMP_Text taskName;
 
@@ -31,15 +33,18 @@ namespace UserTask
 
         private void OnEnable()
         {
-            // Remove cross-out over this task, and enable its checkbox button
-            crossOutImage.SetActive(false);
-
             checkBoxButton.onClick.AddListener(Complete);
         }
 
         private void OnDisable()
         {
             checkBoxButton.onClick.RemoveListener(Complete);
+        }
+
+        private void Start()
+        {
+            // Remove cross-out over this task
+            crossOutImage.SetActive(false);
         }
 
         ///-///////////////////////////////////////////////////////////
@@ -53,7 +58,7 @@ namespace UserTask
                 // Remove cross-out over this task, and enable its checkbox button
                 crossOutImage.SetActive(false);
 
-                TaskManager.Instance.UncompleteTask(this);
+                _myTaskPlacer.UncompleteTask(this);
 
                 _isCompleted = false;
             }
@@ -66,7 +71,7 @@ namespace UserTask
 
 
                 // Tell TaskManager that this task has been completed
-                TaskManager.Instance.CompleteTask(this);
+                _myTaskPlacer.CompleteTask(this);
 
                 _isCompleted = true;
             }
@@ -75,14 +80,20 @@ namespace UserTask
         ///-///////////////////////////////////////////////////////////
         /// Change displayed values of the task.
         /// 
-        public void UpdateTask(TaskData data)
+        public void UpdateTask(TaskData data, TaskPlacer taskPlacer)
         {
             taskData = data;
 
             // Change task name
             taskName.text = data.taskName;
 
+            _myTaskPlacer = taskPlacer;
+
+            // Remove cross-out over this task
+            crossOutImage.SetActive(false);
+
             DisplayStars(data);
+
         }
 
         ///-///////////////////////////////////////////////////////////
@@ -122,6 +133,5 @@ namespace UserTask
             return taskData;
         }
     }
-
 }
 

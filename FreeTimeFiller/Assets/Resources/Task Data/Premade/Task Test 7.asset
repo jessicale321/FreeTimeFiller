@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a101af5d56ee3b4ab558bb3de1b5968, type: 3}
   m_Name: Task Test 7
   m_EditorClassIdentifier: 
-  taskName: Shoot for hoops
-  category: 0
+  taskName: Work on homework
+  category: 5
   difficultyLevel: 4
-  description: Some sort of description?
+  refreshCountdown: 1
+  description: Work on any homework you've been putting off.

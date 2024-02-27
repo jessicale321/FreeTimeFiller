@@ -15,4 +15,5 @@ MonoBehaviour:
   taskName: Study for a class
   category: 5
   difficultyLevel: 4
-  description: Some sort of description?
+  refreshCountdown: 1
+  description: Study for any class you feel needs focusing.

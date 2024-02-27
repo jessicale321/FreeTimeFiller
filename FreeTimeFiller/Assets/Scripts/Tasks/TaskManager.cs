@@ -1,243 +1,108 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
+using Unity.Services.Authentication;
+using Unity.Services.Core;
 using UnityEngine;
-using Random = System.Random;
-using UserTask;
 
 public class TaskManager : MonoBehaviour
 {
     public static TaskManager Instance;
-
-    // Tasks that will show up in the pool
-    private List<TaskData> _taskPool = new List<TaskData>();
-
-    // Folder path for location of Task Data
-    private string _taskDataFolderPath = "Task Data";
-
-    /* How many tasks should be created and displayed?
-     * If taskCount is greater than the number of inactive TaskData's, 
-     * then we will get an error in the console
-     */
-    [SerializeField, Range(1, 8)] private int taskAmountToDisplay = 1;
-
-    private int _taskAmountCurrentlyDisplayed = 0;
-
-    /* Tasks that are currently being displayed
-     * Key: The TaskData (ex. Brushing Teeth)
-     * Value: Is currently displayed? True or false
-     */
-    private Dictionary<TaskData, bool> _activeTaskData = new Dictionary<TaskData, bool>();
     
-    /* Task Data that have been previously completed
-     * Key: The TaskData (ex. Brushing Teeth)
-     * Value: Number of refreshes left until it reappears
-     */
-    private Dictionary<TaskData, int> _taskDataOnHold = new Dictionary<TaskData, int>();
-
-    private List<Task> _completedTasks = new List<Task>();
-
-    // Task that will be instantiated and placed on the canvas
-    [SerializeField] private GameObject taskPrefab;
-    [SerializeField] private Transform taskPanel;
+    [Header("Required Scripts")]
+    private TaskPool _taskPool;
+    private TaskPlacer _taskPlacer;
+    private CustomTaskCreator _customTaskCreator;
     
-    private void Awake()
+    private async void Awake()
     {
-        // Create singleton instance for TaskManager
         Instance = this;
+        
+        // Fetch references of required scripts
+        _taskPool = GetComponent<TaskPool>();
+        _taskPlacer = GetComponent<TaskPlacer>();
+        _customTaskCreator = GetComponent<CustomTaskCreator>();
+        
+        // When the user is signed in, begin the task placement process
+        await UnityServices.InitializeAsync();
+        AuthenticationService.Instance.SignedIn += BeginTaskPlacementProcess;
+        
+        // TODO: REMOVE THIS SOON
+        await AuthenticationService.Instance.SignInAnonymouslyAsync();
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        FindPremadeTasks();
+        // When the custom task creator has finished loading or has created a task, add a custom task
+        _customTaskCreator.CustomTaskWasCreatedWithoutLoad += AddOneCustomTask;
+        _customTaskCreator.ExistingCustomTaskWasEdited += UpdateExistingTaskOnScreen;
+    }
+
+    private void OnDisable()
+    {
+        _customTaskCreator.CustomTaskWasCreatedWithoutLoad -= AddOneCustomTask;
+        _taskPool.TaskCategoriesChanged -= UpdatePremadeTasks;
     }
 
     ///-///////////////////////////////////////////////////////////
-    /// Load all pre-made tasks found under the resources folder
+    /// Start the task placement process by loading the user's saved task category preferences and custom tasks
     /// 
-    private void FindPremadeTasks()
+    private async void BeginTaskPlacementProcess()
     {
-        TaskData[] tasks =  Resources.LoadAll<TaskData>(_taskDataFolderPath);
+        Task[] methodsToWait = {
+            // Load task categories from the user's account first
+            _taskPool.LoadCategoriesFromCloud(),
 
-        foreach (TaskData data in tasks)
+            _customTaskCreator.LoadAllCustomTasks()
+        };
+
+        // Wait for task categories and custom tasks to be loaded in before placement
+        await Task.WhenAll(methodsToWait);
+
+        // All multiple custom tasks to the TaskPlacer and send it the category filter
+        foreach (TaskData data in _customTaskCreator.LoadedCustomTasks)
         {
-            TryAddTask(data);
+            _taskPlacer.TryAddTask(data, _taskPool.ChosenTaskCategories);
         }
 
-        // If we found any tasks, start displaying them
-        if (_taskPool.Count > 0)
-        {
-            // Randomize all elements in the task pool
-            ShuffleTaskList(_taskPool);
-            
-            // Once all TaskData's have been added to the dictionary, start displaying them
-            DisplayAllTasks();
-        }
-        else
-        {
-            Debug.Log($"There were no tasks found under Resources/{_taskDataFolderPath}");
-        }
+        // Try to add all tasks (won't do anything if the user hasn't saved any task categories ever before)
+        UpdatePremadeTasks(_taskPool.ChosenTaskCategories);
+
+        // If task categories are changed again, add the tasks again
+        _taskPool.TaskCategoriesChanged += UpdatePremadeTasks;
+        
+        Debug.Log(("Finish loading custom tasks and categories"));
     }
     
-    public void AddNewTaskToPool(TaskData newTaskData)
+    ///-///////////////////////////////////////////////////////////
+    /// When one custom task was created (not loaded in from cloud), add it on the screen.
+    /// 
+    private void AddOneCustomTask(TaskData customTask)
     {
-        TryAddTask(newTaskData);
-        
-        // Randomize all elements in the task pool
-        ShuffleTaskList(_taskPool);
+        _taskPlacer.TryAddTask(customTask, _taskPool.ChosenTaskCategories);
+    }
+
+    ///-///////////////////////////////////////////////////////////
+    /// When the contents of a custom task has been updated, tell the TaskPlacer that 
+    /// one of its tasks (if its displayable) will need to change its text on screen and
+    /// may get removed depending on the category.
+    /// 
+    private void UpdateExistingTaskOnScreen(TaskData customTaskUpdated){
+        _taskPlacer.ExistingTaskDataWasUpdated(customTaskUpdated, _taskPool.ChosenTaskCategories);
+    }
+
+    ///-///////////////////////////////////////////////////////////
+    /// After all task categories and custom tasks have finished loading,
+    /// tell the TaskPlacer to place all pre-made tasks on the screen.
+    /// 
+    private void UpdatePremadeTasks(List<TaskCategory> chosenTaskCategories)
+    {      
+        // Add pre-made tasks to TaskPlacer after all custom tasks have been added
+        _taskPlacer.FindPremadeTasks(chosenTaskCategories);
+
+        // When task categories have changed, 
+        _taskPlacer.RemoveTaskDataByCategories(chosenTaskCategories);
     }
     
-    private void TryAddTask(TaskData data)
-    {
-        // Don't add any duplicate task data
-        if (_activeTaskData.TryAdd(data, false) == false)
-        {
-            Debug.Log($"{data} is a duplicate in the taskData list!");
-        }
-        else
-        {
-            _taskPool.Add(data);
-            Debug.Log($"Task Manager has loaded in: {data.taskName}");
-        }
-    }
-
-    ///-///////////////////////////////////////////////////////////
-    /// Find a TaskData that is not being displayed currently, and create
-    /// a new task using its values
-    /// 
-    private void DisplayAllTasks()
-    {
-        for(int i = 0; i < taskAmountToDisplay; i++)
-        {
-            TaskData inactiveData = GetInactiveTask();
-
-            if(inactiveData != null)
-            {
-                // Spawn a new task and give it data
-                GameObject newTask = Instantiate(taskPrefab, taskPanel);
-                newTask.GetComponent<Task>().UpdateTask(inactiveData);
-
-                _taskAmountCurrentlyDisplayed++;
-            }
-           
-        }
-    }
-
-    ///-///////////////////////////////////////////////////////////
-    /// Move elements around in taskPool list
-    /// 
-    void ShuffleTaskList(List<TaskData> list)
-    {
-        Random rng = new Random();
-        
-        int n = list.Count;
-        
-        while (n > 1)
-        {
-            n--;
-            int k = rng.Next(n + 1);
-            (list[k], list[n]) = (list[n], list[k]);
-        }
-    }
-
-    ///-///////////////////////////////////////////////////////////
-    /// Return a TaskData that is not being displayed currently
-    /// 
-    private TaskData GetInactiveTask()
-    {
-        foreach(TaskData data in _taskPool)
-        {
-            if (_activeTaskData[data] == false)
-            {
-                _activeTaskData[data] = true;
-
-                return data;
-            }
-        }
-
-        Debug.Log("Could not find a non-active task data!");
-        
-        return null;
-    }
-    
-
-    ///-///////////////////////////////////////////////////////////
-    /// Add a Task to a list of completed tasks. When all tasks displayed on screen
-    /// have been completed, refresh all the tasks. TaskData that were completed are temporarily
-    /// removed from the task pool.
-    /// 
-    public void CompleteTask(Task task)
-    {
-        _completedTasks.Add(task);
-
-        TaskData dataOfCompletedTask = task.GetCurrentTaskData();
-        
-        if (!_taskDataOnHold.ContainsKey(dataOfCompletedTask))
-        {
-            Debug.Log("add");
-            _taskDataOnHold.Add(dataOfCompletedTask, dataOfCompletedTask.refreshCountdown);
-        }
-        
-        // Once the user has completed all tasks that could be displayed on screen...
-        if (_completedTasks.Count >= _taskAmountCurrentlyDisplayed)
-        {
-
-            RefreshAllTasks();
-        }  
-    }
-
-    ///-///////////////////////////////////////////////////////////
-    /// Remove a task from the list of completed tasks
-    /// 
-    public void UncompleteTask(Task task)
-    {
-        _completedTasks.Remove(task);
-    }
-
-    ///-///////////////////////////////////////////////////////////
-    /// When all on screen are completed, remove them and place a new set of tasks.
-    /// TaskData that were temporarily removed from the pool can start returning.
-    /// 
-    private void RefreshAllTasks()
-    {
-        // Previously completed tasks (not this current refresh), can begin to reappear on the user's task list
-        foreach (TaskData taskData in _taskDataOnHold.Keys.Reverse())
-        {
-            // If a TaskData has 0 or less refreshes left to reappear
-            if (_taskDataOnHold[taskData] <= 0)
-            {
-                // TaskData is no longer "active" and can reappear 
-                _activeTaskData[taskData] = false;
-                // Reset counter
-                _taskDataOnHold[taskData] = taskData.refreshCountdown;
-            }
-            else
-            {
-                // A refresh has occurred, so this TaskData should be closer to reappearing in pool again
-                _taskDataOnHold[taskData]--;
-
-                Debug.Log($"{taskData} is closer to reappearing!");
-            }
-        }
-
-        // Remove tasks on screen
-        foreach (Task task in _completedTasks)
-        {
-
-            Destroy(task.gameObject);
-        }
-        
-        Debug.Log("All displayed tasks have been completed!");
-
-        // All tasks on screen were deleted, so reset this back to 0
-        _taskAmountCurrentlyDisplayed = 0;
-        
-        _completedTasks.Clear();
-        
-        // Randomize all elements in the task pool
-        ShuffleTaskList(_taskPool);
-        
-        DisplayAllTasks();
-    }
 }
