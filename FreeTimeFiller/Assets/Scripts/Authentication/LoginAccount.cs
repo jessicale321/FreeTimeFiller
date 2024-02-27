@@ -5,6 +5,7 @@ using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
 using System.Threading.Tasks;
+using UnityEngine.SceneManagement;
 
 public class LoginAccount : MonoBehaviour
 {
@@ -41,7 +42,9 @@ public class LoginAccount : MonoBehaviour
         try
         {
             await AuthenticationService.Instance.SignInWithUsernamePasswordAsync(username, password);
+            await AuthenticationService.Instance.UpdatePlayerNameAsync(username);
             Debug.Log("SignIn is successful.");
+            SceneManager.LoadScene(1);
         }
         catch (AuthenticationException ex)
         {
