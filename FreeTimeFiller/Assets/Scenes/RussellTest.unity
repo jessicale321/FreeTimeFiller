@@ -855,6 +855,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 993817765}
     - target: {fileID: 7073630200094953449, guid: 2373d6712405580488bed190e3758603, type: 3}
+      propertyPath: resetButton
+      value: 
+      objectReference: {fileID: 1135052007}
+    - target: {fileID: 7073630200094953449, guid: 2373d6712405580488bed190e3758603, type: 3}
       propertyPath: createButton
       value: 
       objectReference: {fileID: 1276298068}
@@ -884,6 +888,10 @@ PrefabInstance:
       objectReference: {fileID: 1107745766}
     - target: {fileID: 7073630200094953449, guid: 2373d6712405580488bed190e3758603, type: 3}
       propertyPath: existingCustomTaskButton
+      value: 
+      objectReference: {fileID: 537113763781564285, guid: 46d6ca63414b56546aa0edbfa450762f, type: 3}
+    - target: {fileID: 7073630200094953449, guid: 2373d6712405580488bed190e3758603, type: 3}
+      propertyPath: existingCustomTaskPrefab
       value: 
       objectReference: {fileID: 537113763781564285, guid: 46d6ca63414b56546aa0edbfa450762f, type: 3}
     - target: {fileID: 7073630200094953449, guid: 2373d6712405580488bed190e3758603, type: 3}

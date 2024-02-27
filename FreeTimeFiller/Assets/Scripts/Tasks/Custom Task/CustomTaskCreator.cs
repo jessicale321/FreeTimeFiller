@@ -37,11 +37,11 @@ public class CustomTaskCreator : MonoBehaviour
     [SerializeField] private Button createButton;
     [SerializeField] private Button changeModeButton;
     private TMP_Text _changeModeButtonText;
-    [SerializeField] private Button deleteButton;
+    [SerializeField] private Button resetButton;
 
     [SerializeField] private Transform creationPanel;
     [SerializeField] private Transform editPanel;
-    [SerializeField] private GameObject existingCustomTaskButton;
+    [SerializeField] private GameObject existingCustomTaskPrefab;
 
     // The current custom task the user is editing
     private CustomTaskButton _currentCustomTaskEditing;
@@ -81,7 +81,7 @@ public class CustomTaskCreator : MonoBehaviour
         // Add button functionality
         createButton.onClick.AddListener(AttemptCreation);
         changeModeButton.onClick.AddListener(ChangeMode);
-        deleteButton.onClick.AddListener(ClearAllCustomTaskData);
+        resetButton.onClick.AddListener(ClearAllCustomTaskData);
     }
 
     private void OnDisable()
@@ -89,7 +89,7 @@ public class CustomTaskCreator : MonoBehaviour
         // Remove button functionality
         createButton.onClick.RemoveListener(AttemptCreation);
         changeModeButton.onClick.RemoveListener(ChangeMode);
-        deleteButton.onClick.RemoveListener(ClearAllCustomTaskData);
+        resetButton.onClick.RemoveListener(ClearAllCustomTaskData);
     }
 
     private void Start()
@@ -387,7 +387,7 @@ public class CustomTaskCreator : MonoBehaviour
         if (!_loadedCustomTaskButtons.ContainsKey(customTaskData))
         {
             // Spawn a new button in, and place it on the edit panel
-            GameObject newButton = Instantiate(existingCustomTaskButton, editPanel);
+            GameObject newButton = Instantiate(existingCustomTaskPrefab, editPanel);
             CustomTaskButton customTaskButtonComponent = newButton.GetComponent<CustomTaskButton>();
             // Map the CustomTaskButton component to a TaskData (ex. Wash the dishes is mapped to a specific button)
             _loadedCustomTaskButtons[customTaskData] = customTaskButtonComponent;
