@@ -826,6 +826,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6411565594699745052, guid: 2373d6712405580488bed190e3758603, type: 3}
+      propertyPath: categoryPanel
+      value: 
+      objectReference: {fileID: 560725467}
+    - target: {fileID: 6411565594699745052, guid: 2373d6712405580488bed190e3758603, type: 3}
+      propertyPath: resetChoicesButton
+      value: 
+      objectReference: {fileID: 62505044}
+    - target: {fileID: 6411565594699745052, guid: 2373d6712405580488bed190e3758603, type: 3}
+      propertyPath: taskCategoryButton
+      value: 
+      objectReference: {fileID: 5826458050106275573, guid: f562d74845b9d4e40883c6d071608fe6, type: 3}
+    - target: {fileID: 6411565594699745052, guid: 2373d6712405580488bed190e3758603, type: 3}
+      propertyPath: finalizeChoicesButton
+      value: 
+      objectReference: {fileID: 235644715}
     - target: {fileID: 7073630200094953449, guid: 2373d6712405580488bed190e3758603, type: 3}
       propertyPath: editPanel
       value: 

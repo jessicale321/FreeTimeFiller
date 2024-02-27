@@ -187,7 +187,7 @@ public class CustomTaskCreator : MonoBehaviour
         newTaskData.category = categoryDropdown.GetSelectedTaskCategory();
         
         // Add the new task to the task pool
-        CustomTaskWasCreatedWithoutLoad?.Invoke(newTaskData);
+        //CustomTaskWasCreatedWithoutLoad?.Invoke(newTaskData);
         
         UpdateCustomTaskData(oldTaskName, newTaskData);
 
@@ -234,7 +234,7 @@ public class CustomTaskCreator : MonoBehaviour
 
                 LoadedCustomTasks.Add(newCustomTask);
                 
-                Debug.Log($"Custom Task Loaded: {newCustomTask.taskName}");
+                Debug.Log($"Custom Task Loaded From Cloud: {newCustomTask.taskName}");
 
                 SaveToAssetFolder(newCustomTask);
             }
@@ -373,11 +373,11 @@ public class CustomTaskCreator : MonoBehaviour
         {
             // Switch to edit mode, if in create mode
             case MenuMode.Create:
-                _changeModeButtonText.text = "Creation Mode";
+                _changeModeButtonText.text = "Edit Mode";
                 break;
             // Switch to create mode, if in edit mode
             case MenuMode.Edit:
-                _changeModeButtonText.text = "Edit Mode";
+                _changeModeButtonText.text = "Creation Mode";
                 break;
         }
     }

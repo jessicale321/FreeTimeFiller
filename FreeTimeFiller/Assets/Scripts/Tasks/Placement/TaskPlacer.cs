@@ -119,7 +119,7 @@ public class TaskPlacer : MonoBehaviour
                     data
                 };
             }
-            Debug.Log($"Task Manager has loaded in: {data.taskName}");
+            Debug.Log($"Task Placer can display: {data.taskName}");
         }
     }
     
@@ -161,6 +161,7 @@ public class TaskPlacer : MonoBehaviour
     /// task categories. If it's not, then remove it from all placements.
     public void ExistingTaskDataWasUpdated(TaskData taskDataEdited, List<TaskCategory> userChosenCategories)
     {
+        // If this edited TaskData was displayable...
         if (_activeTaskData.ContainsKey(taskDataEdited))
         {
             // Update Task button's information displayed
@@ -175,6 +176,7 @@ public class TaskPlacer : MonoBehaviour
                 RemoveTaskFromDisplay(taskDataEdited);
             }
         }
+        // If the edited TaskData was not previously displayable, try to add it
         else if (userChosenCategories.Contains(taskDataEdited.category))
         {
             TryAddTask(taskDataEdited, userChosenCategories);

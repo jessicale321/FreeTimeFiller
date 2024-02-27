@@ -9,7 +9,7 @@ using Unity.Services.Core;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TaskPool : MonoBehaviour
+public class CategoryManager : MonoBehaviour
 {
     [Header("UI Components")]
     // Where to place buttons under

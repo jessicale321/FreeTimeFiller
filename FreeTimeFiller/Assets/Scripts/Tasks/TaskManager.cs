@@ -11,7 +11,7 @@ public class TaskManager : MonoBehaviour
     public static TaskManager Instance;
     
     [Header("Required Scripts")]
-    private TaskPool _taskPool;
+    private CategoryManager _taskPool;
     private TaskPlacer _taskPlacer;
     private CustomTaskCreator _customTaskCreator;
     
@@ -20,7 +20,7 @@ public class TaskManager : MonoBehaviour
         Instance = this;
         
         // Fetch references of required scripts
-        _taskPool = GetComponent<TaskPool>();
+        _taskPool = GetComponent<CategoryManager>();
         _taskPlacer = GetComponent<TaskPlacer>();
         _customTaskCreator = GetComponent<CustomTaskCreator>();
         

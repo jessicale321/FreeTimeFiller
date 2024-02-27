@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class CategoryButton : MonoBehaviour
 {
-    private TaskPool _myCreator;
+    private CategoryManager _myCreator;
     private TaskCategory _displayedCategory;
 
     private Button _buttonComponent;
@@ -53,7 +53,7 @@ public class CategoryButton : MonoBehaviour
     ///-///////////////////////////////////////////////////////////
     /// Set a reference to the TaskPool script
     /// 
-    public void SetCustomTaskCreator(TaskPool taskPoolCreator)
+    public void SetCustomTaskCreator(CategoryManager taskPoolCreator)
     {
         _myCreator = taskPoolCreator;
     }
