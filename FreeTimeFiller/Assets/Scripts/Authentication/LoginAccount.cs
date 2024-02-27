@@ -42,6 +42,7 @@ public class LoginAccount : MonoBehaviour
         try
         {
             await AuthenticationService.Instance.SignInWithUsernamePasswordAsync(username, password);
+            await AuthenticationService.Instance.UpdatePlayerNameAsync(username);
             Debug.Log("SignIn is successful.");
             SceneManager.LoadScene(1);
         }

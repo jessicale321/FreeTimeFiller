@@ -52,6 +52,7 @@ public class TestScript : MonoBehaviour
         try
         {
             await AuthenticationService.Instance.SignUpWithUsernamePasswordAsync(username, password);
+            await AuthenticationService.Instance.UpdatePlayerNameAsync(username);
             Debug.Log("SignUp is successful.");
             SceneManager.LoadScene(1);
         }
