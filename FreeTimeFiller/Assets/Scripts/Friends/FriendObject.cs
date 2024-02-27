@@ -22,6 +22,7 @@ namespace UI
             // display information
             userIDDisplay.SetText(userID);
 
+            // add callback
             deleteButton.onClick.AddListener(() =>
             {
                 OnDelete?.Invoke(m_userID);

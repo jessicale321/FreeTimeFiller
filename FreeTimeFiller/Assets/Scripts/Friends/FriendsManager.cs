@@ -11,8 +11,10 @@ using Unity.Services.Friends.Exceptions;
 
 public class FriendsManager : MonoBehaviour
 {
+    // allows each user to choose if they want friends
     public bool UseFriends = true;
 
+    // Friends Mangaer Definition, this allows FriendsUIManager to subscribe to events
     public static FriendsManager Active
     {
         get
@@ -23,19 +25,21 @@ public class FriendsManager : MonoBehaviour
             return internalActive; 
         }
     }
-
+    // create Friends Manager
     private static FriendsManager internalActive;
-
+    // This is unused at the moment. It was used in the tutorial for the person to log in
     public TMP_InputField usernameInput;
 
-    // callbacks for external scrip authentication
+    // callbacks for external script authentication
     public Action OnUserSignIn;
-    // these action definitions might not work
+    // Defining the action that will be called by UI manager for displaying friends and friend requests on refresh
     public Action<List<PlayerProfile>> OnRequestsRefresh; //{ get; internal set; }
     public Action<List<PlayerProfile>> OnFriendsRefresh;  //{ get; internal set; }
 
     private void Awake()
     {
+        // when the scene starts, the friends are initialized if the user wants them. PlayerSignIn() should be called when the scene
+        // opens, but it doesn't right now. So PlayerSignIn() is attached to the home button
         AuthenticationService.Instance.SignedIn += PlayerSignIn;
         if (UseFriends)
         {
@@ -43,17 +47,8 @@ public class FriendsManager : MonoBehaviour
         }
         PlayerSignIn();
     }
-    // Start is called before the first frame update
-  /*  private void Start()
-    {
-        if (UseFriends)
-        {
-            InitializeFriends();
-        }
 
-        PlayerSignIn();
-    }*/
-
+    // Calls Unity's built in Friend system. Allowing users to have friends
     private async void InitializeFriends()
     {
         // initialize services
@@ -71,13 +66,13 @@ public class FriendsManager : MonoBehaviour
         // initialize friends
         await FriendsService.Instance.InitializeAsync();
 
-
         // save the friends relation
         friends = FriendsService.Instance.Friends;
 
         SubscribeToFriendsEventCallbacks();
     }
 
+    // If the player signs in, call the OnUserSign in from UI manager, displaying what's needed
     public async void PlayerSignIn()
     {
         if (AuthenticationService.Instance.IsSignedIn)
@@ -86,13 +81,18 @@ public class FriendsManager : MonoBehaviour
             Debug.Log("User was not signed in!");
     }
 
+    // Creates a relationship with the friend request sent to another user using memberID
     public async void SendFriendRequest_ID(string memberID)
     {
+        // relationship will appear as "friendRequest" if other user has not sent a friend request
+        // if other user already sent a friend request relationship will be "friend"
         var relationship = await FriendsService.Instance.AddFriendAsync(memberID);
 
         Debug.Log($"Friend request send to {memberID}. New relationship is {relationship.Type}");
     }
 
+    // Accepting friend requests, same thing as SendFriendRequest but this will refresh lists to show 
+    // friends instead of appearing in friend requests
     public async void AcceptRequest(string memberID)
     {
         Relationship relationship = await FriendsService.Instance.AddFriendAsync(memberID);
@@ -102,6 +102,7 @@ public class FriendsManager : MonoBehaviour
         RefreshLists();
     }
 
+    // delete friend relationship, refresh lists to delete
     public async void DeleteFriend(string memberID)
     {
         await FriendsService.Instance.DeleteFriendAsync(memberID);
@@ -110,7 +111,7 @@ public class FriendsManager : MonoBehaviour
     }
 
     // Friend Events
-
+    // These events will be called with each freind request/ accept and delete
     void SubscribeToFriendsEventCallbacks()
     {
         try
@@ -141,42 +142,52 @@ public class FriendsManager : MonoBehaviour
         }
     }
 
-
+    // refreshes the lists of user's friends and friend requests
     public void RefreshLists()
     {
         RefreshFriends();
         RefreshRequests();
     }
 
+    // This refreshses the requests from other users
     public void RefreshRequests()
     {
+        // clears previous requests
         m_Requests.Clear();
+        // get new requests
         IReadOnlyList<Relationship> requests = FriendsService.Instance.IncomingFriendRequests;
 
+        // create PlayerProfiles for each friend request, easier for displaying in UI
         foreach (Relationship request in requests)
         {
             m_Requests.Add(new PlayerProfile(request.Member.Profile.Name, request.Member.Id));
 
         }
-        // used auto-fix. might not work
+        // Show on UI
         OnRequestsRefresh?.Invoke(m_Requests);
     }
 
+    // Refershes the friends list of user
     public void RefreshFriends()
     {
+        // clear previous list to not show old data
         m_Friends.Clear();
+        // get friends list
         IReadOnlyList<Relationship> friends = FriendsService.Instance.Friends;
 
+        // create PlayerProfiles for displaying
         foreach(Relationship friend in friends)
         {
             m_Friends.Add(new PlayerProfile(friend.Member.Profile.Name, friend.Member.Id));
         }
 
+        // show on UI
         OnFriendsRefresh?.Invoke(m_Friends);
     }
 
-
+    // friends list
     private IReadOnlyList<Relationship> friends;
+    // playerprofiles for friends and requests for displaying UI
     List<PlayerProfile> m_Requests = new List<PlayerProfile>();
     List<PlayerProfile> m_Friends = new List<PlayerProfile>();
 }
