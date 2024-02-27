@@ -1,0 +1,102 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7651838313973276776
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1031428903733010837}
+  - component: {fileID: 4496924817488256833}
+  - component: {fileID: 7393821257441908569}
+  - component: {fileID: 7073630200094953449}
+  - component: {fileID: 8228962995760092030}
+  m_Layer: 0
+  m_Name: TaskManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1031428903733010837
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7651838313973276776}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 121.33163, y: 201.56877, z: -0.13550407}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4496924817488256833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7651838313973276776}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc613e234f5f0f04cb389ffff408504e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7393821257441908569
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7651838313973276776}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2808742a61c7a3042a1ad819c3c3c433, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxTaskDisplay: 4
+  taskPrefab: {fileID: 7422696577987121108, guid: ebd48ffe12d1aaf4e8d245fff3b33d79, type: 3}
+  taskPanel: {fileID: 0}
+--- !u!114 &7073630200094953449
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7651838313973276776}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de291f077c356a54e94482ad01b5573e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  taskNameInputField: {fileID: 0}
+  taskDescriptionInputField: {fileID: 0}
+  categoryDropdown: {fileID: 0}
+  difficultySlider: {fileID: 0}
+  createButton: {fileID: 0}
+  editButton: {fileID: 0}
+  deleteButton: {fileID: 0}
+  creationPanel: {fileID: 0}
+  editPanel: {fileID: 0}
+  existingCustomTaskButton: {fileID: 3012048613870247459, guid: 1ca4d215ea96c5046a35128fb0b8b2c8, type: 3}
+--- !u!114 &8228962995760092030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7651838313973276776}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f803755f4dbdca84ba755733d0a6c988, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  categoryPanel: {fileID: 0}
+  taskCategoryButton: {fileID: 5826458050106275573, guid: f562d74845b9d4e40883c6d071608fe6, type: 3}
+  finalizeChoicesButton: {fileID: 0}
+  resetChoicesButton: {fileID: 0}

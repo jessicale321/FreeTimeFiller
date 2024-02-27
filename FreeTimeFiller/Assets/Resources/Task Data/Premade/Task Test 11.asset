@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9a101af5d56ee3b4ab558bb3de1b5968, type: 3}
-  m_Name: Task Test 3
+  m_Name: Task Test 11
   m_EditorClassIdentifier: 
-  taskName: Run a mile
-  category: 6
-  difficultyLevel: 4
+  taskName: Work on resume/portfolio
+  category: 5
+  difficultyLevel: 5
   refreshCountdown: 1
-  description: Run a mile long distance. Take your time!
+  description: Work on adding stuff to your resume and or portfolio

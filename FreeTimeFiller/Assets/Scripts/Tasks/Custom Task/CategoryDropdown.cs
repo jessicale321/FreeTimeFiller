@@ -8,9 +8,9 @@ public class CategoryDropdown : MonoBehaviour
 {
     [SerializeField] private TMP_Dropdown taskCategoryDropdown;
 
-    private Dictionary<TaskCategory, int> categoryToIndex = new Dictionary<TaskCategory, int>();
+    private Dictionary<TaskCategory, int> _categoryToIndex = new Dictionary<TaskCategory, int>();
 
-    private TaskCategory selectedCategory;
+    private TaskCategory _selectedCategory;
 
     private void OnEnable()
     {
@@ -33,7 +33,16 @@ public class CategoryDropdown : MonoBehaviour
     private void UpdateSelectedCategory(int index)
     {
         // The selected category is located at the index of the selected dropdown element
-        selectedCategory = categoryToIndex.ElementAt(index).Key;
+        _selectedCategory = _categoryToIndex.ElementAt(index).Key;
+    }
+
+    ///-///////////////////////////////////////////////////////////
+    /// Force the dropdown to select the TaskCategory passed in.
+    /// 
+    public void SetSelectedCategory(TaskCategory category)
+    {
+        _selectedCategory = category;
+        taskCategoryDropdown.value = _categoryToIndex[category];
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -53,9 +62,9 @@ public class CategoryDropdown : MonoBehaviour
             // Convert the task category name to a string
             options.Add(new TMP_Dropdown.OptionData(category.ToString(), null));
 
-            categoryToIndex.Add(category,index++);
+            _categoryToIndex.Add(category,index++);
         }
-
+        
         taskCategoryDropdown.AddOptions(options);
     }
 
@@ -64,6 +73,6 @@ public class CategoryDropdown : MonoBehaviour
     /// 
     public TaskCategory GetSelectedTaskCategory()
     {
-        return selectedCategory;
+        return _selectedCategory;
     }
 }
