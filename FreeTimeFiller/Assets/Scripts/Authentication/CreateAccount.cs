@@ -6,6 +6,7 @@ using Unity.Services.Authentication;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine.SceneManagement;
+using Unity.Services.CloudSave;
 
 public class TestScript : MonoBehaviour
 {
@@ -53,6 +54,7 @@ public class TestScript : MonoBehaviour
         {
             await AuthenticationService.Instance.SignUpWithUsernamePasswordAsync(username, password);
             await AuthenticationService.Instance.UpdatePlayerNameAsync(username);
+            SaveCredentials();
             Debug.Log("SignUp is successful.");
             SceneManager.LoadScene(1);
         }
@@ -73,5 +75,19 @@ public class TestScript : MonoBehaviour
             logMessage.text = "Please include 1 uppercase, 1 lowercase, 1 digit and 1 symbol in password with min 8 characters and max of 30";
             logMessage.gameObject.SetActive(true);
         }
+    }
+
+    /// <summary>
+    /// Saves the user's credentials when a new account is made. Will be displayed on Unity dashboard under their ID > Cloud Save > Data
+    /// </summary>
+    public async void SaveCredentials()
+    {
+        var credentials = new Dictionary<string, object>
+        {
+            {"username", registerUsername.text },
+            {"password", registerPassword.text }
+        };
+
+        await CloudSaveService.Instance.Data.Player.SaveAsync(credentials);
     }
 }
