@@ -86,7 +86,7 @@ public class FriendsManager : MonoBehaviour
     {
         // relationship will appear as "friendRequest" if other user has not sent a friend request
         // if other user already sent a friend request relationship will be "friend"
-        var relationship = await FriendsService.Instance.AddFriendAsync(memberID);
+        var relationship = await FriendsService.Instance.AddFriendByNameAsync(memberID);
 
         Debug.Log($"Friend request send to {memberID}. New relationship is {relationship.Type}");
     }
@@ -95,7 +95,7 @@ public class FriendsManager : MonoBehaviour
     // friends instead of appearing in friend requests
     public async void AcceptRequest(string memberID)
     {
-        Relationship relationship = await FriendsService.Instance.AddFriendAsync(memberID);
+        Relationship relationship = await FriendsService.Instance.AddFriendByNameAsync(memberID);
 
         Debug.Log($"Friend request accepted from {memberID}. New relationship status is {relationship.Type}");
 

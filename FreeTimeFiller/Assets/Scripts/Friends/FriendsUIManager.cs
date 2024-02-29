@@ -78,8 +78,8 @@ namespace UI
                 RequestObjects newRequestItem = Instantiate(requestPrefab, requestPrefab.transform.parent);
                 newRequestItem.gameObject.SetActive(true);
 
-                // set the data for the new request
-                newRequestItem.SetData(req.Id, OnRequestAccept);
+                // set the data for the new request CHANGED TO NAME
+                newRequestItem.SetData(req.Name, OnRequestAccept);
 
                 requestUIs.Add(newRequestItem);
             }
@@ -103,8 +103,8 @@ namespace UI
                 FriendObject newFriendItem = Instantiate(friendPrefab, friendPrefab.transform.parent) as FriendObject;
                 newFriendItem.gameObject.SetActive(true);
 
-                // set the data for the request
-                newFriendItem.SetData(fr.Id, OnDeleteFriend);
+                // set the data for the request CHANGED TO NAME
+                newFriendItem.SetData(fr.Id, fr.Name, OnDeleteFriend);
 
                 friendsUIs.Add(newFriendItem);
             }
