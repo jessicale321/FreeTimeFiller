@@ -67,6 +67,8 @@ public class CategoryManager : MonoBehaviour
         {
             // Spawn in a new button
             GameObject newButton =  Instantiate(taskCategoryButton, categoryPanel);
+            
+            Debug.Log($"Spawned in category button: {newButton}");
 
             CategoryButton categoryButtonComponent = newButton.GetComponent<CategoryButton>();
 

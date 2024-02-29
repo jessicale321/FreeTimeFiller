@@ -11,7 +11,7 @@ public class CategoryButton : MonoBehaviour
     private TaskCategory _displayedCategory;
 
     private Button _buttonComponent;
-    private TMP_Text _textBox;
+    [SerializeField] private TMP_Text textBox;
 
     [SerializeField] private GameObject selectedBox;
 
@@ -20,18 +20,17 @@ public class CategoryButton : MonoBehaviour
 
     private void Awake()
     {
-        // Get reference to text component
-        _textBox = GetComponentInChildren<TMP_Text>();
         _buttonComponent = GetComponent<Button>();
-    }
-
-    private void Start()
-    {
         selectedBox.SetActive(false);
     }
 
     private void OnEnable()
     {
+        if(_selected)
+            selectedBox.SetActive(true);
+        else
+            selectedBox.SetActive(false);
+        
         _buttonComponent.onClick.AddListener(ChooseTaskCategory);
     }
 
@@ -47,7 +46,7 @@ public class CategoryButton : MonoBehaviour
     {
         _displayedCategory = category;
 
-        _textBox.text = category.ToString();
+        textBox.text = category.ToString();
     }
 
     ///-///////////////////////////////////////////////////////////
