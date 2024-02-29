@@ -70,8 +70,8 @@ public class TestScript : MonoBehaviour
             // Notify the player with the proper error message
             Debug.LogException(ex);
 
-            logMessage.text = "Password does not match requirements. Insert at least 1 uppercase, " +
-                "1 lowercase, 1 digit and 1 symbol. With minimum 8 characters and a maximum of 30";
+            logMessage.text = "Please include 1 uppercase, 1 lowercase, 1 digit and 1 symbol in password with min 8 characters and max of 30";
+            logMessage.gameObject.SetActive(true);
         }
     }
 }

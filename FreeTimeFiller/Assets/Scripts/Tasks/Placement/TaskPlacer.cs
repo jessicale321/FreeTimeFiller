@@ -119,7 +119,7 @@ public class TaskPlacer : MonoBehaviour
                     data
                 };
             }
-            Debug.Log($"Task Manager has loaded in: {data.taskName}");
+            Debug.Log($"Task Placer can display: {data.taskName}");
         }
     }
     
@@ -159,19 +159,27 @@ public class TaskPlacer : MonoBehaviour
     ///-///////////////////////////////////////////////////////////
     /// When a task has been edited, check to see if its category is no longer apart of the user's chosen
     /// task categories. If it's not, then remove it from all placements.
-    public void ExistingTaskDataWasUpdated(TaskData taskDataEdited, List<TaskCategory> userChoseCategories)
+    public void ExistingTaskDataWasUpdated(TaskData taskDataEdited, List<TaskCategory> userChosenCategories)
     {
+        // If this edited TaskData was displayable...
         if (_activeTaskData.ContainsKey(taskDataEdited))
         {
             // Update Task button's information displayed
             _tasksDisplayed[taskDataEdited].UpdateTask(taskDataEdited, this);
             
             // If the task was in the pool, but its category was changed to a category that the user doesn't use. Remove it from placement.
-            if (!userChoseCategories.Contains(taskDataEdited.category))
+            if (!userChosenCategories.Contains(taskDataEdited.category))
             {
-                _allDisplayableTaskDataByCategory[taskDataEdited.category].Remove(taskDataEdited);
+                if(_allDisplayableTaskDataByCategory.ContainsKey(taskDataEdited.category))
+                    _allDisplayableTaskDataByCategory[taskDataEdited.category].Remove(taskDataEdited);
+
                 RemoveTaskFromDisplay(taskDataEdited);
             }
+        }
+        // If the edited TaskData was not previously displayable, try to add it
+        else if (userChosenCategories.Contains(taskDataEdited.category))
+        {
+            TryAddTask(taskDataEdited, userChosenCategories);
         }
     }
 
