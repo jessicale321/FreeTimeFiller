@@ -26,10 +26,7 @@ public class CategoryButton : MonoBehaviour
 
     private void OnEnable()
     {
-        if(_selected)
-            selectedBox.SetActive(true);
-        else
-            selectedBox.SetActive(false);
+        ReselectButtonOnEnable();
         
         _buttonComponent.onClick.AddListener(ChooseTaskCategory);
     }
@@ -66,16 +63,33 @@ public class CategoryButton : MonoBehaviour
     {
         if (!_selected)
         {
-            _selected = true;
-            selectedBox.SetActive(true);
-            _myCreator.AddClickedButton(this);
+            SelectButtonOnCommand();
         }
 
         else
         {
-            _selected = false;
-            selectedBox.SetActive(false);
-            _myCreator.RemoveClickedButton(this);
+            UnselectButtonOnCommand();
+        }
+    }
+
+    ///-///////////////////////////////////////////////////////////
+    /// When this button gameObject is enabled, check to see if the category this button
+    /// displays, is saved to the user's cloud. If so, then this button should become selected
+    /// to notify the user that they have it saved. This also prevents buttons from remaining unselected if the user
+    /// closes the category screen without saving.
+    /// 
+    private void ReselectButtonOnEnable()
+    {
+        // If this button doesn't have a reference to the CategoryManager, then return
+        if (_myCreator == null) return;
+
+        if (_myCreator.IsCategorySaved(_displayedCategory))
+        {
+            SelectButtonOnCommand();
+        }
+        else
+        {
+            UnselectButtonOnCommand();
         }
     }
 
@@ -88,6 +102,18 @@ public class CategoryButton : MonoBehaviour
         selectedBox.SetActive(true);
         _myCreator.AddClickedButton(this);
     }
+
+    ///-///////////////////////////////////////////////////////////
+    /// A button was clicked on after it was already selected, therefore the user
+    /// doesn't want this category anymore.
+    /// 
+    private void UnselectButtonOnCommand()
+    {
+        _selected = false;
+        selectedBox.SetActive(false);
+        _myCreator.RemoveClickedButton(this);
+    }
+    
 
     ///-///////////////////////////////////////////////////////////
     /// Return the task category that is displayed by this button

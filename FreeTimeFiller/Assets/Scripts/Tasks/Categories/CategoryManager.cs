@@ -29,6 +29,8 @@ public class CategoryManager : MonoBehaviour
     // The list of task categories that the user has picked out and saved
     public List<TaskCategory> ChosenTaskCategories { get; private set; }
 
+    private List<TaskCategory> _unsavedTaskCategories = new List<TaskCategory>();
+
     public event Action<List<TaskCategory>> TaskCategoriesChanged;
 
     private async void Awake()
@@ -87,7 +89,7 @@ public class CategoryManager : MonoBehaviour
     private void FinishChoosing()
     {
         // Only attempt to save the task categories if the list isn't empty
-        if (ChosenTaskCategories.Count > 0)
+        if (_unsavedTaskCategories.Count > 0)
         {
             Debug.Log("User finished picking categories!");
 
@@ -105,7 +107,9 @@ public class CategoryManager : MonoBehaviour
     /// 
     private async void SaveCategoriesToCloud()
     {
-        JsonUtility.ToJson(ChosenTaskCategories);
+        JsonUtility.ToJson(_unsavedTaskCategories);
+
+        ChosenTaskCategories = _unsavedTaskCategories;
 
         // Save list of custom tasks to the user's account
         await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
@@ -161,7 +165,6 @@ public class CategoryManager : MonoBehaviour
             {
                 Debug.Log("Could not find any saved Task Categories!");
             }
-            
             // Tell listeners that the user has changed their task category preferences
             TaskCategoriesChanged?.Invoke(ChosenTaskCategories);
         }
@@ -172,6 +175,7 @@ public class CategoryManager : MonoBehaviour
     /// 
     private async void ClearAllCategoryChoicesData()
     {
+        _unsavedTaskCategories.Clear();
         ChosenTaskCategories.Clear();
 
         // Overwrite the data with an empty string to "delete" it
@@ -191,9 +195,9 @@ public class CategoryManager : MonoBehaviour
         TaskCategory clickedCategory = categoryButtonClicked.GetTaskCategory();
 
         // Don't add duplicates
-        if (ChosenTaskCategories.Contains(clickedCategory)) return;
+        if (_unsavedTaskCategories.Contains(clickedCategory)) return;
 
-        ChosenTaskCategories.Add(clickedCategory);
+        _unsavedTaskCategories.Add(clickedCategory);
 
         Debug.Log($"User has chosen: {clickedCategory}");
     }
@@ -207,10 +211,18 @@ public class CategoryManager : MonoBehaviour
         TaskCategory clickedCategory = categoryButtonClicked.GetTaskCategory();
 
         // Don't remove a task category if it was never selected
-        if (!ChosenTaskCategories.Contains(clickedCategory)) return;
+        if (!_unsavedTaskCategories.Contains(clickedCategory)) return;
 
-        ChosenTaskCategories.Remove(clickedCategory);
+        _unsavedTaskCategories.Remove(clickedCategory);
 
         Debug.Log($"User has removed: {clickedCategory}");
+    }
+
+    ///-///////////////////////////////////////////////////////////
+    /// Return true if the user has saved the passed in category as one of their preferences. 
+    /// Otherwise, return false.
+    public bool IsCategorySaved(TaskCategory categoryToCheck)
+    {
+        return ChosenTaskCategories.Contains(categoryToCheck);
     }
 }
