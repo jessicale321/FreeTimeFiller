@@ -7,11 +7,11 @@ using UnityEngine.UI;
 
 public class CategoryButton : MonoBehaviour
 {
-    private TaskPool _myCreator;
+    private CategoryManager _myCreator;
     private TaskCategory _displayedCategory;
 
     private Button _buttonComponent;
-    private TMP_Text _textBox;
+    [SerializeField] private TMP_Text textBox;
 
     [SerializeField] private GameObject selectedBox;
 
@@ -20,18 +20,14 @@ public class CategoryButton : MonoBehaviour
 
     private void Awake()
     {
-        // Get reference to text component
-        _textBox = GetComponentInChildren<TMP_Text>();
         _buttonComponent = GetComponent<Button>();
-    }
-
-    private void Start()
-    {
         selectedBox.SetActive(false);
     }
 
     private void OnEnable()
     {
+        ReselectButtonOnEnable();
+        
         _buttonComponent.onClick.AddListener(ChooseTaskCategory);
     }
 
@@ -47,13 +43,13 @@ public class CategoryButton : MonoBehaviour
     {
         _displayedCategory = category;
 
-        _textBox.text = category.ToString();
+        textBox.text = category.ToString();
     }
 
     ///-///////////////////////////////////////////////////////////
     /// Set a reference to the TaskPool script
     /// 
-    public void SetCustomTaskCreator(TaskPool taskPoolCreator)
+    public void SetCustomTaskCreator(CategoryManager taskPoolCreator)
     {
         _myCreator = taskPoolCreator;
     }
@@ -67,16 +63,33 @@ public class CategoryButton : MonoBehaviour
     {
         if (!_selected)
         {
-            _selected = true;
-            selectedBox.SetActive(true);
-            _myCreator.AddClickedButton(this);
+            SelectButtonOnCommand();
         }
 
         else
         {
-            _selected = false;
-            selectedBox.SetActive(false);
-            _myCreator.RemoveClickedButton(this);
+            UnselectButtonOnCommand();
+        }
+    }
+
+    ///-///////////////////////////////////////////////////////////
+    /// When this button gameObject is enabled, check to see if the category this button
+    /// displays, is saved to the user's cloud. If so, then this button should become selected
+    /// to notify the user that they have it saved. This also prevents buttons from remaining unselected if the user
+    /// closes the category screen without saving.
+    /// 
+    private void ReselectButtonOnEnable()
+    {
+        // If this button doesn't have a reference to the CategoryManager, then return
+        if (_myCreator == null) return;
+
+        if (_myCreator.IsCategorySaved(_displayedCategory))
+        {
+            SelectButtonOnCommand();
+        }
+        else
+        {
+            UnselectButtonOnCommand();
         }
     }
 
@@ -89,6 +102,18 @@ public class CategoryButton : MonoBehaviour
         selectedBox.SetActive(true);
         _myCreator.AddClickedButton(this);
     }
+
+    ///-///////////////////////////////////////////////////////////
+    /// A button was clicked on after it was already selected, therefore the user
+    /// doesn't want this category anymore.
+    /// 
+    private void UnselectButtonOnCommand()
+    {
+        _selected = false;
+        selectedBox.SetActive(false);
+        _myCreator.RemoveClickedButton(this);
+    }
+    
 
     ///-///////////////////////////////////////////////////////////
     /// Return the task category that is displayed by this button
