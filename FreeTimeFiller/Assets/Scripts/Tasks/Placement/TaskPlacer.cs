@@ -170,9 +170,6 @@ public class TaskPlacer : MonoBehaviour
             // If the task was in the pool, but its category was changed to a category that the user doesn't use. Remove it from placement.
             if (!userChosenCategories.Contains(taskDataEdited.category))
             {
-                if(_allDisplayableTaskDataByCategory.ContainsKey(taskDataEdited.category))
-                    _allDisplayableTaskDataByCategory[taskDataEdited.category].Remove(taskDataEdited);
-
                 RemoveTaskFromDisplay(taskDataEdited);
             }
         }
@@ -186,8 +183,11 @@ public class TaskPlacer : MonoBehaviour
     ///-///////////////////////////////////////////////////////////
     /// Remove a TaskData from any future displaying on the screen.
     /// 
-    private void RemoveTaskFromDisplay(TaskData dataToRemove)
+    public void RemoveTaskFromDisplay(TaskData dataToRemove)
     {
+        if(_allDisplayableTaskDataByCategory.ContainsKey(dataToRemove.category))
+            _allDisplayableTaskDataByCategory[dataToRemove.category].Remove(dataToRemove);
+        
         _displayableTasks.Remove(dataToRemove);
         _allDisplayableTaskDataByName.Remove(dataToRemove);
         _activeTaskData.Remove(dataToRemove);

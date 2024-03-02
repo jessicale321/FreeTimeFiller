@@ -37,6 +37,7 @@ public class TaskManager : MonoBehaviour
         // When the custom task creator has finished loading or has created a task, add a custom task
         _customTaskCreator.CustomTaskWasCreatedWithoutLoad += AddOneCustomTask;
         _customTaskCreator.ExistingCustomTaskWasEdited += UpdateExistingTaskOnScreen;
+        _customTaskCreator.CustomTaskWasDeleted += DeleteExistingTaskOnScreen;
     }
 
     private void OnDisable()
@@ -88,8 +89,14 @@ public class TaskManager : MonoBehaviour
     /// one of its tasks (if its displayable) will need to change its text on screen and
     /// may get removed depending on the category.
     /// 
-    private void UpdateExistingTaskOnScreen(TaskData customTaskUpdated){
+    private void UpdateExistingTaskOnScreen(TaskData customTaskUpdated)
+    {
         _taskPlacer.ExistingTaskDataWasUpdated(customTaskUpdated, _taskPool.ChosenTaskCategories);
+    }
+
+    private void DeleteExistingTaskOnScreen(TaskData taskDeleted)
+    {
+        _taskPlacer.RemoveTaskFromDisplay(taskDeleted);
     }
 
     ///-///////////////////////////////////////////////////////////

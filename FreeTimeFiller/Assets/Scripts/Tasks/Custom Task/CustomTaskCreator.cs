@@ -98,9 +98,8 @@ public class CustomTaskCreator : MonoBehaviour
 
     private void Start()
     {
-        _currentMenuMode = MenuMode.Create;
-        
-        ChangeModeText();
+        SwitchToCreateMode();
+
     }
 
     #region Creation
@@ -189,10 +188,7 @@ public class CustomTaskCreator : MonoBehaviour
         newTaskData.description = taskDescriptionInputField.text;
         newTaskData.difficultyLevel = difficultySlider.GetDifficultyValue();
         newTaskData.category = categoryDropdown.GetSelectedTaskCategory();
-        
-        // Add the new task to the task pool
-        //CustomTaskWasCreatedWithoutLoad?.Invoke(newTaskData);
-        
+
         UpdateCustomTaskData(oldTaskName, newTaskData);
 
         // Update custom task button on screen to have a new name
@@ -334,6 +330,8 @@ public class CustomTaskCreator : MonoBehaviour
 
         // Convert the contents of the new TaskData to a json string
         string jsonText = JsonUtility.ToJson(_currentCustomTaskEditing.TaskData);
+        
+        RemoveCustomTaskButton(_currentCustomTaskEditing.TaskData);
 
         _customTasksAsJson.Remove(jsonText);
 
@@ -349,7 +347,6 @@ public class CustomTaskCreator : MonoBehaviour
 
         // Go back to creation mode after deleting
         ChangeModeOnButtonClick();
-
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -357,6 +354,12 @@ public class CustomTaskCreator : MonoBehaviour
     /// 
     private async void ClearAllCustomTaskData()
     {
+        // Remove all edit custom task buttons from edit screen
+        foreach (TaskData deletedCustomTask in LoadedCustomTasks)
+        {
+            RemoveCustomTaskButton(deletedCustomTask);
+        }
+        
         _customTasksAsJson.Clear();
         LoadedCustomTasks.Clear();
         
@@ -368,8 +371,25 @@ public class CustomTaskCreator : MonoBehaviour
         Debug.Log("Custom task data was reset!");
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// When a custom task has been deleted, remove its button from the edit mode screen.
+    /// 
+    private void RemoveCustomTaskButton(TaskData taskDataDeleted)
+    {
+        if (_loadedCustomTaskButtons.ContainsKey(taskDataDeleted))
+        {
+            // Destroy the button found
+            Destroy(_loadedCustomTaskButtons[taskDataDeleted].gameObject);
+            
+            _loadedCustomTaskButtons.Remove(taskDataDeleted);
+        }
+    }
+
     #endregion
 
+    ///-///////////////////////////////////////////////////////////
+    /// When clicking on the change mode button, switch to the other mode (Create -> Edit / Edit -> Create).
+    /// 
     private void ChangeModeOnButtonClick()
     {
         switch (_currentMenuMode)
@@ -380,16 +400,20 @@ public class CustomTaskCreator : MonoBehaviour
                 break;
             // Switch to create mode, if in edit mode
             case MenuMode.Edit:
-                SwitchToCreationMode();
+                SwitchToCreateMode();
                 break;
         }
-        ChangeModeText();
     }
 
-    private void SwitchToCreationMode()
+    ///-///////////////////////////////////////////////////////////
+    /// Manually switch to Create mode.
+    /// 
+    private void SwitchToCreateMode()
     {
         _currentMenuMode = MenuMode.Create;
 
+        _changeModeButtonText.text = "Edit Mode";
+        
         creationPanel.gameObject.SetActive(true);
         editPanel.gameObject.SetActive(false);
         // Don't allow user to delete a custom task in creation mode
@@ -399,10 +423,15 @@ public class CustomTaskCreator : MonoBehaviour
         taskDescriptionInputField.text = string.Empty;
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// Manually switch to Edit mode.
+    /// 
     private void SwitchToEditMode()
     {
         _currentMenuMode = MenuMode.Edit;
 
+        _changeModeButtonText.text = "Creation Mode";
+        
         creationPanel.gameObject.SetActive(false);
         editPanel.gameObject.SetActive(true);
 
@@ -413,21 +442,6 @@ public class CustomTaskCreator : MonoBehaviour
         }
     }
 
-    private void ChangeModeText()
-    {
-        switch (_currentMenuMode)
-        {
-            // Switch to edit mode, if in create mode
-            case MenuMode.Create:
-                _changeModeButtonText.text = "Edit Mode";
-                break;
-            // Switch to create mode, if in edit mode
-            case MenuMode.Edit:
-                _changeModeButtonText.text = "Creation Mode";
-                break;
-        }
-    }
-    
     private void SpawnCustomTaskButton(TaskData customTaskData)
     {
         if (!_loadedCustomTaskButtons.ContainsKey(customTaskData))
