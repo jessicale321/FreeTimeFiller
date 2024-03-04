@@ -14,14 +14,15 @@ namespace UI
 
         private string m_userID;
 
-        public void SetData(string userID, Action<string> OnDelete)
+        public void SetData(string userID, string name, Action<string> OnDelete)
         {
             // save information
             m_userID = userID;
 
             // display information
-            userIDDisplay.SetText(userID);
+            userIDDisplay.SetText(name);
 
+            // add callback
             deleteButton.onClick.AddListener(() =>
             {
                 OnDelete?.Invoke(m_userID);
