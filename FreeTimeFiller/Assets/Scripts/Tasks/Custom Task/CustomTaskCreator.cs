@@ -62,7 +62,6 @@ public class CustomTaskCreator : MonoBehaviour
     private Dictionary<TaskData, CustomTaskButton> _loadedCustomTaskButtons =
         new Dictionary<TaskData, CustomTaskButton>();
     
-    public event Action<List<TaskData>> AllCustomTaskWereLoaded; 
     public event Action<TaskData> CustomTaskWasCreatedWithoutLoad;
     public event Action<TaskData> ExistingCustomTaskWasEdited;
     public event Action<TaskData> CustomTaskWasDeleted;
@@ -243,7 +242,6 @@ public class CustomTaskCreator : MonoBehaviour
         {
             Debug.Log("Could not find any saved custom tasks.");
         }
-        AllCustomTaskWereLoaded?.Invoke(LoadedCustomTasks);
     }
 
     #endregion

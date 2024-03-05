@@ -57,11 +57,11 @@ public class TaskManager : MonoBehaviour
             // Load task categories from the user's account first
             _taskPool.LoadCategoriesFromCloud(),
             
-            // Loaded previously displayed tasks
-            _taskPlacer.LoadTaskPlacement(_taskPool.ChosenTaskCategories),
-
             // Load all custom tasks the user created in the past
-            _customTaskCreator.LoadAllCustomTasks()
+            _customTaskCreator.LoadAllCustomTasks(),
+            
+            // Loaded previously displayed tasks
+            _taskPlacer.LoadTaskPlacement(_taskPool.ChosenTaskCategories)
         };
 
         // Wait for task categories and custom tasks to be loaded in before placement
