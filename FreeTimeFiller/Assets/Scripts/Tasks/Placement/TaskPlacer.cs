@@ -396,18 +396,30 @@ public class TaskPlacer : MonoBehaviour
     
     public async Task LoadTaskPlacement(List<TaskCategory> userChosenCategories)
     {
-        _amountAllowedToDisplay = await LoadTPlacement<int>("tasksCurrentlyAllowedToDisplay");
-        
-        // Load all previously displayed tasks
-        List<TaskData> loadedTaskData = await LoadTPlacement<List<TaskData>>("tasksCurrentlyDisplayed");
-        
-        foreach (TaskData taskData in loadedTaskData)
+        try
         {
-            Debug.Log("Found a previously displayed task data: " + taskData.taskName);
+            // Load how many tasks the user was able to display
+            _amountAllowedToDisplay = await LoadData<int>("tasksCurrentlyAllowedToDisplay");
+
+            // Load all previously displayed tasks
+            List<TaskData> loadedTaskData = await LoadData<List<TaskData>>("tasksCurrentlyDisplayed");
+
+            if (loadedTaskData != null)
+            {
+                foreach (TaskData taskData in loadedTaskData)
+                {
+                    Debug.Log("Found a previously displayed task data: " + taskData.taskName);
+                    if(TryAddTask(taskData, userChosenCategories));
+                    SpawnTask(taskData);
+                }
+            }
             
-            if(TryAddTask(taskData, userChosenCategories));
-                SpawnTask(taskData);
         }
+        catch (Exception e)
+        {
+            Debug.LogError($"Error loading data: {e.Message}");
+        }
+        
 
         // var savedCurrentlyCompletedList = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string>
         // {
@@ -451,27 +463,28 @@ public class TaskPlacer : MonoBehaviour
     ///-///////////////////////////////////////////////////////////
     /// Loads and returns data that was saved with provided string. Otherwise, will display that the data couldn't be loaded/found.
     /// 
-    private async Task<T> LoadTPlacement<T>(string dataName)
+    private async Task<T> LoadData<T>(string dataName)
     {
-        var savedList = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string>
+        var savedData = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string>
         {
             dataName
         });
-        
-        if (savedList.TryGetValue(dataName, out var dataLoaded))
+
+        if (savedData.TryGetValue(dataName, out var dataLoaded))
         {
             return dataLoaded.Value.GetAs<T>();
         }
         else
         {
-            Debug.Log("Could not find any data associated with: " + dataName);
+            throw new Exception($"Data associated with '{dataName}' not found or retrieval failed.");
         }
-
-        return default;
     }
 
     public async void ClearTaskPlacement()
     {
+        await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
+            { "tasksCurrentlyAllowedToDisplay", ""} });
+        
         await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
             { "tasksCurrentlyDisplayed", ""} });
     }
