@@ -2,9 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Unity.Services.CloudSave;
 using UnityEngine;
 using Random = System.Random;
-using UserTask;
 
 public class TaskPlacer : MonoBehaviour
 {
@@ -37,7 +38,7 @@ public class TaskPlacer : MonoBehaviour
      */
     private Dictionary<TaskCategory, List<TaskData>> _allDisplayableTaskDataByCategory = new Dictionary<TaskCategory, List<TaskData>>();
 
-    private Dictionary<TaskData, Task> _tasksDisplayed = new Dictionary<TaskData, Task>();
+    private Dictionary<TaskData, UserTask.Task> _tasksDisplayed = new Dictionary<TaskData, UserTask.Task>();
 
     /* Task Data that are displayable
      * Key: The TaskData
@@ -51,7 +52,7 @@ public class TaskPlacer : MonoBehaviour
      */
     private Dictionary<TaskData, int> _taskDataOnHold = new Dictionary<TaskData, int>();
 
-    private List<Task> _completedTasks = new List<Task>();
+    private List<UserTask.Task> _completedTasks = new List<UserTask.Task>();
 
     // Task that will be instantiated and placed on the canvas
     [SerializeField] private GameObject taskPrefab;
@@ -89,10 +90,10 @@ public class TaskPlacer : MonoBehaviour
         }
     }
     
-    public void TryAddTask(TaskData data, List<TaskCategory> userChosenCategories)
+    public bool TryAddTask(TaskData data, List<TaskCategory> userChosenCategories)
     {
         // Filter out TaskData that the user doesn't prefer to see
-        if (!userChosenCategories.Contains(data.category)) return;
+        if (!userChosenCategories.Contains(data.category)) return false;
         
         // Don't add any duplicate task data
         if (_activeTaskData.TryAdd(data, false) == false || CheckTaskNameUniqueness(data))
@@ -120,7 +121,10 @@ public class TaskPlacer : MonoBehaviour
                 };
             }
             Debug.Log($"Task Placer can display: {data.taskName}");
+            return true;
         }
+        
+        return false;
     }
     
     ///-///////////////////////////////////////////////////////////
@@ -211,19 +215,24 @@ public class TaskPlacer : MonoBehaviour
             if (_amountCurrentlyDisplayed >= _amountAllowedToDisplay) return;
 
             TaskData inactiveData = GetInactiveTask();
-
-            if(inactiveData != null)
-            {
-                // Spawn a new task and give it data
-                GameObject newTask = Instantiate(taskPrefab, taskPanel);
-                Task taskComponent = newTask.GetComponent<Task>();
-                taskComponent.UpdateTask(inactiveData, this);
-                
-                _tasksDisplayed.Add(inactiveData, taskComponent);
-
-                _amountCurrentlyDisplayed++;
-            }
+            
+            SpawnTask(inactiveData);
         }
+    }
+
+    private void SpawnTask(TaskData data)
+    {
+        if (data == null) return;
+        
+        // Spawn a new task and give it data
+        GameObject newTask = Instantiate(taskPrefab, taskPanel);
+        UserTask.Task taskComponent = newTask.GetComponent<UserTask.Task>();
+        taskComponent.UpdateTask(data, this);
+                
+        _tasksDisplayed.Add(data, taskComponent);
+
+        _amountCurrentlyDisplayed++;
+        
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -270,7 +279,7 @@ public class TaskPlacer : MonoBehaviour
     /// have been completed, refresh all the tasks. TaskData that were completed are temporarily
     /// removed from the task pool.
     /// 
-    public void CompleteTask(Task task)
+    public void CompleteTask(UserTask.Task task)
     {
         _completedTasks.Add(task);
 
@@ -283,13 +292,16 @@ public class TaskPlacer : MonoBehaviour
         if (_completedTasks.Count >= _amountCurrentlyDisplayed)
         {
             RefreshAllTasks();
-        }  
+        }
+
+        // TODO: Move this someplace else!
+        SaveTaskPlacement();
     }
 
     ///-///////////////////////////////////////////////////////////
     /// Remove a task from the list of completed tasks
     /// 
-    public void UncompleteTask(Task task)
+    public void UncompleteTask(UserTask.Task task)
     {
         _completedTasks.Remove(task);
     }
@@ -320,7 +332,7 @@ public class TaskPlacer : MonoBehaviour
         }
 
         // Remove tasks on screen
-        foreach (Task task in _completedTasks)
+        foreach (UserTask.Task task in _completedTasks)
         {
             _tasksDisplayed.Remove(task.GetCurrentTaskData());
             Destroy(task.gameObject);
@@ -339,9 +351,126 @@ public class TaskPlacer : MonoBehaviour
         _completedTasks.Clear();
         
         // Randomize all elements in the task pool
-        ShuffleTaskList(_displayableTasks);
+        //ShuffleTaskList(_displayableTasks);
         
-        DisplayAllTasks();
+        // Display more tasks after refresh (if we can still display more tasks)
+        if(_amountAllowedToDisplay > 0) 
+            DisplayAllTasks();
+        else
+            Debug.Log("All task refreshes have been used up! User must wait 24 hours for a refresh to occur!");
+    }
+
+    #endregion
+
+    #region Saving
+    
+    ///-///////////////////////////////////////////////////////////
+    /// Save the custom task to the user's account.
+    /// Override an existing custom task if the user is editing one, otherwise save a new one.
+    /// 
+    private async void SaveTaskPlacement()
+    {
+        // Convert dictionary to a list of KeyValuePairs
+        List<KeyValuePair<TaskData, int>> dataList = _taskDataOnHold.ToList();
+
+        // Convert the list to a serializable data structure (e.g., a list of tuples)
+        List<Tuple<TaskData, int>> serializableList = new List<Tuple<TaskData, int>>();
+        foreach (var pair in dataList)
+        {
+            serializableList.Add(new Tuple<TaskData, int>(pair.Key, pair.Value));
+        }
+
+        await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
+            { "tasksCurrentlyAllowedToDisplay", _amountAllowedToDisplay} });
+        
+        // Save list of custom tasks to the user's account
+        await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
+            { "tasksCurrentlyDisplayed", _tasksDisplayed.Keys.ToList()} });
+        
+        await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
+            { "tasksCurrentlyMarkedOff", _completedTasks} });
+        
+        await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
+            { "tasksCurrentlyOnRefresh", serializableList} });
+    }
+
+    public async Task LoadTaskPlacement(List<TaskCategory> userChosenCategories)
+    {
+        // Load the list of custom tasks created by the user from their cloud account
+        var savedAllowedAmountToDisplay = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string>
+        {
+            "tasksCurrentlyAllowedToDisplay"
+        });
+
+        if (savedAllowedAmountToDisplay.TryGetValue("tasksCurrentlyAllowedToDisplay", out var amountAllowed))
+        {
+            _amountAllowedToDisplay = amountAllowed.Value.GetAs<int>();
+        }
+        
+        // Load the list of custom tasks created by the user from their cloud account
+        var savedCurrentlyDisplayedList = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string>
+        {
+            "tasksCurrentlyDisplayed"
+        });
+
+        // If there's data loaded, deserialize it back into a list of TaskData
+        if (savedCurrentlyDisplayedList.TryGetValue("tasksCurrentlyDisplayed", out var displayedData))
+        {
+            // Deserialize JSON string back into a list of TaskData
+            List<TaskData> loadedTaskData = displayedData.Value.GetAs<List<TaskData>>();
+
+            foreach (TaskData taskData in loadedTaskData)
+            {
+                Debug.Log("Found a previously displayed task data: " + taskData.taskName);
+                
+                if(TryAddTask(taskData, userChosenCategories));
+                    SpawnTask(taskData);
+            }
+        }
+        
+        // var savedCurrentlyCompletedList = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string>
+        // {
+        //     "tasksCurrentlyMarkedOff"
+        // });
+        //
+        // // If there's data loaded, deserialize it back into a list of TaskData
+        // if (savedCurrentlyCompletedList.TryGetValue("tasksCurrentlyMarkedOff", out var completedData))
+        // {
+        //     // Deserialize JSON string back into a list of TaskData
+        //     List<UserTask.Task> loadedCompletedTaskData = completedData.Value.GetAs<List<UserTask.Task>>();
+        //
+        //     foreach (UserTask.Task taskToComplete in loadedCompletedTaskData)
+        //     {
+        //         Debug.Log("Completed: " + taskToComplete);
+        //         CompleteTask(taskToComplete);
+        //     }
+        // }
+        
+        // var savedCurrentlyOnRefreshList = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string>
+        // {
+        //     "tasksCurrentlyOnRefresh"
+        // });
+        //
+        // // If there's data loaded, deserialize it back into a list of TaskData
+        // if (savedCurrentlyOnRefreshList.TryGetValue("tasksCurrentlyDisplayed", out var refreshData))
+        // {
+        //     // Deserialize JSON string back into a list of TaskData
+        //     List<Tuple<TaskData, int>> loadedRefreshData = refreshData.Value.GetAs<List<Tuple<TaskData, int>>>();
+        //
+        //     Debug.Log("Refresh list?: " + loadedRefreshData);
+        //     // Add the taskData, and how many refreshes that taskData has left to the takDataOnHold dictionary
+        //     foreach (var tuple in loadedRefreshData)
+        //     {
+        //         _taskDataOnHold.Add(tuple.Item1, tuple.Item2);
+        //         Debug.Log($"Loaded: {tuple.Item1.taskName} has {tuple.Item2} refreshes left!");
+        //     }
+        // }
+    }
+
+    public async void ClearTaskPlacement()
+    {
+        await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
+            { "tasksCurrentlyDisplayed", ""} });
     }
 
     #endregion

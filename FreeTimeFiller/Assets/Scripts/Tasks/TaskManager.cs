@@ -30,6 +30,8 @@ public class TaskManager : MonoBehaviour
         
         // TODO: REMOVE THIS SOON
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
+        
+        //_taskPlacer.ClearTaskPlacement();
     }
 
     private void OnEnable()
@@ -54,7 +56,11 @@ public class TaskManager : MonoBehaviour
         Task[] methodsToWait = {
             // Load task categories from the user's account first
             _taskPool.LoadCategoriesFromCloud(),
+            
+            // Loaded previously displayed tasks
+            _taskPlacer.LoadTaskPlacement(_taskPool.ChosenTaskCategories),
 
+            // Load all custom tasks the user created in the past
             _customTaskCreator.LoadAllCustomTasks()
         };
 
