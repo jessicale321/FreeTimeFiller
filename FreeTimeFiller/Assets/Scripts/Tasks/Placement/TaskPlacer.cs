@@ -393,41 +393,22 @@ public class TaskPlacer : MonoBehaviour
         await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
             { "tasksCurrentlyOnRefresh", serializableList} });
     }
-
+    
     public async Task LoadTaskPlacement(List<TaskCategory> userChosenCategories)
     {
-        // Load the list of custom tasks created by the user from their cloud account
-        var savedAllowedAmountToDisplay = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string>
-        {
-            "tasksCurrentlyAllowedToDisplay"
-        });
-
-        if (savedAllowedAmountToDisplay.TryGetValue("tasksCurrentlyAllowedToDisplay", out var amountAllowed))
-        {
-            _amountAllowedToDisplay = amountAllowed.Value.GetAs<int>();
-        }
+        _amountAllowedToDisplay = await LoadTPlacement<int>("tasksCurrentlyAllowedToDisplay");
         
-        // Load the list of custom tasks created by the user from their cloud account
-        var savedCurrentlyDisplayedList = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string>
-        {
-            "tasksCurrentlyDisplayed"
-        });
-
-        // If there's data loaded, deserialize it back into a list of TaskData
-        if (savedCurrentlyDisplayedList.TryGetValue("tasksCurrentlyDisplayed", out var displayedData))
-        {
-            // Deserialize JSON string back into a list of TaskData
-            List<TaskData> loadedTaskData = displayedData.Value.GetAs<List<TaskData>>();
-
-            foreach (TaskData taskData in loadedTaskData)
-            {
-                Debug.Log("Found a previously displayed task data: " + taskData.taskName);
-                
-                if(TryAddTask(taskData, userChosenCategories));
-                    SpawnTask(taskData);
-            }
-        }
+        // Load all previously displayed tasks
+        List<TaskData> loadedTaskData = await LoadTPlacement<List<TaskData>>("tasksCurrentlyDisplayed");
         
+        foreach (TaskData taskData in loadedTaskData)
+        {
+            Debug.Log("Found a previously displayed task data: " + taskData.taskName);
+            
+            if(TryAddTask(taskData, userChosenCategories));
+                SpawnTask(taskData);
+        }
+
         // var savedCurrentlyCompletedList = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string>
         // {
         //     "tasksCurrentlyMarkedOff"
@@ -445,7 +426,7 @@ public class TaskPlacer : MonoBehaviour
         //         CompleteTask(taskToComplete);
         //     }
         // }
-        
+
         // var savedCurrentlyOnRefreshList = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string>
         // {
         //     "tasksCurrentlyOnRefresh"
@@ -465,6 +446,28 @@ public class TaskPlacer : MonoBehaviour
         //         Debug.Log($"Loaded: {tuple.Item1.taskName} has {tuple.Item2} refreshes left!");
         //     }
         // }
+    }
+
+    ///-///////////////////////////////////////////////////////////
+    /// Loads and returns data that was saved with provided string. Otherwise, will display that the data couldn't be loaded/found.
+    /// 
+    private async Task<T> LoadTPlacement<T>(string dataName)
+    {
+        var savedList = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string>
+        {
+            dataName
+        });
+        
+        if (savedList.TryGetValue(dataName, out var dataLoaded))
+        {
+            return dataLoaded.Value.GetAs<T>();
+        }
+        else
+        {
+            Debug.Log("Could not find any data associated with: " + dataName);
+        }
+
+        return default;
     }
 
     public async void ClearTaskPlacement()
