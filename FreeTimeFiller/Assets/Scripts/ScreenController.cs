@@ -10,10 +10,12 @@ public class ScreenController : MonoBehaviour
     [SerializeField] private MenuScreen homeScreen;
     [SerializeField] private MenuScreen searchScreen;
     [SerializeField] private MenuScreen profileScreen;
+    [SerializeField] private MenuScreen categoryChoiceScreen;
 
-    [SerializeField] private Button homeButton;
-    [SerializeField] private Button searchButton;
-    [SerializeField] private Button profileButton;
+    [SerializeField] private Button homeBtn;
+    [SerializeField] private Button searchBtn;
+    [SerializeField] private Button profileBtn;
+    [SerializeField] private Button finishChoosingCategoriesBtn;
 
     private MenuScreen lastShownScreen;
 
@@ -24,9 +26,10 @@ public class ScreenController : MonoBehaviour
         homeScreen.Show();
         lastShownScreen = homeScreen;
 
-        homeButton.onClick.AddListener(OnHomeButtonClicked);
-        searchButton.onClick.AddListener(OnSearchButtonClicked);
-        profileButton.onClick.AddListener(OnProfileButtonClicked);
+        homeBtn.onClick.AddListener(OnHomeButtonClicked);
+        searchBtn.onClick.AddListener(OnSearchButtonClicked);
+        profileBtn.onClick.AddListener(OnProfileButtonClicked);
+        finishChoosingCategoriesBtn.onClick.AddListener(OnFinishChoosingCategoriesButtonClicked);
     }
 
     //-/////////////////////////////////////////////////////////////////////
@@ -54,5 +57,13 @@ public class ScreenController : MonoBehaviour
         lastShownScreen.Hide();
         profileScreen.Show();
         lastShownScreen = profileScreen;
+    }
+
+    //-/////////////////////////////////////////////////////////////////////
+    ///
+    public void OnFinishChoosingCategoriesButtonClicked()
+    {
+        categoryChoiceScreen.Hide();
+        lastShownScreen = categoryChoiceScreen;
     }
 }

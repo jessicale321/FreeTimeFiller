@@ -4595,7 +4595,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1689827263
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4873,6 +4873,14 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1825773299623807902, guid: 4aa6980bb11211448b166225185ab2b8, type: 3}
+      propertyPath: homeBtn
+      value: 
+      objectReference: {fileID: 1746644989}
+    - target: {fileID: 1825773299623807902, guid: 4aa6980bb11211448b166225185ab2b8, type: 3}
+      propertyPath: searchBtn
+      value: 
+      objectReference: {fileID: 982047896}
+    - target: {fileID: 1825773299623807902, guid: 4aa6980bb11211448b166225185ab2b8, type: 3}
       propertyPath: homeButton
       value: 
       objectReference: {fileID: 1746644989}
@@ -4880,6 +4888,10 @@ PrefabInstance:
       propertyPath: homeScreen
       value: 
       objectReference: {fileID: 1349388463}
+    - target: {fileID: 1825773299623807902, guid: 4aa6980bb11211448b166225185ab2b8, type: 3}
+      propertyPath: profileBtn
+      value: 
+      objectReference: {fileID: 385830631}
     - target: {fileID: 1825773299623807902, guid: 4aa6980bb11211448b166225185ab2b8, type: 3}
       propertyPath: searchButton
       value: 
@@ -4896,6 +4908,14 @@ PrefabInstance:
       propertyPath: profileScreen
       value: 
       objectReference: {fileID: 387769353}
+    - target: {fileID: 1825773299623807902, guid: 4aa6980bb11211448b166225185ab2b8, type: 3}
+      propertyPath: categoryChoiceScreen
+      value: 
+      objectReference: {fileID: 1689827264}
+    - target: {fileID: 1825773299623807902, guid: 4aa6980bb11211448b166225185ab2b8, type: 3}
+      propertyPath: finishChoosingCategoriesBtn
+      value: 
+      objectReference: {fileID: 1718560719}
     - target: {fileID: 7936532756307331096, guid: 4aa6980bb11211448b166225185ab2b8, type: 3}
       propertyPath: m_Name
       value: ScreenManager
