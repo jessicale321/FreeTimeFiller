@@ -31,27 +31,27 @@ namespace UserTask
 
         private bool _isCompleted = false;
 
+        private void Awake()
+        {
+            // Remove cross-out over this task
+            crossOutImage.SetActive(false);
+        }
+
         private void OnEnable()
         {
-            checkBoxButton.onClick.AddListener(Complete);
+            checkBoxButton.onClick.AddListener(CompleteOnClick);
         }
 
         private void OnDisable()
         {
-            checkBoxButton.onClick.RemoveListener(Complete);
-        }
-
-        private void Start()
-        {
-            // Remove cross-out over this task
-            crossOutImage.SetActive(false);
+            checkBoxButton.onClick.RemoveListener(CompleteOnClick);
         }
 
         ///-///////////////////////////////////////////////////////////
         /// Place a cross-out image on top of this task if the task hasn't been completed yet.
         /// If the task was already completed, then uncomplete the task.
         /// 
-        private void Complete()
+        private void CompleteOnClick()
         {
             if (_isCompleted)
             {
@@ -64,17 +64,24 @@ namespace UserTask
             }
             else
             {
-                Debug.Log($"{taskData.taskName} has been completed!");
-
-                // Show a cross-out over this task, and disable its checkbox button
-                crossOutImage.SetActive(true);
-
-
-                // Tell TaskManager that this task has been completed
-                _myTaskPlacer.CompleteTask(this);
-
-                _isCompleted = true;
+                CompleteOnCommand();
             }
+        }
+
+        ///-///////////////////////////////////////////////////////////
+        /// Complete this task, even if its check box wasn't clicked on.
+        /// 
+        public void CompleteOnCommand()
+        {
+            Debug.Log($"{taskData.taskName} has been completed!");
+
+            // Show a cross-out over this task, and disable its checkbox button
+            crossOutImage.SetActive(true);
+            
+            // Tell TaskManager that this task has been completed
+            _myTaskPlacer.CompleteTask(this);
+
+            _isCompleted = true;
         }
 
         ///-///////////////////////////////////////////////////////////

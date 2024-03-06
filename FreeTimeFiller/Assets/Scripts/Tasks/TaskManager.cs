@@ -60,8 +60,6 @@ public class TaskManager : MonoBehaviour
             // Load all custom tasks the user created in the past
             _customTaskCreator.LoadAllCustomTasks(),
             
-            // Loaded previously displayed tasks
-            _taskPlacer.LoadTaskPlacement(_taskPool.ChosenTaskCategories)
         };
 
         // Wait for task categories and custom tasks to be loaded in before placement
@@ -75,6 +73,9 @@ public class TaskManager : MonoBehaviour
 
         // Try to add all tasks (won't do anything if the user hasn't saved any task categories ever before)
         UpdatePremadeTasks(_taskPool.ChosenTaskCategories);
+        
+        // Loaded previously displayed tasks
+        await _taskPlacer.LoadTaskPlacement();
 
         // If task categories are changed again, add the tasks again
         _taskPool.TaskCategoriesChanged += UpdatePremadeTasks;
