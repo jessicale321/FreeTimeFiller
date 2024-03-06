@@ -49,7 +49,7 @@ namespace UserTask
 
         ///-///////////////////////////////////////////////////////////
         /// Place a cross-out image on top of this task if the task hasn't been completed yet.
-        /// If the task was already completed, then uncomplete the task.
+        /// If the task was already completed, then un-complete the task.
         /// 
         private void CompleteOnClick()
         {
@@ -64,16 +64,19 @@ namespace UserTask
             }
             else
             {
-                MarkOff();
-                // Tell TaskManager that this task has been completed
-                _myTaskPlacer.CompleteTask(this);
+                CompleteOnCommand();
             }
         }
 
-        public void MarkOff()
+        ///-///////////////////////////////////////////////////////////
+        /// Notify the TaskPlacer that this task has been completed, also place a cross-out image.
+        /// 
+        public void CompleteOnCommand()
         {
             // Show a cross-out over this task, and disable its checkbox button
             crossOutImage.SetActive(true);
+            
+            _myTaskPlacer.CompleteTask(this);
             
             _isCompleted = true;
         }

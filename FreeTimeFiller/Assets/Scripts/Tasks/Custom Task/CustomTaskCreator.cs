@@ -98,7 +98,6 @@ public class CustomTaskCreator : MonoBehaviour
     private void Start()
     {
         SwitchToCreateMode();
-
     }
 
     #region Creation

@@ -277,9 +277,9 @@ public class TaskPlacer : MonoBehaviour
         // Once the user has completed all tasks that could be displayed on screen...
         if (_completedTasks.Count >= _amountCurrentlyDisplayed)
         {
+            Debug.Log($"What was count: {_completedTasks.Count} vs. amount currently displayed? {_amountCurrentlyDisplayed}");
             RefreshAllTasks();
         }
-        
         SaveCompletedTasks();
     }
 
@@ -343,6 +343,7 @@ public class TaskPlacer : MonoBehaviour
         else
             Debug.Log("All task refreshes have been used up! User must wait 24 hours for a refresh to occur!");
         
+        SaveTaskPlacement();
         SaveCompletedTasks();
     }
 
@@ -417,18 +418,16 @@ public class TaskPlacer : MonoBehaviour
                 {
                     Debug.Log("Found a previously displayed task data: " + taskDataByName);
 
-                    TaskData taskData = _allDisplayableTaskDataByName[taskDataByName];
-                    
-                    // Place the task on screen
-                    SpawnTask(taskData);
-                    
-                    // If the previously loaded task was also completed, re-complete it
-                    if (loadedCompletedTasks.Contains(taskDataByName))
-                    {
-                        CompleteTask(_tasksDisplayed[taskData]);
-                        _tasksDisplayed[taskData].MarkOff();
-                    }
-                        
+                    SpawnTask(_allDisplayableTaskDataByName[taskDataByName]);
+                }
+            }
+
+            if (loadedCompletedTasks != null)
+            {
+                // Re-complete any tasks
+                foreach (string completedTaskData in loadedCompletedTasks)
+                {
+                    _tasksDisplayed[_allDisplayableTaskDataByName[completedTaskData]].CompleteOnCommand();
                 }
             }
         }
@@ -466,6 +465,9 @@ public class TaskPlacer : MonoBehaviour
         
         await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
             { "tasksCurrentlyDisplayed", ""} });
+        
+        await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
+            { "tasksCurrentlyMarkedOff", ""} });
     }
 
     #endregion
