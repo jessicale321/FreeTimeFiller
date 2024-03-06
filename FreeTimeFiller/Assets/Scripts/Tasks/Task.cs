@@ -64,23 +64,17 @@ namespace UserTask
             }
             else
             {
-                CompleteOnCommand();
+                MarkOff();
+                // Tell TaskManager that this task has been completed
+                _myTaskPlacer.CompleteTask(this);
             }
         }
 
-        ///-///////////////////////////////////////////////////////////
-        /// Complete this task, even if its check box wasn't clicked on.
-        /// 
-        public void CompleteOnCommand()
+        public void MarkOff()
         {
-            Debug.Log($"{taskData.taskName} has been completed!");
-
             // Show a cross-out over this task, and disable its checkbox button
             crossOutImage.SetActive(true);
             
-            // Tell TaskManager that this task has been completed
-            _myTaskPlacer.CompleteTask(this);
-
             _isCompleted = true;
         }
 

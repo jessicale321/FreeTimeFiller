@@ -57,11 +57,6 @@ public class TaskPlacer : MonoBehaviour
     // Task that will be instantiated and placed on the canvas
     [SerializeField] private GameObject taskPrefab;
     [SerializeField] private Transform taskPanel;
-    
-    private void Awake()
-    {
-        _amountAllowedToDisplay = maxTaskDisplay;
-    }
 
     #region Adding
 
@@ -285,7 +280,7 @@ public class TaskPlacer : MonoBehaviour
             RefreshAllTasks();
         }
         
-        SaveTaskPlacement();
+        SaveCompletedTasks();
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -295,7 +290,7 @@ public class TaskPlacer : MonoBehaviour
     {
         _completedTasks.Remove(task);
         
-        SaveTaskPlacement();
+        SaveCompletedTasks();
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -347,6 +342,8 @@ public class TaskPlacer : MonoBehaviour
             DisplayAllTasks();
         else
             Debug.Log("All task refreshes have been used up! User must wait 24 hours for a refresh to occur!");
+        
+        SaveCompletedTasks();
     }
 
     #endregion
@@ -354,8 +351,7 @@ public class TaskPlacer : MonoBehaviour
     #region Saving
     
     ///-///////////////////////////////////////////////////////////
-    /// Save the custom task to the user's account.
-    /// Override an existing custom task if the user is editing one, otherwise save a new one.
+    /// Save the tasks the user has displayed on screen.
     /// 
     private async void SaveTaskPlacement()
     {
@@ -370,30 +366,45 @@ public class TaskPlacer : MonoBehaviour
         }
 
         List<string> allDisplayedTasksByName = _tasksDisplayed.Keys.Select(key => key.taskName).ToList();
-
-        List<string> allCompletedTasksByName =
-            _completedTasks.Select(task => task.GetCurrentTaskData().taskName).ToList();
-
-        await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
-            { "tasksCurrentlyAllowedToDisplay", _amountAllowedToDisplay} });
         
         // Save list of custom tasks (by task name) to the user's account
         await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
             { "tasksCurrentlyDisplayed", allDisplayedTasksByName} });
-        
-        await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
-            { "tasksCurrentlyMarkedOff", allCompletedTasksByName} });
-        
+
         await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
             { "tasksCurrentlyOnRefresh", serializableList} });
     }
+
+    ///-///////////////////////////////////////////////////////////
+    /// Save all the tasks the user has completed so far.
+    /// 
+    private async void SaveCompletedTasks()
+    {
+        if (_amountAllowedToDisplay < 0)
+            _amountAllowedToDisplay = 0;
+        
+        // Save how many tasks the user was able to display (we convert to string, because integers cannot be null)
+        await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
+            { "tasksCurrentlyAllowedToDisplay", _amountAllowedToDisplay.ToString()} });
+        
+        List<string> allCompletedTasksByName =
+            _completedTasks.Select(task => task.GetCurrentTaskData().taskName).ToList();
+        
+        await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
+            { "tasksCurrentlyMarkedOff", allCompletedTasksByName} });
+    }
     
-    public async Task LoadTaskPlacement()
+    public async void LoadTaskPlacement()
     {
         try
         {
-            // Load how many tasks the user was able to display
-            _amountAllowedToDisplay = await LoadData<int>("tasksCurrentlyAllowedToDisplay");
+            string loadedAmountToDisplay = await LoadData<string>("tasksCurrentlyAllowedToDisplay");
+            
+            // Load how many tasks the user was able to display (string to int)
+            if (!string.IsNullOrEmpty(loadedAmountToDisplay))
+                _amountAllowedToDisplay = int.Parse(loadedAmountToDisplay);
+            else
+                _amountAllowedToDisplay = maxTaskDisplay;
 
             List<string> loadedCompletedTasks = await LoadData<List<string>>("tasksCurrentlyMarkedOff");
             
@@ -412,8 +423,12 @@ public class TaskPlacer : MonoBehaviour
                     SpawnTask(taskData);
                     
                     // If the previously loaded task was also completed, re-complete it
-                    if(loadedCompletedTasks.Contains(taskDataByName))
-                        _tasksDisplayed[taskData].CompleteOnCommand();
+                    if (loadedCompletedTasks.Contains(taskDataByName))
+                    {
+                        CompleteTask(_tasksDisplayed[taskData]);
+                        _tasksDisplayed[taskData].MarkOff();
+                    }
+                        
                 }
             }
         }
