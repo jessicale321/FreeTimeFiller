@@ -14,6 +14,7 @@ public class TaskManager : MonoBehaviour
     private CategoryManager _taskPool;
     private TaskPlacer _taskPlacer;
     private CustomTaskCreator _customTaskCreator;
+    private TaskRefreshWithTime _taskRefreshWithTime;
     
     private async void Awake()
     {
@@ -23,6 +24,7 @@ public class TaskManager : MonoBehaviour
         _taskPool = GetComponent<CategoryManager>();
         _taskPlacer = GetComponent<TaskPlacer>();
         _customTaskCreator = GetComponent<CustomTaskCreator>();
+        _taskRefreshWithTime = GetComponent<TaskRefreshWithTime>();
         
         // When the user is signed in, begin the task placement process
         await UnityServices.InitializeAsync();
@@ -31,7 +33,7 @@ public class TaskManager : MonoBehaviour
         // TODO: REMOVE THIS SOON
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
         
-        //_taskPlacer.ClearTaskPlacement();
+        _taskPlacer.ClearTaskPlacement();
     }
 
     private void OnEnable()
@@ -46,6 +48,7 @@ public class TaskManager : MonoBehaviour
     {
         _customTaskCreator.CustomTaskWasCreatedWithoutLoad -= AddOneCustomTask;
         _taskPool.TaskCategoriesChanged -= UpdatePremadeTasks;
+        _taskRefreshWithTime.RefreshTimerOccurred -= NotifyTaskPlacerOfRefresh;
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -75,6 +78,10 @@ public class TaskManager : MonoBehaviour
         
         // Loaded previously displayed tasks
         _taskPlacer.LoadTaskPlacement();
+
+        _taskRefreshWithTime.RefreshTimerOccurred += NotifyTaskPlacerOfRefresh;
+
+        _taskRefreshWithTime.CheckElaspedTimeOnLogin();
 
         // If task categories are changed again, add the tasks again
         _taskPool.TaskCategoriesChanged += UpdatePremadeTasks;
@@ -116,6 +123,10 @@ public class TaskManager : MonoBehaviour
 
         // When task categories have changed, 
         _taskPlacer.EditPlacementOnCategoryChange(chosenTaskCategories);
+    } 
+
+    private void NotifyTaskPlacerOfRefresh()
+    {
+        //_taskPlacer.RefreshAllTasks();
     }
-    
 }

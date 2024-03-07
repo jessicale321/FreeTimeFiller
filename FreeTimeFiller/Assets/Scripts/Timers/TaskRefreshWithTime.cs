@@ -7,21 +7,23 @@ using UnityEngine;
 
 public class TaskRefreshWithTime: MonoBehaviour
 {
-    private DateTime _lastLoginTime;
+    private DateTime _lastTimeAppWasOpened;
 
-    private bool _signedIn;
+    private DateTime _lastTimeRefreshedWhileOpen;
 
-    private async void Awake()
+    public Action RefreshTimerOccurred;
+
+    private void Awake()
     {
-        _signedIn = false;
-
-        // When the user is signed in, begin the task placement process
-        await UnityServices.InitializeAsync();
-
-        AuthenticationService.Instance.SignedIn += CheckElaspedTimeOnLogin;
-
-        _signedIn = true;
+        _lastTimeRefreshedWhileOpen = DateTime.Now;
     }
+
+    //private void OnApplicationFocus(bool focus)
+    //{
+    //    // Save login time when the app regains focus
+    //    if(focus)
+    //        SaveLoginTime();
+    //}
 
     private void OnApplicationQuit()
     {
@@ -32,18 +34,22 @@ public class TaskRefreshWithTime: MonoBehaviour
     private void Update()
     {
         // Check every frame if the time should refresh
-        if(_signedIn && DateTime.Now.Minute != _lastLoginTime.Minute)
+        if(DateTime.Now.Minute != _lastTimeRefreshedWhileOpen.Minute)
         {
-            Debug.Log("App is open and a refresh has occurred!");
-            SaveLoginTime();
+            _lastTimeRefreshedWhileOpen = DateTime.Now;
+            RefreshTimerOccurred?.Invoke();
+            Debug.Log("App is open and a refresh has occurred!");     
         }
     }
 
-    private void CheckElaspedTimeOnLogin()
+    public async void CheckElaspedTimeOnLogin()
     {
-        if (DateTime.Now.Minute != _lastLoginTime.Minute)
+        _lastTimeAppWasOpened = await DataManager.LoadData<DateTime>("lastTimeAppWasOpened");
+
+        if (DateTime.Now.Minute != _lastTimeAppWasOpened.Minute)
         {
             Debug.Log("Minute has changed since last login! Refresh!");
+            RefreshTimerOccurred?.Invoke();
         }
         else
         {
@@ -57,11 +63,8 @@ public class TaskRefreshWithTime: MonoBehaviour
     private async void SaveLoginTime()
     {
         // Save login time when opening the app
-        _lastLoginTime = DateTime.Now;
+        _lastTimeAppWasOpened = DateTime.Now;
 
-        await DataManager.SaveData("lastLoginTime", _lastLoginTime);
+        await DataManager.SaveData("lastTimeAppWasOpened", _lastTimeAppWasOpened);
     }
-
-    // Save login time in start/ on quit
-    // when they login, check if the datetime.now day is not the same as the last time logged time
 }
