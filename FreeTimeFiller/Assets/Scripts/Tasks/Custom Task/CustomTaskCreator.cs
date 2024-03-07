@@ -202,23 +202,18 @@ public class CustomTaskCreator : MonoBehaviour
     /// 
     public async Task LoadAllCustomTasks()
     {
-        // Load the list of custom tasks created by the user from their cloud account
-        var savedList = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string>
-        {
-            "customTasks"
-        });
+        List<string> savedCustomTasks = await DataManager.LoadData<List<string>>("customTasks");
         
-        // If there's data loaded, deserialize it back into a list of strings
-        if (savedList.TryGetValue("customTasks", out var data))
+        if(savedCustomTasks != null)
         {
-            // Don't allow duplicates to load in
-            if (_customTasksAsJson.Contains(data.Value.GetAsString())) return;
-            
-            List<string> stringList = data.Value.GetAs<List<string>>();
-            
-            // Append the loaded list to the existing list
-            if(stringList != null)
-                _customTasksAsJson.AddRange(stringList);
+            foreach(string customTask in savedCustomTasks)
+            {
+                // Don't allow duplicates to load in
+                if (_customTasksAsJson.Contains(customTask)) return;
+
+                else
+                    _customTasksAsJson.Add(customTask);
+            }
         }
 
         if (_customTasksAsJson.Count > 0)
@@ -263,8 +258,7 @@ public class CustomTaskCreator : MonoBehaviour
         LoadedCustomTasks.Add(taskDataToSave);
 
         // Save list of custom tasks to the user's account
-        await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
-            { "customTasks", _customTasksAsJson} });
+        await DataManager.SaveData("customTasks", _customTasksAsJson);
     }
     
     private async void UpdateCustomTaskData(string oldTaskName, TaskData newTaskData)
@@ -284,11 +278,8 @@ public class CustomTaskCreator : MonoBehaviour
             Debug.Log($"Updated custom task data: {oldTaskName} to {newTaskData.taskName}");
 
             // Save the updated custom tasks list to Unity Cloud
-            await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object>
-            {
-                { "customTasks", _customTasksAsJson }
-            });
-            
+            await DataManager.SaveData("customTasks", _customTasksAsJson);
+
             LoadedCustomTasks.Add(newTaskData);
             
             // Tell all listeners that the contents of an existing custom task has been edited
@@ -335,9 +326,7 @@ public class CustomTaskCreator : MonoBehaviour
         LoadedCustomTasks.Remove(_currentCustomTaskEditing.TaskData);
 
         // Save custom tasks that no longer contains the deleted task
-        await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
-            { "customTasks", _customTasksAsJson }
-        });
+        await DataManager.SaveData("customTasks", _customTasksAsJson);
 
         // Tell all listeners that a TaskData was deleted
         CustomTaskWasDeleted?.Invoke(_currentCustomTaskEditing.TaskData);
@@ -359,11 +348,9 @@ public class CustomTaskCreator : MonoBehaviour
         
         _customTasksAsJson.Clear();
         LoadedCustomTasks.Clear();
-        
+
         // Overwrite the data with an empty string to "delete" it
-        await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
-            { "customTasks", "" }
-        });
+        await DataManager.DeleteAllDataByName("customTasks");
 
         Debug.Log("Custom task data was reset!");
     }

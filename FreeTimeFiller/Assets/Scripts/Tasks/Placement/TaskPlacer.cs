@@ -367,13 +367,9 @@ public class TaskPlacer : MonoBehaviour
         }
 
         List<string> allDisplayedTasksByName = _tasksDisplayed.Keys.Select(key => key.taskName).ToList();
-        
-        // Save list of custom tasks (by task name) to the user's account
-        await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
-            { "tasksCurrentlyDisplayed", allDisplayedTasksByName} });
 
-        await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
-            { "tasksCurrentlyOnRefresh", serializableList} });
+        await DataManager.SaveData("tasksCurrentlyDisplayed", allDisplayedTasksByName);
+        await DataManager.SaveData("tasksCurrentlyOnRefresh", serializableList);
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -384,22 +380,18 @@ public class TaskPlacer : MonoBehaviour
         if (_amountAllowedToDisplay < 0)
             _amountAllowedToDisplay = 0;
         
-        // Save how many tasks the user was able to display (we convert to string, because integers cannot be null)
-        await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
-            { "tasksCurrentlyAllowedToDisplay", _amountAllowedToDisplay.ToString()} });
-        
         List<string> allCompletedTasksByName =
             _completedTasks.Select(task => task.GetCurrentTaskData().taskName).ToList();
-        
-        await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
-            { "tasksCurrentlyMarkedOff", allCompletedTasksByName} });
+
+        await DataManager.SaveData("tasksCurrentlyAllowedToDisplay", _amountAllowedToDisplay.ToString());
+        await DataManager.SaveData("tasksCurrentlyMarkedOff", allCompletedTasksByName);
     }
     
     public async void LoadTaskPlacement()
     {
         try
         {
-            string loadedAmountToDisplay = await LoadData<string>("tasksCurrentlyAllowedToDisplay");
+            string loadedAmountToDisplay = await DataManager.LoadData<string>("tasksCurrentlyAllowedToDisplay");//await LoadData<string>("tasksCurrentlyAllowedToDisplay");
             
             // Load how many tasks the user was able to display (string to int)
             if (!string.IsNullOrEmpty(loadedAmountToDisplay))
@@ -407,11 +399,12 @@ public class TaskPlacer : MonoBehaviour
             else
                 _amountAllowedToDisplay = maxTaskDisplay;
 
-            List<string> loadedCompletedTasks = await LoadData<List<string>>("tasksCurrentlyMarkedOff");
-            
+            // Load all previously completed tasks (by name)
+            List<string> loadedCompletedTasks = await DataManager.LoadData<List<string>>("tasksCurrentlyMarkedOff");
+
             // Load all previously displayed tasks (by name)
-            List<string> loadedDisplayedTasks = await LoadData<List<string>>("tasksCurrentlyDisplayed");
-            
+            List<string> loadedDisplayedTasks = await DataManager.LoadData<List<string>>("tasksCurrentlyDisplayed");
+
             if (loadedDisplayedTasks != null)
             {
                 foreach (string taskDataByName in loadedDisplayedTasks)
@@ -438,36 +431,11 @@ public class TaskPlacer : MonoBehaviour
         DisplayAllTasks();
     }
 
-    ///-///////////////////////////////////////////////////////////
-    /// Loads and returns data that was saved with provided string. Otherwise, will display that the data couldn't be loaded/found.
-    /// 
-    private async Task<T> LoadData<T>(string dataName)
-    {
-        var savedData = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string>
-        {
-            dataName
-        });
-
-        if (savedData.TryGetValue(dataName, out var dataLoaded))
-        {
-            return dataLoaded.Value.GetAs<T>();
-        }
-        else
-        {
-            throw new Exception($"Data associated with '{dataName}' not found or retrieval failed.");
-        }
-    }
-
     public async void ClearTaskPlacement()
     {
-        await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
-            { "tasksCurrentlyAllowedToDisplay", ""} });
-        
-        await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
-            { "tasksCurrentlyDisplayed", ""} });
-        
-        await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
-            { "tasksCurrentlyMarkedOff", ""} });
+        await DataManager.DeleteAllDataByName("tasksCurrentlyAllowedToDisplay");
+        await DataManager.DeleteAllDataByName("tasksCurrentlyDisplayed");
+        await DataManager.DeleteAllDataByName("tasksCurrentlyMarkedOff");
     }
 
     #endregion
