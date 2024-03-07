@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9a101af5d56ee3b4ab558bb3de1b5968, type: 3}
-  m_Name: hey delete me  Custom
+  m_Name: test 15 Custom
   m_EditorClassIdentifier: 
-  taskName: 'hey delete me '
+  taskName: test 15
   category: 5
-  difficultyLevel: 1
+  difficultyLevel: 4
   refreshCountdown: 1
-  description: please delete me por favor
+  description: knas

@@ -152,8 +152,11 @@ public class TaskPlacer : MonoBehaviour
         // If this edited TaskData was displayable...
         if (_activeTaskData.ContainsKey(taskDataEdited))
         {
-            // Update Task button's information displayed
-            _tasksDisplayed[taskDataEdited].UpdateTask(taskDataEdited, this);
+            // Update Task button's information displayed (if it's currently displayed)
+            if(_tasksDisplayed.ContainsKey(taskDataEdited))
+            {
+                _tasksDisplayed[taskDataEdited].UpdateTask(taskDataEdited, this);
+            }
             
             // If the task was in the pool, but its category was changed to a category that the user doesn't use. Remove it from placement.
             if (!userChosenCategories.Contains(taskDataEdited.category))
@@ -166,6 +169,10 @@ public class TaskPlacer : MonoBehaviour
         {
             TryAddTask(taskDataEdited, userChosenCategories);
         }
+
+        // Task name could have been edited, therefore we must save again
+        SaveTaskPlacement();
+        SaveCompletedTasks();
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -173,6 +180,7 @@ public class TaskPlacer : MonoBehaviour
     /// 
     public void RemoveTaskFromDisplay(TaskData dataToRemove)
     {
+        Debug.Log("Removed From Display: " + dataToRemove.taskName);
         if(_allDisplayableTaskDataByCategory.ContainsKey(dataToRemove.category))
             _allDisplayableTaskDataByCategory[dataToRemove.category].Remove(dataToRemove);
         
