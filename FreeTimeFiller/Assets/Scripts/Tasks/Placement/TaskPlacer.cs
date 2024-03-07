@@ -38,6 +38,7 @@ public class TaskPlacer : MonoBehaviour
      */
     private Dictionary<TaskCategory, List<TaskData>> _allDisplayableTaskDataByCategory = new Dictionary<TaskCategory, List<TaskData>>();
 
+    
     private Dictionary<TaskData, UserTask.Task> _tasksDisplayed = new Dictionary<TaskData, UserTask.Task>();
 
     /* Task Data that are displayable
@@ -53,9 +54,6 @@ public class TaskPlacer : MonoBehaviour
     private Dictionary<TaskData, int> _taskDataOnHold = new Dictionary<TaskData, int>();
 
     private List<UserTask.Task> _completedTasks = new List<UserTask.Task>();
-
-    // Tasks that are on display, but will be deleted due to edits
-    private List<TaskData> toBeRemovedTasks = new List<TaskData>();
 
     // Task that will be instantiated and placed on the canvas
     [SerializeField] private GameObject taskPrefab;
@@ -80,20 +78,9 @@ public class TaskPlacer : MonoBehaviour
     public bool TryAddTask(TaskData data, List<TaskCategory> userChosenCategories)
     {
         // Filter out TaskData that the user doesn't prefer to see
-        if (!userChosenCategories.Contains(data.category))
-        {
-            // If the task is/was on display, allow it to be added and it will be removed soon
-            if(_tasksDisplayed.ContainsKey(data))
-            {
-                toBeRemovedTasks.Add(data);
-            }
-            else
-            {
-                return false;
-            }
-        }
-        
-        // Don't add any duplicate task data
+        if (!userChosenCategories.Contains(data.category)) return false;
+
+            // Don't add any duplicate task data
         if (_activeTaskData.TryAdd(data, false) == false || CheckTaskNameUniqueness(data))
         {
             Debug.Log($"{data.taskName} is a duplicate in the taskData list!");
@@ -121,7 +108,6 @@ public class TaskPlacer : MonoBehaviour
             Debug.Log($"Task Placer can display: {data.taskName}");
             return true;
         }
-        
         return false;
     }
     
@@ -139,7 +125,7 @@ public class TaskPlacer : MonoBehaviour
     /// When TaskCategory preferences have changed, check if any displayable tasks need to be removed. The user 
     /// may have decided they don't want to see certain tasks anymore.
     /// 
-    public void RemoveTaskDataByCategories(List<TaskCategory> userChosenCategories)
+    public void EditPlacementOnCategoryChange(List<TaskCategory> userChosenCategories)
     {
         foreach (TaskCategory category in _allDisplayableTaskDataByCategory.Keys)
         {
@@ -154,12 +140,12 @@ public class TaskPlacer : MonoBehaviour
                 foreach (TaskData dataFromRemovedCategory in taskDataToRemove)
                 {
                     RemoveTaskFromDisplay(dataFromRemovedCategory);
+
                     Debug.Log($"Removed by category: {dataFromRemovedCategory.taskName}");
                 }
-
                 _allDisplayableTaskDataByCategory[category].Clear();
             }
-        } 
+        }
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -187,10 +173,6 @@ public class TaskPlacer : MonoBehaviour
         {
             TryAddTask(taskDataEdited, userChosenCategories);
         }
-
-        // Task name could have been edited, therefore we must save again
-        SaveTaskPlacement();
-        SaveCompletedTasks();
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -198,14 +180,35 @@ public class TaskPlacer : MonoBehaviour
     /// 
     public void RemoveTaskFromDisplay(TaskData dataToRemove)
     {
-        Debug.Log("Removed From Display: " + dataToRemove.taskName);
         if(_allDisplayableTaskDataByCategory.ContainsKey(dataToRemove.category))
             _allDisplayableTaskDataByCategory[dataToRemove.category].Remove(dataToRemove);
+
+        if (_tasksDisplayed.ContainsKey(dataToRemove))
+        {
+            Destroy(_tasksDisplayed[dataToRemove].gameObject);
+            _tasksDisplayed.Remove(dataToRemove);
+        }
         
         _displayableTasks.Remove(dataToRemove);
         _allDisplayableTaskDataByName.Remove(dataToRemove.taskName);
         _activeTaskData.Remove(dataToRemove);
         _taskDataOnHold.Remove(dataToRemove);
+        
+        _amountCurrentlyDisplayed--;
+        
+        ReplaceDeletedTask();
+        
+        // Task name could have been edited, therefore we must save again
+        SaveTaskPlacement();
+        SaveCompletedTasks();
+    }
+    
+    private void ReplaceDeletedTask()
+    {
+        // TODO: Check if the replaced task was completed, if so then un-complete it!
+        TaskData newTaskData = GetInactiveTask();
+
+        SpawnTask(newTaskData);
     }
 
     #region Displaying
@@ -221,20 +224,21 @@ public class TaskPlacer : MonoBehaviour
         
         for(int i = 0; i < _amountAllowedToDisplay; i++)
         {
-            // Don't allow more tasks to be displayed, if we reached the current max amount
-            if (_amountCurrentlyDisplayed >= _amountAllowedToDisplay) return;
-
             TaskData inactiveData = GetInactiveTask();
             
             SpawnTask(inactiveData);
         }
-        
         SaveTaskPlacement();
     }
 
     private void SpawnTask(TaskData data)
     {
         if (data == null) return;
+        
+        // Don't allow more tasks to be displayed, if we reached the current max amount
+        if (_amountCurrentlyDisplayed >= _amountAllowedToDisplay) return;
+        
+        _activeTaskData[data] = true;
         
         // Spawn a new task and give it data
         GameObject newTask = Instantiate(taskPrefab, taskPanel);
@@ -244,7 +248,6 @@ public class TaskPlacer : MonoBehaviour
         _tasksDisplayed.TryAdd(data, taskComponent);
 
         _amountCurrentlyDisplayed++;
-        
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -271,12 +274,7 @@ public class TaskPlacer : MonoBehaviour
     {
         foreach(TaskData data in _displayableTasks)
         {
-            if (_activeTaskData[data] == false)
-            {
-                _activeTaskData[data] = true;
-
-                return data;
-            }
+            if (_activeTaskData[data] == false) return data;
         }
         Debug.Log("Could not find a non-active task data!");
         return null;
@@ -347,15 +345,12 @@ public class TaskPlacer : MonoBehaviour
         // Remove tasks on screen
         foreach (UserTask.Task task in _completedTasks)
         {
-            _tasksDisplayed.Remove(task.GetCurrentTaskData());
+            TaskData dataOfCompletedTask = task.GetCurrentTaskData();
+
+            _tasksDisplayed.Remove(dataOfCompletedTask);
             Destroy(task.gameObject);
         }
 
-        //foreach (TaskData dataDueForRemoving in toBeRemovedTasks)
-        //{
-
-        //}
-        
         Debug.Log("All displayed tasks have been completed!");
 
         // All tasks on screen were deleted, so reset this back to 0
@@ -442,7 +437,9 @@ public class TaskPlacer : MonoBehaviour
                 {
                     Debug.Log("Found a previously displayed task data: " + taskDataByName);
 
-                    SpawnTask(_allDisplayableTaskDataByName[taskDataByName]);
+                    TaskData taskData = _allDisplayableTaskDataByName[taskDataByName];
+                    
+                    SpawnTask(taskData);
                 }
             }
 
@@ -461,6 +458,7 @@ public class TaskPlacer : MonoBehaviour
         }
         DisplayAllTasks();
     }
+    
 
     public async void ClearTaskPlacement()
     {

@@ -115,7 +115,7 @@ public class TaskManager : MonoBehaviour
         _taskPlacer.FindPremadeTasks(chosenTaskCategories);
 
         // When task categories have changed, 
-        _taskPlacer.RemoveTaskDataByCategories(chosenTaskCategories);
+        _taskPlacer.EditPlacementOnCategoryChange(chosenTaskCategories);
     }
     
 }
