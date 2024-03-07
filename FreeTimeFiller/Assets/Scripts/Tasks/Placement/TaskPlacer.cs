@@ -54,6 +54,9 @@ public class TaskPlacer : MonoBehaviour
 
     private List<UserTask.Task> _completedTasks = new List<UserTask.Task>();
 
+    // Tasks that are on display, but will be deleted due to edits
+    private List<TaskData> toBeRemovedTasks = new List<TaskData>();
+
     // Task that will be instantiated and placed on the canvas
     [SerializeField] private GameObject taskPrefab;
     [SerializeField] private Transform taskPanel;
@@ -77,7 +80,18 @@ public class TaskPlacer : MonoBehaviour
     public bool TryAddTask(TaskData data, List<TaskCategory> userChosenCategories)
     {
         // Filter out TaskData that the user doesn't prefer to see
-        if (!userChosenCategories.Contains(data.category)) return false;
+        if (!userChosenCategories.Contains(data.category))
+        {
+            // If the task is/was on display, allow it to be added and it will be removed soon
+            if(_tasksDisplayed.ContainsKey(data))
+            {
+                toBeRemovedTasks.Add(data);
+            }
+            else
+            {
+                return false;
+            }
+        }
         
         // Don't add any duplicate task data
         if (_activeTaskData.TryAdd(data, false) == false || CheckTaskNameUniqueness(data))
@@ -133,12 +147,16 @@ public class TaskPlacer : MonoBehaviour
             {
                 Debug.Log($"{category} was removed! Remove all of its tasks from display!");
 
-                foreach (TaskData dataFromRemovedCategory in _allDisplayableTaskDataByCategory[category])
+                // Create a copy of the collection to avoid modifying it while iterating
+                List<TaskData> taskDataToRemove = new List<TaskData>(_allDisplayableTaskDataByCategory[category]);
+
+                // Remove each task from display
+                foreach (TaskData dataFromRemovedCategory in taskDataToRemove)
                 {
                     RemoveTaskFromDisplay(dataFromRemovedCategory);
-
                     Debug.Log($"Removed by category: {dataFromRemovedCategory.taskName}");
                 }
+
                 _allDisplayableTaskDataByCategory[category].Clear();
             }
         } 
@@ -332,6 +350,11 @@ public class TaskPlacer : MonoBehaviour
             _tasksDisplayed.Remove(task.GetCurrentTaskData());
             Destroy(task.gameObject);
         }
+
+        //foreach (TaskData dataDueForRemoving in toBeRemovedTasks)
+        //{
+
+        //}
         
         Debug.Log("All displayed tasks have been completed!");
 
