@@ -417,7 +417,7 @@ public class TaskPlacer : MonoBehaviour
     {
         try
         {
-            string loadedAmountToDisplay = await DataManager.LoadData<string>("tasksCurrentlyAllowedToDisplay");//await LoadData<string>("tasksCurrentlyAllowedToDisplay");
+            string loadedAmountToDisplay = await DataManager.LoadData<string>("tasksCurrentlyAllowedToDisplay");
             
             // Load how many tasks the user was able to display (string to int)
             if (!string.IsNullOrEmpty(loadedAmountToDisplay))
