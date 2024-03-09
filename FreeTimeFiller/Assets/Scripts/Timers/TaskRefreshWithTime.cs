@@ -11,7 +11,7 @@ public class TaskRefreshWithTime: MonoBehaviour
 
     private DateTime _lastTimeRefreshedWhileOpen;
 
-    public Action RefreshTimerOccurred;
+    public Action refreshTimerOccurred;
 
     private void Awake()
     {
@@ -37,19 +37,19 @@ public class TaskRefreshWithTime: MonoBehaviour
         if(DateTime.Now.Minute != _lastTimeRefreshedWhileOpen.Minute)
         {
             _lastTimeRefreshedWhileOpen = DateTime.Now;
-            RefreshTimerOccurred?.Invoke();
+            refreshTimerOccurred?.Invoke();
             Debug.Log("App is open and a refresh has occurred!");     
         }
     }
 
-    public async void CheckElaspedTimeOnLogin()
+    public async void CheckElapsedTimeOnLogin()
     {
         _lastTimeAppWasOpened = await DataManager.LoadData<DateTime>("lastTimeAppWasOpened");
 
         if (DateTime.Now.Minute != _lastTimeAppWasOpened.Minute)
         {
             Debug.Log("Minute has changed since last login! Refresh!");
-            RefreshTimerOccurred?.Invoke();
+            refreshTimerOccurred?.Invoke();
         }
         else
         {

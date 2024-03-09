@@ -33,7 +33,7 @@ public class TaskManager : MonoBehaviour
         // TODO: REMOVE THIS SOON
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
         
-        _taskPlacer.ClearTaskPlacement();
+        //_taskPlacer.ClearTaskPlacement();
     }
 
     private void OnEnable()
@@ -48,7 +48,7 @@ public class TaskManager : MonoBehaviour
     {
         _customTaskCreator.CustomTaskWasCreatedWithoutLoad -= AddOneCustomTask;
         _taskPool.TaskCategoriesChanged -= UpdatePremadeTasks;
-        _taskRefreshWithTime.RefreshTimerOccurred -= NotifyTaskPlacerOfRefresh;
+        _taskRefreshWithTime.refreshTimerOccurred -= NotifyTaskPlacerOfRefresh;
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -79,9 +79,9 @@ public class TaskManager : MonoBehaviour
         // Loaded previously displayed tasks
         _taskPlacer.LoadTaskPlacement();
 
-        _taskRefreshWithTime.RefreshTimerOccurred += NotifyTaskPlacerOfRefresh;
+        _taskRefreshWithTime.refreshTimerOccurred += NotifyTaskPlacerOfRefresh;
 
-        _taskRefreshWithTime.CheckElaspedTimeOnLogin();
+        _taskRefreshWithTime.CheckElapsedTimeOnLogin();
 
         // If task categories are changed again, add the tasks again
         _taskPool.TaskCategoriesChanged += UpdatePremadeTasks;
@@ -127,6 +127,6 @@ public class TaskManager : MonoBehaviour
 
     private void NotifyTaskPlacerOfRefresh()
     {
-        //_taskPlacer.RefreshAllTasks();
+        _taskPlacer.RefreshAllTasksWithTime();
     }
 }

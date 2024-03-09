@@ -146,6 +146,11 @@ public class TaskPlacer : MonoBehaviour
                 _allDisplayableTaskDataByCategory[category].Clear();
             }
         }
+        // Display more tasks if needed
+        if (_amountCurrentlyDisplayed < _amountAllowedToDisplay)
+        {
+            DisplayAllTasks();
+        }
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -302,7 +307,7 @@ public class TaskPlacer : MonoBehaviour
         if (_completedTasks.Count >= _amountCurrentlyDisplayed)
         {
             Debug.Log($"What was count: {_completedTasks.Count} vs. amount currently displayed? {_amountCurrentlyDisplayed}");
-            RefreshAllTasks();
+            RefreshAllTasksOnFullCompletion();
         }
         SaveCompletedTasks();
     }
@@ -317,11 +322,34 @@ public class TaskPlacer : MonoBehaviour
         SaveCompletedTasks();
     }
 
+    private void RemoveAllTasksFromScreen()
+    {
+        // Create a copy of the keys to avoid modifying the dictionary while iterating
+        List<TaskData> tasksToRemove = new List<TaskData>(_tasksDisplayed.Keys);
+
+        // Remove tasks on screen
+        foreach (TaskData taskData in tasksToRemove)
+        {
+            // TaskData is no longer "active" and can reappear 
+            _activeTaskData[taskData] = false;
+            
+            if (_tasksDisplayed.TryGetValue(taskData, out UserTask.Task task))
+            {
+                Destroy(task.gameObject);
+                _tasksDisplayed.Remove(taskData);
+            }
+        }
+
+        // Reset the count of displayed tasks
+        _amountCurrentlyDisplayed = 0;
+    }
+
+
     ///-///////////////////////////////////////////////////////////
     /// When all on screen are completed, remove them and place a new set of tasks.
     /// TaskData that were temporarily removed from the pool can start returning.
     /// 
-    private void RefreshAllTasks()
+    private void RefreshAllTasksOnFullCompletion()
     {
         // Previously completed tasks (not this current refresh), can begin to reappear on the user's task list
         foreach (TaskData taskData in _taskDataOnHold.Keys.Reverse())
@@ -329,8 +357,6 @@ public class TaskPlacer : MonoBehaviour
             // If a TaskData has 0 or less refreshes left to reappear
             if (_taskDataOnHold[taskData] <= 0)
             {
-                // TaskData is no longer "active" and can reappear 
-                _activeTaskData[taskData] = false;
                 // Reset counter
                 _taskDataOnHold[taskData] = taskData.refreshCountdown;
             }
@@ -342,19 +368,7 @@ public class TaskPlacer : MonoBehaviour
             Debug.Log(taskData.taskName + " has " + _taskDataOnHold[taskData] + " refreshes left!");
         }
 
-        // Remove tasks on screen
-        foreach (UserTask.Task task in _completedTasks)
-        {
-            TaskData dataOfCompletedTask = task.GetCurrentTaskData();
-
-            _tasksDisplayed.Remove(dataOfCompletedTask);
-            Destroy(task.gameObject);
-        }
-
-        Debug.Log("All displayed tasks have been completed!");
-
-        // All tasks on screen were deleted, so reset this back to 0
-        _amountCurrentlyDisplayed = 0;
+        RemoveAllTasksFromScreen();
 
         // Lower amount of tasks to display on screen, on each refresh
         _amountAllowedToDisplay--;
@@ -369,7 +383,27 @@ public class TaskPlacer : MonoBehaviour
         else
             Debug.Log("All task refreshes have been used up! User must wait 24 hours for a refresh to occur!");
         
-        SaveTaskPlacement();
+        SaveCompletedTasks();
+    }
+
+    ///-///////////////////////////////////////////////////////////
+    /// When refresh timer occurs, remove all tasks from the screen and place a new set.
+    /// 
+    public void RefreshAllTasksWithTime()
+    {
+        // No more tasks are considered on refresh
+        _taskDataOnHold.Clear();
+        
+        // No more tasks are considered complete
+        _completedTasks.Clear();
+
+        RemoveAllTasksFromScreen();
+
+        _amountAllowedToDisplay = maxTaskDisplay;
+
+        // Show new set of tasks
+        DisplayAllTasks();
+        
         SaveCompletedTasks();
     }
 
