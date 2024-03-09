@@ -160,11 +160,18 @@ public class TaskPlacer : MonoBehaviour
     ///-///////////////////////////////////////////////////////////
     /// When a task has been edited, check to see if its category is no longer apart of the user's chosen
     /// task categories. If it's not, then remove it from all placements.
-    public void ExistingTaskDataWasUpdated(TaskData taskDataEdited, List<TaskCategory> userChosenCategories)
+    public void ExistingTaskDataWasUpdated(string oldTaskName, TaskData taskDataEdited, List<TaskCategory> userChosenCategories)
     {
         // If this edited TaskData was displayable...
         if (_activeTaskData.ContainsKey(taskDataEdited))
         {
+            // Delete the old task's name and replace it (if the name was changed)
+            if (oldTaskName != taskDataEdited.taskName)
+            {
+                _allDisplayableTaskDataByName.Remove(oldTaskName);
+                _allDisplayableTaskDataByName.Add(taskDataEdited.taskName, taskDataEdited);
+            }
+
             // Update Task button's information displayed (if it's currently displayed)
             if(_tasksDisplayed.ContainsKey(taskDataEdited))
             {
@@ -176,12 +183,16 @@ public class TaskPlacer : MonoBehaviour
             {
                 RemoveTaskFromDisplay(taskDataEdited);
             }
+            
+            SaveTaskPlacement();
+            SaveCompletedTasks();
         }
         // If the edited TaskData was not previously displayable, try to add it
         else if (userChosenCategories.Contains(taskDataEdited.category))
         {
             TryAddTask(taskDataEdited, userChosenCategories);
         }
+        
     }
 
     ///-///////////////////////////////////////////////////////////

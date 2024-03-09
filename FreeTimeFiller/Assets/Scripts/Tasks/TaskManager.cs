@@ -102,9 +102,9 @@ public class TaskManager : MonoBehaviour
     /// one of its tasks (if its displayable) will need to change its text on screen and
     /// may get removed depending on the category.
     /// 
-    private void UpdateExistingTaskOnScreen(TaskData customTaskUpdated)
+    private void UpdateExistingTaskOnScreen(string oldCustomTaskName, TaskData customTaskUpdated)
     {
-        _taskPlacer.ExistingTaskDataWasUpdated(customTaskUpdated, _taskPool.ChosenTaskCategories);
+        _taskPlacer.ExistingTaskDataWasUpdated(oldCustomTaskName, customTaskUpdated, _taskPool.ChosenTaskCategories);
     }
 
     ///-///////////////////////////////////////////////////////////

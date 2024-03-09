@@ -63,7 +63,8 @@ public class CustomTaskCreator : MonoBehaviour
         new Dictionary<TaskData, CustomTaskButton>();
     
     public event Action<TaskData> CustomTaskWasCreatedWithoutLoad;
-    public event Action<TaskData> ExistingCustomTaskWasEdited;
+    // When an existing custom task has had its information changed (passes reference to old name, and new task data)
+    public event Action<string, TaskData> ExistingCustomTaskWasEdited;
     public event Action<TaskData> CustomTaskWasDeleted;
 
     private async void Awake()
@@ -283,7 +284,7 @@ public class CustomTaskCreator : MonoBehaviour
             LoadedCustomTasks.Add(newTaskData);
             
             // Tell all listeners that the contents of an existing custom task has been edited
-            ExistingCustomTaskWasEdited?.Invoke(newTaskData);
+            ExistingCustomTaskWasEdited?.Invoke(oldTaskName, newTaskData);
         }
         else
         {

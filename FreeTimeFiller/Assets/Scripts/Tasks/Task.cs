@@ -40,6 +40,15 @@ namespace UserTask
         private void OnEnable()
         {
             checkBoxButton.onClick.AddListener(CompleteOnClick);
+
+            if (_isCompleted)
+            {
+                crossOutImage.SetActive(true);
+            }
+            else
+            {
+                crossOutImage.SetActive(false);
+            }
         }
 
         private void OnDisable()
