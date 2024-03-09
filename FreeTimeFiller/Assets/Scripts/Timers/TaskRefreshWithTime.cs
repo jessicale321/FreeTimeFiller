@@ -11,10 +11,15 @@ public class TaskRefreshWithTime: MonoBehaviour
 
     private DateTime _lastTimeRefreshedWhileOpen;
 
+    // Don't let update and app opening refreshes to occur simultaneously 
+    private bool _currentlyRefreshingFromAppOpen;
+    
     public Action refreshTimerOccurred;
 
     private void Awake()
     {
+        _currentlyRefreshingFromAppOpen = false;
+        
         _lastTimeRefreshedWhileOpen = DateTime.Now;
     }
 
@@ -34,7 +39,7 @@ public class TaskRefreshWithTime: MonoBehaviour
     private void Update()
     {
         // Check every frame if the time should refresh
-        if(DateTime.Now.Minute != _lastTimeRefreshedWhileOpen.Minute)
+        if(DateTime.Now.Day != _lastTimeRefreshedWhileOpen.Day && _currentlyRefreshingFromAppOpen)
         {
             _lastTimeRefreshedWhileOpen = DateTime.Now;
             refreshTimerOccurred?.Invoke();
@@ -42,24 +47,34 @@ public class TaskRefreshWithTime: MonoBehaviour
         }
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// When the app is opened, check if there has been a day that has elapsed and if so,
+    /// tell listeners that the refresh timer has occurred.
+    /// 
     public async void CheckElapsedTimeOnLogin()
     {
         _lastTimeAppWasOpened = await DataManager.LoadData<DateTime>("lastTimeAppWasOpened");
 
-        if (DateTime.Now.Minute != _lastTimeAppWasOpened.Minute)
+        if (DateTime.Now.Day != _lastTimeAppWasOpened.Day)
         {
-            Debug.Log("Minute has changed since last login! Refresh!");
+            Debug.Log("Day has changed since last login! Refresh!");
+            _currentlyRefreshingFromAppOpen = true;
             refreshTimerOccurred?.Invoke();
         }
         else
         {
-            Debug.Log("Minute has not changed, don't refresh!");
+            Debug.Log("Day has not changed, don't refresh!");
         }
 
+        _currentlyRefreshingFromAppOpen = false;
+        
         // Save login time when opening the app
         SaveLoginTime();
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// Save the last DateTime in which the user opened the app.
+    /// 
     private async void SaveLoginTime()
     {
         // Save login time when opening the app

@@ -74,7 +74,11 @@ public class TaskPlacer : MonoBehaviour
             TryAddTask(data, userChosenCategories);
         }
     }
-    
+
+    ///-///////////////////////////////////////////////////////////
+    /// Attempt to allow a new task to become displayable. Return true if it's allowed to become displayable,
+    /// otherwise return false.
+    /// 
     public bool TryAddTask(TaskData data, List<TaskCategory> userChosenCategories)
     {
         // Filter out TaskData that the user doesn't prefer to see
@@ -194,6 +198,7 @@ public class TaskPlacer : MonoBehaviour
             _tasksDisplayed.Remove(dataToRemove);
         }
         
+        // Remove task from all containers
         _displayableTasks.Remove(dataToRemove);
         _allDisplayableTaskDataByName.Remove(dataToRemove.taskName);
         _activeTaskData.Remove(dataToRemove);
@@ -201,13 +206,17 @@ public class TaskPlacer : MonoBehaviour
         
         _amountCurrentlyDisplayed--;
         
+        // Replace the deleted task with a different one
         ReplaceDeletedTask();
         
         // Task name could have been edited, therefore we must save again
         SaveTaskPlacement();
         SaveCompletedTasks();
     }
-    
+
+    ///-///////////////////////////////////////////////////////////
+    /// After deleting a task, add a new inactive one.
+    /// 
     private void ReplaceDeletedTask()
     {
         // TODO: Check if the replaced task was completed, if so then un-complete it!
@@ -236,6 +245,9 @@ public class TaskPlacer : MonoBehaviour
         SaveTaskPlacement();
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// Place a new task gameObject on the screen, if we have room to do so.
+    /// 
     private void SpawnTask(TaskData data)
     {
         if (data == null) return;
@@ -322,6 +334,9 @@ public class TaskPlacer : MonoBehaviour
         SaveCompletedTasks();
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// Clear all tasks gameObjects on the screen.
+    /// 
     private void RemoveAllTasksFromScreen()
     {
         // Create a copy of the keys to avoid modifying the dictionary while iterating
@@ -446,7 +461,10 @@ public class TaskPlacer : MonoBehaviour
         await DataManager.SaveData("tasksCurrentlyAllowedToDisplay", _amountAllowedToDisplay.ToString());
         await DataManager.SaveData("tasksCurrentlyMarkedOff", allCompletedTasksByName);
     }
-    
+
+    ///-///////////////////////////////////////////////////////////
+    /// Begin displaying all tasks that the user had on the screen in a previous session.
+    /// 
     public async void LoadTaskPlacement()
     {
         try
@@ -492,8 +510,10 @@ public class TaskPlacer : MonoBehaviour
         }
         DisplayAllTasks();
     }
-    
 
+    ///-///////////////////////////////////////////////////////////
+    /// Delete all data associated with previous task placement.
+    /// 
     public async void ClearTaskPlacement()
     {
         await DataManager.DeleteAllDataByName("tasksCurrentlyAllowedToDisplay");

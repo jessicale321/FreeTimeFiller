@@ -107,6 +107,10 @@ public class TaskManager : MonoBehaviour
         _taskPlacer.ExistingTaskDataWasUpdated(customTaskUpdated, _taskPool.ChosenTaskCategories);
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// When the user has deleted an existing task, tell the TaskPlacer to remove it from the screen
+    /// and replace it with an inactive task.
+    /// 
     private void DeleteExistingTaskOnScreen(TaskData taskDeleted)
     {
         _taskPlacer.RemoveTaskFromDisplay(taskDeleted);
@@ -123,8 +127,12 @@ public class TaskManager : MonoBehaviour
 
         // When task categories have changed, 
         _taskPlacer.EditPlacementOnCategoryChange(chosenTaskCategories);
-    } 
+    }
 
+    ///-///////////////////////////////////////////////////////////
+    /// When refresh timer has occurred, tell TaskPlacer to replace all tasks on screen
+    /// with new ones.
+    /// 
     private void NotifyTaskPlacerOfRefresh()
     {
         _taskPlacer.RefreshAllTasksWithTime();
