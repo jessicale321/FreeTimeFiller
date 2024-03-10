@@ -8,6 +8,8 @@ using Unity.Services.Authentication;
 using Unity.Services.Friends;
 using Unity.Services.Friends.Models;
 using Unity.Services.Friends.Exceptions;
+using System.Runtime.CompilerServices;
+using UnityEngine.SceneManagement;
 
 public class FriendsManager : MonoBehaviour
 {
@@ -36,16 +38,20 @@ public class FriendsManager : MonoBehaviour
     public Action<List<PlayerProfile>> OnRequestsRefresh; //{ get; internal set; }
     public Action<List<PlayerProfile>> OnFriendsRefresh;  //{ get; internal set; }
 
-    private void Awake()
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         // when the scene starts, the friends are initialized if the user wants them. PlayerSignIn() should be called when the scene
         // opens, but it doesn't right now. So PlayerSignIn() is attached to the home button
-        AuthenticationService.Instance.SignedIn += PlayerSignIn;
         if (UseFriends)
         {
             InitializeFriends();
         }
-        PlayerSignIn();
+        OnUserSignIn?.Invoke();
     }
 
     // Calls Unity's built in Friend system. Allowing users to have friends
@@ -72,23 +78,28 @@ public class FriendsManager : MonoBehaviour
         SubscribeToFriendsEventCallbacks();
     }
 
-    // If the player signs in, call the OnUserSign in from UI manager, displaying what's needed
-    public async void PlayerSignIn()
+    // If the player signs in, call the OnUserSign in from UI manager, displaying what's needed. No longer needed
+  /*  public async void PlayerSignIn()
     {
         if (AuthenticationService.Instance.IsSignedIn)
             OnUserSignIn?.Invoke();
         else
             Debug.Log("User was not signed in!");
-    }
+    }*/
 
     // Creates a relationship with the friend request sent to another user using memberID
     public async void SendFriendRequest_ID(string memberID)
     {
         // relationship will appear as "friendRequest" if other user has not sent a friend request
         // if other user already sent a friend request relationship will be "friend"
-        var relationship = await FriendsService.Instance.AddFriendByNameAsync(memberID);
-
-        Debug.Log($"Friend request send to {memberID}. New relationship is {relationship.Type}");
+        try
+        {
+            await FriendsService.Instance.AddFriendByNameAsync(memberID);
+        }
+        catch (Exception ex)
+        {
+            Debug.Log(ex.Message);
+        }
     }
 
     // Accepting friend requests, same thing as SendFriendRequest but this will refresh lists to show 
@@ -137,8 +148,9 @@ public class FriendsManager : MonoBehaviour
         }
         catch (FriendsServiceException e)
         {
-            Debug.Log(
-                "An error occurred while performing teh action. Code: " + e.StatusCode + ", Message: " + e.Message);
+            Debug.Log("Hey we are here and something went wrong with friends");
+            //Debug.Log(
+            //"An error occurred while performing the action. Code: " + e.StatusCode + ", Message: " + e.Message);
         }
     }
 

@@ -15,8 +15,6 @@ namespace UI
         public TMP_Text playerUserName;
         public TMP_Text playerUserID;
         public TMP_Text playerInfo;
-        // Friends loby is connnected to the canvas that shows the screen manager Jessica created
-        public GameObject friendsLobby;
         // This is the search bar for who the friend request is being sent to
         [Header("From Control Area")] public TMP_InputField friendRecipientID;
         // NOT REAL PREFABS, these are GameObjects that are being created for each friend request or new friend 
@@ -30,13 +28,8 @@ namespace UI
             FriendsManager.Active.OnUserSignIn += OnUserSignIn;
         }*/
 
-        private void Start()
+        private void OnEnable()
         {
-            // Game objects are hidden on start, this actually might be my issue with canvas not showing lol
-            foreach (object o in transform)
-            {
-                (o as Transform).gameObject.SetActive(false);
-            }
             // subscribing to event callbacks for each method in FriendsManager
             FriendsManager.Active.OnUserSignIn += OnUserSignIn;
             FriendsManager.Active.OnRequestsRefresh += OnRequestsRefresh;
@@ -51,8 +44,6 @@ namespace UI
             playerUserName.text = AuthenticationService.Instance.PlayerName;
             playerInfo.text = AuthenticationService.Instance.Profile;
             Debug.Log("We accessed the stuff");
-            // we could probably attach this to just the start(), it all depends how we want the UI to interact
-            friendsLobby.SetActive(true);
         }
 
         // Calls SendFriendRequest from FriendManager

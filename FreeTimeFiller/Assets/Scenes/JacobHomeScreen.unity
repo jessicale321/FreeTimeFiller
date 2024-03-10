@@ -2242,19 +2242,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1032565906}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 371114984}
-        m_TargetAssemblyTypeName: FriendsManager, Assembly-CSharp
-        m_MethodName: PlayerSignIn
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1032565906
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3417,7 +3405,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6732666696424215542, guid: a21337f25c42e7c4fa1e4dcf56485ff3, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -73.44001
+      value: -73.44
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
