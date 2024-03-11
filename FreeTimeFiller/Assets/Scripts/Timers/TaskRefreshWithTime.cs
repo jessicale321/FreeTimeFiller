@@ -32,7 +32,7 @@ public class TaskRefreshWithTime: MonoBehaviour
     private void Update()
     {
         // Check every frame if the time should refresh
-        if(DateTime.Now.Day != _lastTimeRefreshedWhileOpen.Day && _currentlyRefreshingFromAppOpen)
+        if(DateTime.Now.Day != _lastTimeRefreshedWhileOpen.Day && !_currentlyRefreshingFromAppOpen)
         {
             _lastTimeRefreshedWhileOpen = DateTime.Now;
             refreshTimerOccurred?.Invoke();
