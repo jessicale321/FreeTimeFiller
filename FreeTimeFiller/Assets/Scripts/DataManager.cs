@@ -27,9 +27,11 @@ public static class DataManager
             dataName
         });
 
+        // If there was data found under the provided name, return it
         if (savedData.TryGetValue(dataName, out var dataLoaded))
         {
             Debug.Log($"Data Manager loaded: {dataName}");
+            // Return the data as T
             return dataLoaded.Value.GetAs<T>();
         }
         else
@@ -43,6 +45,7 @@ public static class DataManager
     /// 
     public static async Task DeleteAllDataByName(string dataName)
     {
+        // Try to find the data given, then override it with an empty string (basically deleting it)
         try
         {
             await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {

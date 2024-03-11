@@ -480,9 +480,10 @@ public class TaskPlacer : MonoBehaviour
     {
         try
         {
+            // Load how many tasks the user was allowed to display in the previous session
             string loadedAmountToDisplay = await DataManager.LoadData<string>("tasksCurrentlyAllowedToDisplay");
             
-            // Load how many tasks the user was able to display (string to int)
+            // Check that the value isn't null, then set the amountAllowedToDisplay to what was loaded
             if (!string.IsNullOrEmpty(loadedAmountToDisplay))
                 _amountAllowedToDisplay = int.Parse(loadedAmountToDisplay);
             else
@@ -496,6 +497,7 @@ public class TaskPlacer : MonoBehaviour
 
             if (loadedDisplayedTasks != null)
             {
+                // For each loaded displayed task, place them on the screen
                 foreach (string taskDataByName in loadedDisplayedTasks)
                 {
                     Debug.Log("Found a previously displayed task data: " + taskDataByName);
@@ -508,7 +510,7 @@ public class TaskPlacer : MonoBehaviour
 
             if (loadedCompletedTasks != null)
             {
-                // Re-complete any tasks
+                // For each loaded completed task, re-complete them
                 foreach (string completedTaskData in loadedCompletedTasks)
                 {
                     _tasksDisplayed[_allDisplayableTaskDataByName[completedTaskData]].CompleteOnCommand();
@@ -519,6 +521,7 @@ public class TaskPlacer : MonoBehaviour
         {
             Debug.LogError($"Error loading data: {e.Message}");
         }
+        // Display all tasks (this is only works when there were no tasks found from a previous session)
         DisplayAllTasks();
     }
 

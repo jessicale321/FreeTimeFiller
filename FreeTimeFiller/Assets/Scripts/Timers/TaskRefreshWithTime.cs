@@ -23,13 +23,6 @@ public class TaskRefreshWithTime: MonoBehaviour
         _lastTimeRefreshedWhileOpen = DateTime.Now;
     }
 
-    //private void OnApplicationFocus(bool focus)
-    //{
-    //    // Save login time when the app regains focus
-    //    if(focus)
-    //        SaveLoginTime();
-    //}
-
     private void OnApplicationQuit()
     {
         // Save login time when closing the app
