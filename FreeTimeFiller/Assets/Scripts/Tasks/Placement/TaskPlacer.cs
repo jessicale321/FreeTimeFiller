@@ -2,9 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Unity.Services.CloudSave;
 using UnityEngine;
 using Random = System.Random;
-using UserTask;
 
 public class TaskPlacer : MonoBehaviour
 {
@@ -37,13 +38,14 @@ public class TaskPlacer : MonoBehaviour
      */
     private Dictionary<TaskCategory, List<TaskData>> _allDisplayableTaskDataByCategory = new Dictionary<TaskCategory, List<TaskData>>();
 
-    private Dictionary<TaskData, Task> _tasksDisplayed = new Dictionary<TaskData, Task>();
+    
+    private Dictionary<TaskData, UserTask.Task> _tasksDisplayed = new Dictionary<TaskData, UserTask.Task>();
 
     /* Task Data that are displayable
      * Key: The TaskData
      * Value: The name of the TaskData (ex. Wash the dishes)
      */
-    private Dictionary<TaskData, string> _allDisplayableTaskDataByName = new Dictionary<TaskData, string>();
+    private Dictionary<string, TaskData> _allDisplayableTaskDataByName = new Dictionary<string, TaskData>();
 
     /* Task Data that have been previously completed
      * Key: The TaskData (ex. Brushing Teeth)
@@ -51,16 +53,11 @@ public class TaskPlacer : MonoBehaviour
      */
     private Dictionary<TaskData, int> _taskDataOnHold = new Dictionary<TaskData, int>();
 
-    private List<Task> _completedTasks = new List<Task>();
+    private List<UserTask.Task> _completedTasks = new List<UserTask.Task>();
 
     // Task that will be instantiated and placed on the canvas
     [SerializeField] private GameObject taskPrefab;
     [SerializeField] private Transform taskPanel;
-    
-    private void Awake()
-    {
-        _amountAllowedToDisplay = maxTaskDisplay;
-    }
 
     #region Adding
 
@@ -76,25 +73,18 @@ public class TaskPlacer : MonoBehaviour
             // Only add tasks based on the user's Task Category preferences
             TryAddTask(data, userChosenCategories);
         }
-
-        // If we found any tasks, start displaying them
-        if (_displayableTasks.Count > 0)
-        {
-            // Once all TaskData's have been added to the dictionary, start displaying them
-            DisplayAllTasks();
-        }
-        else
-        {
-            Debug.Log($"There were no tasks found under Resources/{_taskDataFolderPath}. Or no task categories were loaded in.");
-        }
     }
-    
-    public void TryAddTask(TaskData data, List<TaskCategory> userChosenCategories)
+
+    ///-///////////////////////////////////////////////////////////
+    /// Attempt to allow a new task to become displayable. Return true if it's allowed to become displayable,
+    /// otherwise return false.
+    /// 
+    public bool TryAddTask(TaskData data, List<TaskCategory> userChosenCategories)
     {
         // Filter out TaskData that the user doesn't prefer to see
-        if (!userChosenCategories.Contains(data.category)) return;
-        
-        // Don't add any duplicate task data
+        if (!userChosenCategories.Contains(data.category)) return false;
+
+            // Don't add any duplicate task data
         if (_activeTaskData.TryAdd(data, false) == false || CheckTaskNameUniqueness(data))
         {
             Debug.Log($"{data.taskName} is a duplicate in the taskData list!");
@@ -102,7 +92,7 @@ public class TaskPlacer : MonoBehaviour
         else
         {
             _displayableTasks.Add(data);
-            _allDisplayableTaskDataByName.Add(data, data.taskName);
+            _allDisplayableTaskDataByName.Add(data.taskName, data);
 
             // Check if the category already exists in the dictionary
             if (_allDisplayableTaskDataByCategory.ContainsKey(data.category))
@@ -120,7 +110,9 @@ public class TaskPlacer : MonoBehaviour
                 };
             }
             Debug.Log($"Task Placer can display: {data.taskName}");
+            return true;
         }
+        return false;
     }
     
     ///-///////////////////////////////////////////////////////////
@@ -128,7 +120,7 @@ public class TaskPlacer : MonoBehaviour
     /// 
     private bool CheckTaskNameUniqueness(TaskData taskData)
     {
-        return _allDisplayableTaskDataByName.ContainsValue(taskData.taskName);
+        return _allDisplayableTaskDataByName.ContainsKey(taskData.taskName);
     }
 
     #endregion
@@ -137,7 +129,7 @@ public class TaskPlacer : MonoBehaviour
     /// When TaskCategory preferences have changed, check if any displayable tasks need to be removed. The user 
     /// may have decided they don't want to see certain tasks anymore.
     /// 
-    public void RemoveTaskDataByCategories(List<TaskCategory> userChosenCategories)
+    public void EditPlacementOnCategoryChange(List<TaskCategory> userChosenCategories)
     {
         foreach (TaskCategory category in _allDisplayableTaskDataByCategory.Keys)
         {
@@ -145,7 +137,11 @@ public class TaskPlacer : MonoBehaviour
             {
                 Debug.Log($"{category} was removed! Remove all of its tasks from display!");
 
-                foreach (TaskData dataFromRemovedCategory in _allDisplayableTaskDataByCategory[category])
+                // Create a copy of the collection to avoid modifying it while iterating
+                List<TaskData> taskDataToRemove = new List<TaskData>(_allDisplayableTaskDataByCategory[category]);
+
+                // Remove each task from display
+                foreach (TaskData dataFromRemovedCategory in taskDataToRemove)
                 {
                     RemoveTaskFromDisplay(dataFromRemovedCategory);
 
@@ -153,45 +149,91 @@ public class TaskPlacer : MonoBehaviour
                 }
                 _allDisplayableTaskDataByCategory[category].Clear();
             }
-        } 
+        }
+        // Display more tasks if needed
+        if (_amountCurrentlyDisplayed < _amountAllowedToDisplay)
+        {
+            DisplayAllTasks();
+        }
     }
 
     ///-///////////////////////////////////////////////////////////
     /// When a task has been edited, check to see if its category is no longer apart of the user's chosen
     /// task categories. If it's not, then remove it from all placements.
-    public void ExistingTaskDataWasUpdated(TaskData taskDataEdited, List<TaskCategory> userChosenCategories)
+    public void ExistingTaskDataWasUpdated(string oldTaskName, TaskData taskDataEdited, List<TaskCategory> userChosenCategories)
     {
         // If this edited TaskData was displayable...
         if (_activeTaskData.ContainsKey(taskDataEdited))
         {
-            // Update Task button's information displayed
-            _tasksDisplayed[taskDataEdited].UpdateTask(taskDataEdited, this);
+            // Delete the old task's name and replace it (if the name was changed)
+            if (oldTaskName != taskDataEdited.taskName)
+            {
+                _allDisplayableTaskDataByName.Remove(oldTaskName);
+                _allDisplayableTaskDataByName.Add(taskDataEdited.taskName, taskDataEdited);
+            }
+
+            // Update Task button's information displayed (if it's currently displayed)
+            if(_tasksDisplayed.ContainsKey(taskDataEdited))
+            {
+                _tasksDisplayed[taskDataEdited].UpdateTask(taskDataEdited, this);
+            }
             
             // If the task was in the pool, but its category was changed to a category that the user doesn't use. Remove it from placement.
             if (!userChosenCategories.Contains(taskDataEdited.category))
             {
-                if(_allDisplayableTaskDataByCategory.ContainsKey(taskDataEdited.category))
-                    _allDisplayableTaskDataByCategory[taskDataEdited.category].Remove(taskDataEdited);
-
                 RemoveTaskFromDisplay(taskDataEdited);
             }
+            
+            SaveTaskPlacement();
+            SaveCompletedTasks();
         }
         // If the edited TaskData was not previously displayable, try to add it
         else if (userChosenCategories.Contains(taskDataEdited.category))
         {
             TryAddTask(taskDataEdited, userChosenCategories);
         }
+        
     }
 
     ///-///////////////////////////////////////////////////////////
     /// Remove a TaskData from any future displaying on the screen.
     /// 
-    private void RemoveTaskFromDisplay(TaskData dataToRemove)
+    public void RemoveTaskFromDisplay(TaskData dataToRemove)
     {
+        if(_allDisplayableTaskDataByCategory.ContainsKey(dataToRemove.category))
+            _allDisplayableTaskDataByCategory[dataToRemove.category].Remove(dataToRemove);
+
+        if (_tasksDisplayed.ContainsKey(dataToRemove))
+        {
+            Destroy(_tasksDisplayed[dataToRemove].gameObject);
+            _tasksDisplayed.Remove(dataToRemove);
+        }
+        
+        // Remove task from all containers
         _displayableTasks.Remove(dataToRemove);
-        _allDisplayableTaskDataByName.Remove(dataToRemove);
+        _allDisplayableTaskDataByName.Remove(dataToRemove.taskName);
         _activeTaskData.Remove(dataToRemove);
         _taskDataOnHold.Remove(dataToRemove);
+        
+        _amountCurrentlyDisplayed--;
+        
+        // Replace the deleted task with a different one
+        ReplaceDeletedTask();
+        
+        // Task name could have been edited, therefore we must save again
+        SaveTaskPlacement();
+        SaveCompletedTasks();
+    }
+
+    ///-///////////////////////////////////////////////////////////
+    /// After deleting a task, add a new inactive one.
+    /// 
+    private void ReplaceDeletedTask()
+    {
+        // TODO: Check if the replaced task was completed, if so then un-complete it!
+        TaskData newTaskData = GetInactiveTask();
+
+        SpawnTask(newTaskData);
     }
 
     #region Displaying
@@ -207,23 +249,33 @@ public class TaskPlacer : MonoBehaviour
         
         for(int i = 0; i < _amountAllowedToDisplay; i++)
         {
-            // Don't allow more tasks to be displayed, if we reached the current max amount
-            if (_amountCurrentlyDisplayed >= _amountAllowedToDisplay) return;
-
             TaskData inactiveData = GetInactiveTask();
-
-            if(inactiveData != null)
-            {
-                // Spawn a new task and give it data
-                GameObject newTask = Instantiate(taskPrefab, taskPanel);
-                Task taskComponent = newTask.GetComponent<Task>();
-                taskComponent.UpdateTask(inactiveData, this);
-                
-                _tasksDisplayed.Add(inactiveData, taskComponent);
-
-                _amountCurrentlyDisplayed++;
-            }
+            
+            SpawnTask(inactiveData);
         }
+        SaveTaskPlacement();
+    }
+
+    ///-///////////////////////////////////////////////////////////
+    /// Place a new task gameObject on the screen, if we have room to do so.
+    /// 
+    private void SpawnTask(TaskData data)
+    {
+        if (data == null) return;
+        
+        // Don't allow more tasks to be displayed, if we reached the current max amount
+        if (_amountCurrentlyDisplayed >= _amountAllowedToDisplay) return;
+        
+        _activeTaskData[data] = true;
+        
+        // Spawn a new task and give it data
+        GameObject newTask = Instantiate(taskPrefab, taskPanel);
+        UserTask.Task taskComponent = newTask.GetComponent<UserTask.Task>();
+        taskComponent.UpdateTask(data, this);
+                
+        _tasksDisplayed.TryAdd(data, taskComponent);
+
+        _amountCurrentlyDisplayed++;
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -250,12 +302,7 @@ public class TaskPlacer : MonoBehaviour
     {
         foreach(TaskData data in _displayableTasks)
         {
-            if (_activeTaskData[data] == false)
-            {
-                _activeTaskData[data] = true;
-
-                return data;
-            }
+            if (_activeTaskData[data] == false) return data;
         }
         Debug.Log("Could not find a non-active task data!");
         return null;
@@ -270,7 +317,7 @@ public class TaskPlacer : MonoBehaviour
     /// have been completed, refresh all the tasks. TaskData that were completed are temporarily
     /// removed from the task pool.
     /// 
-    public void CompleteTask(Task task)
+    public void CompleteTask(UserTask.Task task)
     {
         _completedTasks.Add(task);
 
@@ -282,23 +329,53 @@ public class TaskPlacer : MonoBehaviour
         // Once the user has completed all tasks that could be displayed on screen...
         if (_completedTasks.Count >= _amountCurrentlyDisplayed)
         {
-            RefreshAllTasks();
-        }  
+            Debug.Log($"What was count: {_completedTasks.Count} vs. amount currently displayed? {_amountCurrentlyDisplayed}");
+            RefreshAllTasksOnFullCompletion();
+        }
+        SaveCompletedTasks();
     }
 
     ///-///////////////////////////////////////////////////////////
     /// Remove a task from the list of completed tasks
     /// 
-    public void UncompleteTask(Task task)
+    public void UncompleteTask(UserTask.Task task)
     {
         _completedTasks.Remove(task);
+        
+        SaveCompletedTasks();
     }
+
+    ///-///////////////////////////////////////////////////////////
+    /// Clear all tasks gameObjects on the screen.
+    /// 
+    private void RemoveAllTasksFromScreen()
+    {
+        // Create a copy of the keys to avoid modifying the dictionary while iterating
+        List<TaskData> tasksToRemove = new List<TaskData>(_tasksDisplayed.Keys);
+
+        // Remove tasks on screen
+        foreach (TaskData taskData in tasksToRemove)
+        {
+            // TaskData is no longer "active" and can reappear 
+            _activeTaskData[taskData] = false;
+            
+            if (_tasksDisplayed.TryGetValue(taskData, out UserTask.Task task))
+            {
+                Destroy(task.gameObject);
+                _tasksDisplayed.Remove(taskData);
+            }
+        }
+
+        // Reset the count of displayed tasks
+        _amountCurrentlyDisplayed = 0;
+    }
+
 
     ///-///////////////////////////////////////////////////////////
     /// When all on screen are completed, remove them and place a new set of tasks.
     /// TaskData that were temporarily removed from the pool can start returning.
     /// 
-    private void RefreshAllTasks()
+    private void RefreshAllTasksOnFullCompletion()
     {
         // Previously completed tasks (not this current refresh), can begin to reappear on the user's task list
         foreach (TaskData taskData in _taskDataOnHold.Keys.Reverse())
@@ -306,8 +383,6 @@ public class TaskPlacer : MonoBehaviour
             // If a TaskData has 0 or less refreshes left to reappear
             if (_taskDataOnHold[taskData] <= 0)
             {
-                // TaskData is no longer "active" and can reappear 
-                _activeTaskData[taskData] = false;
                 // Reset counter
                 _taskDataOnHold[taskData] = taskData.refreshCountdown;
             }
@@ -319,17 +394,7 @@ public class TaskPlacer : MonoBehaviour
             Debug.Log(taskData.taskName + " has " + _taskDataOnHold[taskData] + " refreshes left!");
         }
 
-        // Remove tasks on screen
-        foreach (Task task in _completedTasks)
-        {
-            _tasksDisplayed.Remove(task.GetCurrentTaskData());
-            Destroy(task.gameObject);
-        }
-        
-        Debug.Log("All displayed tasks have been completed!");
-
-        // All tasks on screen were deleted, so reset this back to 0
-        _amountCurrentlyDisplayed = 0;
+        RemoveAllTasksFromScreen();
 
         // Lower amount of tasks to display on screen, on each refresh
         _amountAllowedToDisplay--;
@@ -337,11 +402,137 @@ public class TaskPlacer : MonoBehaviour
         Debug.Log(_amountAllowedToDisplay);
         
         _completedTasks.Clear();
+
+        // Display more tasks after refresh (if we can still display more tasks)
+        if(_amountAllowedToDisplay > 0) 
+            DisplayAllTasks();
+        else
+            Debug.Log("All task refreshes have been used up! User must wait 24 hours for a refresh to occur!");
         
-        // Randomize all elements in the task pool
-        ShuffleTaskList(_displayableTasks);
+        SaveCompletedTasks();
+    }
+
+    ///-///////////////////////////////////////////////////////////
+    /// When refresh timer occurs, remove all tasks from the screen and place a new set.
+    /// 
+    public void RefreshAllTasksWithTime()
+    {
+        // No more tasks are considered on refresh
+        _taskDataOnHold.Clear();
         
+        // No more tasks are considered complete
+        _completedTasks.Clear();
+
+        RemoveAllTasksFromScreen();
+
+        _amountAllowedToDisplay = maxTaskDisplay;
+
+        // Show new set of tasks
         DisplayAllTasks();
+        
+        SaveCompletedTasks();
+    }
+
+    #endregion
+
+    #region Saving
+    
+    ///-///////////////////////////////////////////////////////////
+    /// Save the tasks the user has displayed on screen.
+    /// 
+    private async void SaveTaskPlacement()
+    {
+        // Convert dictionary to a list of KeyValuePairs
+        List<KeyValuePair<TaskData, int>> dataList = _taskDataOnHold.ToList();
+
+        // Convert the list to a serializable data structure (e.g., a list of tuples)
+        List<Tuple<TaskData, int>> serializableList = new List<Tuple<TaskData, int>>();
+        foreach (var pair in dataList)
+        {
+            serializableList.Add(new Tuple<TaskData, int>(pair.Key, pair.Value));
+        }
+
+        List<string> allDisplayedTasksByName = _tasksDisplayed.Keys.Select(key => key.taskName).ToList();
+
+        await DataManager.SaveData("tasksCurrentlyDisplayed", allDisplayedTasksByName);
+        await DataManager.SaveData("tasksCurrentlyOnRefresh", serializableList);
+    }
+
+    ///-///////////////////////////////////////////////////////////
+    /// Save all the tasks the user has completed so far.
+    /// 
+    private async void SaveCompletedTasks()
+    {
+        if (_amountAllowedToDisplay < 0)
+            _amountAllowedToDisplay = 0;
+        
+        List<string> allCompletedTasksByName =
+            _completedTasks.Select(task => task.GetCurrentTaskData().taskName).ToList();
+
+        await DataManager.SaveData("tasksCurrentlyAllowedToDisplay", _amountAllowedToDisplay.ToString());
+        await DataManager.SaveData("tasksCurrentlyMarkedOff", allCompletedTasksByName);
+    }
+
+    ///-///////////////////////////////////////////////////////////
+    /// Begin displaying all tasks that the user had on the screen in a previous session.
+    /// 
+    public async void LoadTaskPlacement()
+    {
+        try
+        {
+            // Load how many tasks the user was allowed to display in the previous session
+            string loadedAmountToDisplay = await DataManager.LoadData<string>("tasksCurrentlyAllowedToDisplay");
+            
+            // Check that the value isn't null, then set the amountAllowedToDisplay to what was loaded
+            if (!string.IsNullOrEmpty(loadedAmountToDisplay))
+                _amountAllowedToDisplay = int.Parse(loadedAmountToDisplay);
+            else
+                _amountAllowedToDisplay = maxTaskDisplay;
+
+            // Load all previously completed tasks (by name)
+            List<string> loadedCompletedTasks = await DataManager.LoadData<List<string>>("tasksCurrentlyMarkedOff");
+
+            // Load all previously displayed tasks (by name)
+            List<string> loadedDisplayedTasks = await DataManager.LoadData<List<string>>("tasksCurrentlyDisplayed");
+
+            if (loadedDisplayedTasks != null)
+            {
+                // For each loaded displayed task, place them on the screen
+                foreach (string taskDataByName in loadedDisplayedTasks)
+                {
+                    Debug.Log("Found a previously displayed task data: " + taskDataByName);
+
+                    TaskData taskData = _allDisplayableTaskDataByName[taskDataByName];
+                    
+                    SpawnTask(taskData);
+                }
+            }
+
+            if (loadedCompletedTasks != null)
+            {
+                // For each loaded completed task, re-complete them
+                foreach (string completedTaskData in loadedCompletedTasks)
+                {
+                    _tasksDisplayed[_allDisplayableTaskDataByName[completedTaskData]].CompleteOnCommand();
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Error loading data: {e.Message}");
+        }
+        // Display all tasks (this is only works when there were no tasks found from a previous session)
+        DisplayAllTasks();
+    }
+
+    ///-///////////////////////////////////////////////////////////
+    /// Delete all data associated with previous task placement.
+    /// 
+    public async void ClearTaskPlacement()
+    {
+        await DataManager.DeleteAllDataByName("tasksCurrentlyAllowedToDisplay");
+        await DataManager.DeleteAllDataByName("tasksCurrentlyDisplayed");
+        await DataManager.DeleteAllDataByName("tasksCurrentlyMarkedOff");
     }
 
     #endregion

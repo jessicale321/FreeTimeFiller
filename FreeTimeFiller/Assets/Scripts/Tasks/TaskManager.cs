@@ -14,6 +14,7 @@ public class TaskManager : MonoBehaviour
     private CategoryManager _taskPool;
     private TaskPlacer _taskPlacer;
     private CustomTaskCreator _customTaskCreator;
+    private TaskRefreshWithTime _taskRefreshWithTime;
     
     private async void Awake()
     {
@@ -23,6 +24,7 @@ public class TaskManager : MonoBehaviour
         _taskPool = GetComponent<CategoryManager>();
         _taskPlacer = GetComponent<TaskPlacer>();
         _customTaskCreator = GetComponent<CustomTaskCreator>();
+        _taskRefreshWithTime = GetComponent<TaskRefreshWithTime>();
         
         // When the user is signed in, begin the task placement process
         await UnityServices.InitializeAsync();
@@ -30,6 +32,8 @@ public class TaskManager : MonoBehaviour
         
         // TODO: REMOVE THIS SOON
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
+        
+        //_taskPlacer.ClearTaskPlacement();
     }
 
     private void OnEnable()
@@ -37,12 +41,14 @@ public class TaskManager : MonoBehaviour
         // When the custom task creator has finished loading or has created a task, add a custom task
         _customTaskCreator.CustomTaskWasCreatedWithoutLoad += AddOneCustomTask;
         _customTaskCreator.ExistingCustomTaskWasEdited += UpdateExistingTaskOnScreen;
+        _customTaskCreator.CustomTaskWasDeleted += DeleteExistingTaskOnScreen;
     }
 
     private void OnDisable()
     {
         _customTaskCreator.CustomTaskWasCreatedWithoutLoad -= AddOneCustomTask;
         _taskPool.TaskCategoriesChanged -= UpdatePremadeTasks;
+        _taskRefreshWithTime.refreshTimerOccurred -= NotifyTaskPlacerOfRefresh;
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -53,8 +59,9 @@ public class TaskManager : MonoBehaviour
         Task[] methodsToWait = {
             // Load task categories from the user's account first
             _taskPool.LoadCategoriesFromCloud(),
-
-            _customTaskCreator.LoadAllCustomTasks()
+            
+            // Load all custom tasks the user created in the past
+            _customTaskCreator.LoadAllCustomTasks(),
         };
 
         // Wait for task categories and custom tasks to be loaded in before placement
@@ -68,6 +75,13 @@ public class TaskManager : MonoBehaviour
 
         // Try to add all tasks (won't do anything if the user hasn't saved any task categories ever before)
         UpdatePremadeTasks(_taskPool.ChosenTaskCategories);
+        
+        // Loaded previously displayed tasks
+        _taskPlacer.LoadTaskPlacement();
+
+        _taskRefreshWithTime.refreshTimerOccurred += NotifyTaskPlacerOfRefresh;
+
+        _taskRefreshWithTime.CheckElapsedTimeOnLogin();
 
         // If task categories are changed again, add the tasks again
         _taskPool.TaskCategoriesChanged += UpdatePremadeTasks;
@@ -88,8 +102,18 @@ public class TaskManager : MonoBehaviour
     /// one of its tasks (if its displayable) will need to change its text on screen and
     /// may get removed depending on the category.
     /// 
-    private void UpdateExistingTaskOnScreen(TaskData customTaskUpdated){
-        _taskPlacer.ExistingTaskDataWasUpdated(customTaskUpdated, _taskPool.ChosenTaskCategories);
+    private void UpdateExistingTaskOnScreen(string oldCustomTaskName, TaskData customTaskUpdated)
+    {
+        _taskPlacer.ExistingTaskDataWasUpdated(oldCustomTaskName, customTaskUpdated, _taskPool.ChosenTaskCategories);
+    }
+
+    ///-///////////////////////////////////////////////////////////
+    /// When the user has deleted an existing task, tell the TaskPlacer to remove it from the screen
+    /// and replace it with an inactive task.
+    /// 
+    private void DeleteExistingTaskOnScreen(TaskData taskDeleted)
+    {
+        _taskPlacer.RemoveTaskFromDisplay(taskDeleted);
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -102,7 +126,15 @@ public class TaskManager : MonoBehaviour
         _taskPlacer.FindPremadeTasks(chosenTaskCategories);
 
         // When task categories have changed, 
-        _taskPlacer.RemoveTaskDataByCategories(chosenTaskCategories);
+        _taskPlacer.EditPlacementOnCategoryChange(chosenTaskCategories);
     }
-    
+
+    ///-///////////////////////////////////////////////////////////
+    /// When refresh timer has occurred, tell TaskPlacer to replace all tasks on screen
+    /// with new ones.
+    /// 
+    private void NotifyTaskPlacerOfRefresh()
+    {
+        _taskPlacer.RefreshAllTasksWithTime();
+    }
 }

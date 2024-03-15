@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7393821257441908569}
   - component: {fileID: 7073630200094953449}
   - component: {fileID: 6411565594699745052}
+  - component: {fileID: 4126836180022038905}
   m_Layer: 0
   m_Name: TaskManager
   m_TagString: Untagged
@@ -59,7 +60,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2808742a61c7a3042a1ad819c3c3c433, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxTaskDisplay: 4
+  maxTaskDisplay: 5
   taskPrefab: {fileID: 7422696577987121108, guid: ebd48ffe12d1aaf4e8d245fff3b33d79, type: 3}
   taskPanel: {fileID: 0}
 --- !u!114 &7073630200094953449
@@ -80,10 +81,11 @@ MonoBehaviour:
   difficultySlider: {fileID: 0}
   createButton: {fileID: 0}
   changeModeButton: {fileID: 0}
+  resetButton: {fileID: 0}
   deleteButton: {fileID: 0}
   creationPanel: {fileID: 0}
   editPanel: {fileID: 0}
-  existingCustomTaskButton: {fileID: 3012048613870247459, guid: 1ca4d215ea96c5046a35128fb0b8b2c8, type: 3}
+  existingCustomTaskPrefab: {fileID: 537113763781564285, guid: 46d6ca63414b56546aa0edbfa450762f, type: 3}
 --- !u!114 &6411565594699745052
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -97,6 +99,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   categoryPanel: {fileID: 0}
-  taskCategoryButton: {fileID: 0}
+  taskCategoryButton: {fileID: 5826458050106275573, guid: f562d74845b9d4e40883c6d071608fe6, type: 3}
   finalizeChoicesButton: {fileID: 0}
   resetChoicesButton: {fileID: 0}
+--- !u!114 &4126836180022038905
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7651838313973276776}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8218e7b8e158e9e499bf7bfe28939f12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
