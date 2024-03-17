@@ -63,16 +63,9 @@ public class TaskPlacer : MonoBehaviour
     [SerializeField] private GameObject taskPrefab;
     [SerializeField] private Transform taskPanel;
 
-    private void Start()
+    private void Awake()
     {
-        if (completionMessage != null)
-        {
-            // If there are tasks displayed, don't show the completion message
-            if(_tasksDisplayed.Count > 0)
-                completionMessage.gameObject.SetActive(false);
-            else
-                completionMessage.gameObject.SetActive(true);
-        }
+        completionMessage.gameObject.SetActive(false);
     }
 
     #region Adding
@@ -238,6 +231,7 @@ public class TaskPlacer : MonoBehaviour
         
         // Task name could have been edited, therefore we must save again
         SaveTaskPlacement();
+        SaveTasksOnHold();
         SaveCompletedTasks();
     }
 
@@ -318,7 +312,20 @@ public class TaskPlacer : MonoBehaviour
     {
         foreach(TaskData data in _displayableTasks)
         {
-            if (_activeTaskData[data] == false) return data;
+            if (_activeTaskData[data] == false)
+            {
+                if (_taskDataOnHold.TryGetValue(data, out int refreshesLeftUntilReappear))
+                {
+                    // If this task was previously active and is no longer on hold, it's inactive
+                    if (refreshesLeftUntilReappear <= 0)
+                        return data;
+                }
+                // If the task wasn't in the taskDataOnHold dictionary, then it's inactive
+                else
+                {
+                    return data;
+                }
+            }
         }
         Debug.Log("Could not find a non-active task data!");
         return null;
@@ -335,12 +342,7 @@ public class TaskPlacer : MonoBehaviour
     public void CompleteTask(UserTask.Task task)
     {
         _completedTasks.Add(task);
-
-        TaskData dataOfCompletedTask = task.GetCurrentTaskData();
         
-        // Reset counter
-        _taskDataOnHold[dataOfCompletedTask] = dataOfCompletedTask.refreshCountdown;
-
         // Once the user has completed all tasks that could be displayed on screen...
         if (_completedTasks.Count >= _amountCurrentlyDisplayed)
         {
@@ -391,21 +393,27 @@ public class TaskPlacer : MonoBehaviour
     /// 
     private void RefreshAllTasksOnFullCompletion()
     {
-        // Previously completed tasks (not this current refresh), can begin to reappear on the user's task list
+        Debug.Log("Refresh everything on full completion!");
+        
+        // Previously completed tasks (not this current set), can begin to reappear on the user's task list
         foreach (TaskData taskData in _taskDataOnHold.Keys.Reverse())
         {
-            // If a TaskData has 0 or less refreshes left to reappear
-            if (_taskDataOnHold[taskData] <= 0)
-            {
-                // Reset counter
-                _taskDataOnHold[taskData] = taskData.refreshCountdown;
-            }
-            else
-            {
-                // A refresh has occurred, so this TaskData should be closer to reappearing in pool again
-                _taskDataOnHold[taskData]--;
-            }
+            // A refresh has occurred, so this TaskData should be closer to reappearing in pool again
+            _taskDataOnHold[taskData]--;
+
+            // Don't let value go below 0
+            if (_taskDataOnHold[taskData] < 0)
+                _taskDataOnHold[taskData] = 0;
+            
             Debug.Log(taskData.taskName + " has " + _taskDataOnHold[taskData] + " refreshes left!");
+        }
+
+        // If the tasks weren't on hold before, put them on hold.
+        foreach (UserTask.Task task in _completedTasks)
+        {
+            TaskData dataOfCompletedTask = task.GetCurrentTaskData();
+
+            _taskDataOnHold.TryAdd(dataOfCompletedTask, dataOfCompletedTask.refreshCountdown);
         }
 
         RemoveAllTasksFromScreen();
@@ -424,6 +432,7 @@ public class TaskPlacer : MonoBehaviour
             OnTaskFullCompletion();
         
         SaveCompletedTasks();
+        SaveTasksOnHold();
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -446,6 +455,7 @@ public class TaskPlacer : MonoBehaviour
         DisplayAllTasks();
         
         SaveCompletedTasks();
+        SaveTasksOnHold();
         
         // Remove completion message from screen
         if(completionMessage != null)
@@ -465,26 +475,16 @@ public class TaskPlacer : MonoBehaviour
 
     #endregion
 
-    #region Saving
+    #region Saving & Loading
     ///-///////////////////////////////////////////////////////////
     /// Save the tasks the user has displayed on screen.
     /// 
     private async void SaveTaskPlacement()
     {
-        // Convert dictionary to a list of KeyValuePairs
-        List<KeyValuePair<TaskData, int>> dataList = _taskDataOnHold.ToList();
-
-        // Convert the list to a serializable data structure (e.g., a list of tuples)
-        List<Tuple<TaskData, int>> serializableList = new List<Tuple<TaskData, int>>();
-        foreach (var pair in dataList)
-        {
-            serializableList.Add(new Tuple<TaskData, int>(pair.Key, pair.Value));
-        }
-
         List<string> allDisplayedTasksByName = _tasksDisplayed.Keys.Select(key => key.taskName).ToList();
 
         await DataManager.SaveData("tasksCurrentlyDisplayed", allDisplayedTasksByName);
-        await DataManager.SaveData("tasksCurrentlyOnRefresh", serializableList);
+        
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -500,6 +500,23 @@ public class TaskPlacer : MonoBehaviour
 
         await DataManager.SaveData("tasksCurrentlyAllowedToDisplay", _amountAllowedToDisplay.ToString());
         await DataManager.SaveData("tasksCurrentlyMarkedOff", allCompletedTasksByName);
+    }
+
+    private async void SaveTasksOnHold()
+    {
+        Debug.Log("Save tasks on hold to reappear!");
+        // Convert dictionary to a list of KeyValuePairs
+        List<KeyValuePair<TaskData, int>> dataOnHoldList = _taskDataOnHold.ToList();
+
+        // Convert the list to a serializable data structure (e.g., a list of tuples)
+        List<Tuple<string, int>> taskDataOnHoldListOfTuples = new List<Tuple<string, int>>();
+        foreach (var pair in dataOnHoldList)
+        {
+            taskDataOnHoldListOfTuples.Add(new Tuple<string, int>(pair.Key.taskName, pair.Value));
+            Debug.Log($"Saving {pair.Key.taskName} with {pair.Value} refreshes left to reappear.");
+        }
+        
+        await DataManager.SaveData("tasksCurrentlyOnRefresh", taskDataOnHoldListOfTuples);
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -524,6 +541,9 @@ public class TaskPlacer : MonoBehaviour
             // Load all previously displayed tasks (by name)
             List<string> loadedDisplayedTasks = await DataManager.LoadData<List<string>>("tasksCurrentlyDisplayed");
 
+            List<Tuple<string, int>> taskDataOnHoldListOfTuples =
+                await DataManager.LoadData<List<Tuple<string, int>>>("tasksCurrentlyOnRefresh");
+
             if (loadedDisplayedTasks != null)
             {
                 // For each loaded displayed task, place them on the screen
@@ -540,18 +560,43 @@ public class TaskPlacer : MonoBehaviour
             if (loadedCompletedTasks != null)
             {
                 // For each loaded completed task, re-complete them
-                foreach (string completedTaskData in loadedCompletedTasks)
+                foreach (string nameOfCompletedTask in loadedCompletedTasks)
                 {
-                    _tasksDisplayed[_allDisplayableTaskDataByName[completedTaskData]].CompleteOnCommand();
+                    _tasksDisplayed[_allDisplayableTaskDataByName[nameOfCompletedTask]].CompleteOnCommand();
                 }
             }
+
+            if (taskDataOnHoldListOfTuples != null)
+            {
+                // For each task that was on refresh, add them to the taskDataOnHold dictionary so we remember 
+                // how many refreshes it had left for it to reappear on the screen.
+                foreach (var (taskName, refreshesLeftUntilReappear) in taskDataOnHoldListOfTuples)
+                {
+                    TaskData dataOfTaskOnHold = _allDisplayableTaskDataByName[taskName];
+                    _taskDataOnHold[dataOfTaskOnHold] = refreshesLeftUntilReappear;
+                    
+                    Debug.Log($"{taskName} was previously on refresh and will reappear after {_taskDataOnHold[dataOfTaskOnHold]} refreshes.");
+                }
+            }
+            
         }
         catch (Exception e)
         {
             Debug.LogError($"Error loading data: {e.Message}");
         }
+        
         // Display all tasks (this is only works when there were no tasks found from a previous session)
         DisplayAllTasks();
+        
+        // Display completion message if all tasks were completed
+        if (completionMessage != null)
+        {
+            // If there are tasks displayed, don't show the completion message
+            if(_tasksDisplayed.Count > 0)
+                completionMessage.gameObject.SetActive(false);
+            else
+                completionMessage.gameObject.SetActive(true);
+        }
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -562,6 +607,7 @@ public class TaskPlacer : MonoBehaviour
         await DataManager.DeleteAllDataByName("tasksCurrentlyAllowedToDisplay");
         await DataManager.DeleteAllDataByName("tasksCurrentlyDisplayed");
         await DataManager.DeleteAllDataByName("tasksCurrentlyMarkedOff");
+        await DataManager.DeleteAllDataByName("tasksCurrentlyOnRefresh");
     }
 
     #endregion
