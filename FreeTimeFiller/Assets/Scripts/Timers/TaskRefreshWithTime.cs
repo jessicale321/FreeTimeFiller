@@ -1,14 +1,19 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class TaskRefreshWithTime: MonoBehaviour
 {
+    [SerializeField] private TMP_Text refreshTimerDisplay;
+    
+    // DateTime for last time user opened or closed the app
     private DateTime _lastTimeAppWasOpened;
-
+    // DateTime for the last time that tasks refreshed
     private DateTime _lastTimeRefreshedWhileOpen;
 
     // Don't let update and app opening refreshes to occur simultaneously 
@@ -31,6 +36,9 @@ public class TaskRefreshWithTime: MonoBehaviour
 
     private void Update()
     {
+        // Always display time until refresh occurs
+        DisplayTimeUntilMidnight();
+        
         // Check every frame if the time should refresh
         if(DateTime.Now.Day != _lastTimeRefreshedWhileOpen.Day && !_currentlyRefreshingFromAppOpen)
         {
@@ -63,6 +71,23 @@ public class TaskRefreshWithTime: MonoBehaviour
         
         // Save login time when opening the app
         SaveLoginTime();
+    }
+
+    ///-///////////////////////////////////////////////////////////
+    /// Display how much time there is left until midnight (when refresh occurs).
+    /// 
+    private void DisplayTimeUntilMidnight()
+    {
+        // Get the current time
+        DateTime currentTime = DateTime.Now;
+
+        // Get the time remaining until midnight
+        DateTime nextMidnight = currentTime.Date.AddDays(1);
+        TimeSpan timeUntilMidnight = nextMidnight - currentTime;
+        
+        // Display the time remaining
+        string timeRemainingText = $"{timeUntilMidnight.Hours}hr {timeUntilMidnight.Minutes}m {timeUntilMidnight.Seconds}s";
+        refreshTimerDisplay.text = "Next Refresh: " + timeRemainingText;
     }
 
     ///-///////////////////////////////////////////////////////////

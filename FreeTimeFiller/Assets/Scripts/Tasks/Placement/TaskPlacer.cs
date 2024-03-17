@@ -3,12 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TMPro;
 using Unity.Services.CloudSave;
 using UnityEngine;
 using Random = System.Random;
 
 public class TaskPlacer : MonoBehaviour
 {
+    // UI text that tells user they finished all the tasks they can do
+    [SerializeField] private TMP_Text completionMessage;
+    
     // Tasks that will show up in the pool
     private List<TaskData> _displayableTasks = new List<TaskData>();
 
@@ -59,8 +63,19 @@ public class TaskPlacer : MonoBehaviour
     [SerializeField] private GameObject taskPrefab;
     [SerializeField] private Transform taskPanel;
 
-    #region Adding
+    private void Start()
+    {
+        if (completionMessage != null)
+        {
+            // If there are tasks displayed, don't show the completion message
+            if(_tasksDisplayed.Count > 0)
+                completionMessage.gameObject.SetActive(false);
+            else
+                completionMessage.gameObject.SetActive(true);
+        }
+    }
 
+    #region Adding
     ///-///////////////////////////////////////////////////////////
     /// Load all pre-made tasks found under the resources folder
     /// 
@@ -125,6 +140,7 @@ public class TaskPlacer : MonoBehaviour
 
     #endregion
 
+    #region Editing & Removing
     ///-///////////////////////////////////////////////////////////
     /// When TaskCategory preferences have changed, check if any displayable tasks need to be removed. The user 
     /// may have decided they don't want to see certain tasks anymore.
@@ -235,9 +251,9 @@ public class TaskPlacer : MonoBehaviour
 
         SpawnTask(newTaskData);
     }
+    #endregion
 
     #region Displaying
-
     ///-///////////////////////////////////////////////////////////
     /// Find a TaskData that is not being displayed currently, and create
     /// a new task using its values
@@ -311,7 +327,6 @@ public class TaskPlacer : MonoBehaviour
     #endregion
 
     #region Completing
-
     ///-///////////////////////////////////////////////////////////
     /// Add a Task to a list of completed tasks. When all tasks displayed on screen
     /// have been completed, refresh all the tasks. TaskData that were completed are temporarily
@@ -369,8 +384,7 @@ public class TaskPlacer : MonoBehaviour
         // Reset the count of displayed tasks
         _amountCurrentlyDisplayed = 0;
     }
-
-
+    
     ///-///////////////////////////////////////////////////////////
     /// When all on screen are completed, remove them and place a new set of tasks.
     /// TaskData that were temporarily removed from the pool can start returning.
@@ -407,7 +421,7 @@ public class TaskPlacer : MonoBehaviour
         if(_amountAllowedToDisplay > 0) 
             DisplayAllTasks();
         else
-            Debug.Log("All task refreshes have been used up! User must wait 24 hours for a refresh to occur!");
+            OnTaskFullCompletion();
         
         SaveCompletedTasks();
     }
@@ -425,18 +439,33 @@ public class TaskPlacer : MonoBehaviour
 
         RemoveAllTasksFromScreen();
 
+        // Max number of tasks can be completed again
         _amountAllowedToDisplay = maxTaskDisplay;
 
         // Show new set of tasks
         DisplayAllTasks();
         
         SaveCompletedTasks();
+        
+        // Remove completion message from screen
+        if(completionMessage != null)
+            completionMessage.gameObject.SetActive(false);
+    }
+
+    ///-///////////////////////////////////////////////////////////
+    /// Display a message to the user when they have completed the max number of tasks.
+    /// 
+    private void OnTaskFullCompletion()
+    {
+        Debug.Log("All task refreshes have been used up! User must wait 24 hours for a refresh to occur!");
+
+        if(completionMessage != null)
+            completionMessage.gameObject.SetActive(true);
     }
 
     #endregion
 
     #region Saving
-    
     ///-///////////////////////////////////////////////////////////
     /// Save the tasks the user has displayed on screen.
     /// 
