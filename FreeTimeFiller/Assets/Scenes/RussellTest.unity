@@ -534,6 +534,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 4672829511951482901, guid: c7031ed8c233d324ba58bd3dbd5869a1, type: 3}
   m_PrefabInstance: {fileID: 84661450146575871}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1078970243 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8974813578103326304, guid: b0d098b8d7e0cdb478d2680261b70148, type: 3}
+  m_PrefabInstance: {fileID: 1323230041296010473}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1107745766 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6314903180961014016, guid: c7031ed8c233d324ba58bd3dbd5869a1, type: 3}
@@ -702,6 +713,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2da0c512f12947e489f739169773d7ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1802665104 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1893886224132238676, guid: b0d098b8d7e0cdb478d2680261b70148, type: 3}
+  m_PrefabInstance: {fileID: 1323230041296010473}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1932886862 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1277091273961429835, guid: c7031ed8c233d324ba58bd3dbd5869a1, type: 3}
@@ -771,6 +793,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4126836180022038905, guid: 2373d6712405580488bed190e3758603, type: 3}
+      propertyPath: refreshTimerDisplay
+      value: 
+      objectReference: {fileID: 1802665104}
     - target: {fileID: 6411565594699745052, guid: 2373d6712405580488bed190e3758603, type: 3}
       propertyPath: categoryPanel
       value: 
@@ -827,6 +853,10 @@ PrefabInstance:
       propertyPath: taskPanel
       value: 
       objectReference: {fileID: 2021687173}
+    - target: {fileID: 7393821257441908569, guid: 2373d6712405580488bed190e3758603, type: 3}
+      propertyPath: completionMessage
+      value: 
+      objectReference: {fileID: 1078970243}
     - target: {fileID: 7651838313973276776, guid: 2373d6712405580488bed190e3758603, type: 3}
       propertyPath: m_Name
       value: TaskManager
@@ -1028,6 +1058,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 973351827}
     m_Modifications:
+    - target: {fileID: 2092606619848483691, guid: b0d098b8d7e0cdb478d2680261b70148, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2621807561232833991, guid: b0d098b8d7e0cdb478d2680261b70148, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1111,10 +1145,6 @@ PrefabInstance:
     - target: {fileID: 2667139168730093000, guid: b0d098b8d7e0cdb478d2680261b70148, type: 3}
       propertyPath: m_Name
       value: Task Screen
-      objectReference: {fileID: 0}
-    - target: {fileID: 2667139168730093000, guid: b0d098b8d7e0cdb478d2680261b70148, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
