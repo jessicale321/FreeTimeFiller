@@ -38,6 +38,7 @@ public class CustomTaskCreator : MonoBehaviour
     [SerializeField] private Button changeModeButton;
     private TMP_Text _changeModeButtonText;
     [SerializeField] private Button resetButton;
+    [SerializeField] private Button deleteButton;
 
     [SerializeField] private Transform creationPanel;
     [SerializeField] private Transform editPanel;
@@ -61,9 +62,10 @@ public class CustomTaskCreator : MonoBehaviour
     private Dictionary<TaskData, CustomTaskButton> _loadedCustomTaskButtons =
         new Dictionary<TaskData, CustomTaskButton>();
     
-    public event Action<List<TaskData>> AllCustomTaskWereLoaded; 
     public event Action<TaskData> CustomTaskWasCreatedWithoutLoad;
-    public event Action<TaskData> ExistingCustomTaskWasEdited;
+    // When an existing custom task has had its information changed (passes reference to old name, and new task data)
+    public event Action<string, TaskData> ExistingCustomTaskWasEdited;
+    public event Action<TaskData> CustomTaskWasDeleted;
 
     private async void Awake()
     {
@@ -80,23 +82,23 @@ public class CustomTaskCreator : MonoBehaviour
     {
         // Add button functionality
         createButton.onClick.AddListener(AttemptCreation);
-        changeModeButton.onClick.AddListener(ChangeMode);
+        changeModeButton.onClick.AddListener(ChangeModeOnButtonClick);
         resetButton.onClick.AddListener(ClearAllCustomTaskData);
+        deleteButton.onClick.AddListener(DeleteOneCustomTaskData);
     }
 
     private void OnDisable()
     {
         // Remove button functionality
         createButton.onClick.RemoveListener(AttemptCreation);
-        changeModeButton.onClick.RemoveListener(ChangeMode);
+        changeModeButton.onClick.RemoveListener(ChangeModeOnButtonClick);
         resetButton.onClick.RemoveListener(ClearAllCustomTaskData);
+        deleteButton.onClick.RemoveListener(DeleteOneCustomTaskData);
     }
 
     private void Start()
     {
-        _currentMenuMode = MenuMode.Create;
-        
-        ChangeModeText();
+        SwitchToCreateMode();
     }
 
     #region Creation
@@ -185,10 +187,7 @@ public class CustomTaskCreator : MonoBehaviour
         newTaskData.description = taskDescriptionInputField.text;
         newTaskData.difficultyLevel = difficultySlider.GetDifficultyValue();
         newTaskData.category = categoryDropdown.GetSelectedTaskCategory();
-        
-        // Add the new task to the task pool
-        //CustomTaskWasCreatedWithoutLoad?.Invoke(newTaskData);
-        
+
         UpdateCustomTaskData(oldTaskName, newTaskData);
 
         // Update custom task button on screen to have a new name
@@ -204,23 +203,18 @@ public class CustomTaskCreator : MonoBehaviour
     /// 
     public async Task LoadAllCustomTasks()
     {
-        // Load the list of custom tasks created by the user from their cloud account
-        var savedList = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string>
-        {
-            "customTasks"
-        });
+        List<string> savedCustomTasks = await DataManager.LoadData<List<string>>("customTasks");
         
-        // If there's data loaded, deserialize it back into a list of strings
-        if (savedList.TryGetValue("customTasks", out var data))
+        if(savedCustomTasks != null)
         {
-            // Don't allow duplicates to load in
-            if (_customTasksAsJson.Contains(data.Value.GetAsString())) return;
-            
-            List<string> stringList = data.Value.GetAs<List<string>>();
-            
-            // Append the loaded list to the existing list
-            if(stringList != null)
-                _customTasksAsJson.AddRange(stringList);
+            foreach(string customTask in savedCustomTasks)
+            {
+                // Don't allow duplicates to load in
+                if (_customTasksAsJson.Contains(customTask)) return;
+
+                else
+                    _customTasksAsJson.Add(customTask);
+            }
         }
 
         if (_customTasksAsJson.Count > 0)
@@ -243,7 +237,6 @@ public class CustomTaskCreator : MonoBehaviour
         {
             Debug.Log("Could not find any saved custom tasks.");
         }
-        AllCustomTaskWereLoaded?.Invoke(LoadedCustomTasks);
     }
 
     #endregion
@@ -266,8 +259,7 @@ public class CustomTaskCreator : MonoBehaviour
         LoadedCustomTasks.Add(taskDataToSave);
 
         // Save list of custom tasks to the user's account
-        await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
-            { "customTasks", _customTasksAsJson} });
+        await DataManager.SaveData("customTasks", _customTasksAsJson);
     }
     
     private async void UpdateCustomTaskData(string oldTaskName, TaskData newTaskData)
@@ -287,15 +279,12 @@ public class CustomTaskCreator : MonoBehaviour
             Debug.Log($"Updated custom task data: {oldTaskName} to {newTaskData.taskName}");
 
             // Save the updated custom tasks list to Unity Cloud
-            await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object>
-            {
-                { "customTasks", _customTasksAsJson }
-            });
-            
+            await DataManager.SaveData("customTasks", _customTasksAsJson);
+
             LoadedCustomTasks.Add(newTaskData);
             
             // Tell all listeners that the contents of an existing custom task has been edited
-            ExistingCustomTaskWasEdited?.Invoke(newTaskData);
+            ExistingCustomTaskWasEdited?.Invoke(oldTaskName, newTaskData);
         }
         else
         {
@@ -319,69 +308,125 @@ public class CustomTaskCreator : MonoBehaviour
 
     #region Deleting
 
+    private async void DeleteOneCustomTaskData()
+    {
+        // Don't let user delete a custom task that doesn't exist
+        if(_currentCustomTaskEditing == null)
+        {
+            Debug.Log("Cannot delete a custom task because there isn't an existing one selected!");
+            return;
+        }
+
+        // Convert the contents of the new TaskData to a json string
+        string jsonText = JsonUtility.ToJson(_currentCustomTaskEditing.TaskData);
+        
+        RemoveCustomTaskButton(_currentCustomTaskEditing.TaskData);
+
+        _customTasksAsJson.Remove(jsonText);
+
+        LoadedCustomTasks.Remove(_currentCustomTaskEditing.TaskData);
+
+        // Save custom tasks that no longer contains the deleted task
+        await DataManager.SaveData("customTasks", _customTasksAsJson);
+
+        // Tell all listeners that a TaskData was deleted
+        CustomTaskWasDeleted?.Invoke(_currentCustomTaskEditing.TaskData);
+
+        // Go back to creation mode after deleting
+        ChangeModeOnButtonClick();
+    }
+
     ///-///////////////////////////////////////////////////////////
     /// Delete all custom task data from the user's account.
     /// 
     private async void ClearAllCustomTaskData()
     {
+        // Remove all edit custom task buttons from edit screen
+        foreach (TaskData deletedCustomTask in LoadedCustomTasks)
+        {
+            RemoveCustomTaskButton(deletedCustomTask);
+        }
+        
         _customTasksAsJson.Clear();
         LoadedCustomTasks.Clear();
-        
+
         // Overwrite the data with an empty string to "delete" it
-        await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
-            { "customTasks", "" }
-        });
+        await DataManager.DeleteAllDataByName("customTasks");
 
         Debug.Log("Custom task data was reset!");
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// When a custom task has been deleted, remove its button from the edit mode screen.
+    /// 
+    private void RemoveCustomTaskButton(TaskData taskDataDeleted)
+    {
+        if (_loadedCustomTaskButtons.ContainsKey(taskDataDeleted))
+        {
+            // Destroy the button found
+            Destroy(_loadedCustomTaskButtons[taskDataDeleted].gameObject);
+            
+            _loadedCustomTaskButtons.Remove(taskDataDeleted);
+        }
+    }
+
     #endregion
 
-    private void ChangeMode()
+    ///-///////////////////////////////////////////////////////////
+    /// When clicking on the change mode button, switch to the other mode (Create -> Edit / Edit -> Create).
+    /// 
+    private void ChangeModeOnButtonClick()
     {
         switch (_currentMenuMode)
         {
             // Switch to edit mode, if in create mode
             case MenuMode.Create:
-                _currentMenuMode = MenuMode.Edit;
-                
-                creationPanel.gameObject.SetActive(false);
-                editPanel.gameObject.SetActive(true);
-                
-                // For each custom task that the user has saved, make a button for it that they can click on to edit
-                foreach(TaskData customTaskData in LoadedCustomTasks)
-                {
-                    SpawnCustomTaskButton(customTaskData);
-                }
+                SwitchToEditMode();
                 break;
             // Switch to create mode, if in edit mode
             case MenuMode.Edit:
-                _currentMenuMode = MenuMode.Create;
-                
-                creationPanel.gameObject.SetActive(true);
-                editPanel.gameObject.SetActive(false);
-                taskNameInputField.text = string.Empty;
-                taskDescriptionInputField.text = string.Empty;
+                SwitchToCreateMode();
                 break;
         }
-        ChangeModeText();
     }
 
-    private void ChangeModeText()
+    ///-///////////////////////////////////////////////////////////
+    /// Manually switch to Create mode.
+    /// 
+    private void SwitchToCreateMode()
     {
-        switch (_currentMenuMode)
+        _currentMenuMode = MenuMode.Create;
+
+        _changeModeButtonText.text = "Edit Mode";
+        
+        creationPanel.gameObject.SetActive(true);
+        editPanel.gameObject.SetActive(false);
+        // Don't allow user to delete a custom task in creation mode
+        deleteButton.gameObject.SetActive(false);
+
+        taskNameInputField.text = string.Empty;
+        taskDescriptionInputField.text = string.Empty;
+    }
+
+    ///-///////////////////////////////////////////////////////////
+    /// Manually switch to Edit mode.
+    /// 
+    private void SwitchToEditMode()
+    {
+        _currentMenuMode = MenuMode.Edit;
+
+        _changeModeButtonText.text = "Creation Mode";
+        
+        creationPanel.gameObject.SetActive(false);
+        editPanel.gameObject.SetActive(true);
+
+        // For each custom task that the user has saved, make a button for it that they can click on to edit
+        foreach (TaskData customTaskData in LoadedCustomTasks)
         {
-            // Switch to edit mode, if in create mode
-            case MenuMode.Create:
-                _changeModeButtonText.text = "Edit Mode";
-                break;
-            // Switch to create mode, if in edit mode
-            case MenuMode.Edit:
-                _changeModeButtonText.text = "Creation Mode";
-                break;
+            SpawnCustomTaskButton(customTaskData);
         }
     }
-    
+
     private void SpawnCustomTaskButton(TaskData customTaskData)
     {
         if (!_loadedCustomTaskButtons.ContainsKey(customTaskData))
@@ -395,6 +440,10 @@ public class CustomTaskCreator : MonoBehaviour
         _loadedCustomTaskButtons[customTaskData].UpdateCustomTaskButton(customTaskData, this);
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// Populate creation panel with information of the existing custom task that 
+    /// the user selected. Also, allow them to delete the custom task.
+    /// 
     public void EditExistingTask(CustomTaskButton customTaskButton)
     {
         _currentCustomTaskEditing = customTaskButton;
@@ -402,6 +451,7 @@ public class CustomTaskCreator : MonoBehaviour
         
         creationPanel.gameObject.SetActive(true);
         editPanel.gameObject.SetActive(false);
+        deleteButton.gameObject.SetActive(true);
 
         taskNameInputField.text = currentCustomTaskDataEditing.taskName;
         taskDescriptionInputField.text = currentCustomTaskDataEditing.description;

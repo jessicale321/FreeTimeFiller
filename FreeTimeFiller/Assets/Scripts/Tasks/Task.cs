@@ -31,27 +31,36 @@ namespace UserTask
 
         private bool _isCompleted = false;
 
-        private void OnEnable()
-        {
-            checkBoxButton.onClick.AddListener(Complete);
-        }
-
-        private void OnDisable()
-        {
-            checkBoxButton.onClick.RemoveListener(Complete);
-        }
-
-        private void Start()
+        private void Awake()
         {
             // Remove cross-out over this task
             crossOutImage.SetActive(false);
         }
 
+        private void OnEnable()
+        {
+            checkBoxButton.onClick.AddListener(CompleteOnClick);
+
+            if (_isCompleted)
+            {
+                crossOutImage.SetActive(true);
+            }
+            else
+            {
+                crossOutImage.SetActive(false);
+            }
+        }
+
+        private void OnDisable()
+        {
+            checkBoxButton.onClick.RemoveListener(CompleteOnClick);
+        }
+
         ///-///////////////////////////////////////////////////////////
         /// Place a cross-out image on top of this task if the task hasn't been completed yet.
-        /// If the task was already completed, then uncomplete the task.
+        /// If the task was already completed, then un-complete the task.
         /// 
-        private void Complete()
+        private void CompleteOnClick()
         {
             if (_isCompleted)
             {
@@ -64,17 +73,21 @@ namespace UserTask
             }
             else
             {
-                Debug.Log($"{taskData.taskName} has been completed!");
-
-                // Show a cross-out over this task, and disable its checkbox button
-                crossOutImage.SetActive(true);
-
-
-                // Tell TaskManager that this task has been completed
-                _myTaskPlacer.CompleteTask(this);
-
-                _isCompleted = true;
+                CompleteOnCommand();
             }
+        }
+
+        ///-///////////////////////////////////////////////////////////
+        /// Notify the TaskPlacer that this task has been completed, also place a cross-out image.
+        /// 
+        public void CompleteOnCommand()
+        {
+            // Show a cross-out over this task, and disable its checkbox button
+            crossOutImage.SetActive(true);
+            
+            _myTaskPlacer.CompleteTask(this);
+            
+            _isCompleted = true;
         }
 
         ///-///////////////////////////////////////////////////////////
