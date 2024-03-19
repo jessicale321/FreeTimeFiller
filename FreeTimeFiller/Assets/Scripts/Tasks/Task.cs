@@ -3,11 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace UserTask
 {
-    public class Task : MonoBehaviour
+    public class Task : MonoBehaviour//, IPointerUpHandler ,IPointerDownHandler
     {
         // Data that this task is currently using
         [SerializeField] private TaskData taskData;
@@ -30,6 +31,7 @@ namespace UserTask
         private List<GameObject> _allStars = new List<GameObject>();
 
         private bool _isCompleted = false;
+        private bool _isHoldingDown;
 
         private void Awake()
         {
@@ -55,6 +57,7 @@ namespace UserTask
         {
             checkBoxButton.onClick.RemoveListener(CompleteOnClick);
         }
+        
 
         ///-///////////////////////////////////////////////////////////
         /// Place a cross-out image on top of this task if the task hasn't been completed yet.
