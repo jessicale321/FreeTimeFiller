@@ -578,7 +578,7 @@ GameObject:
   - component: {fileID: 781223793237194443}
   - component: {fileID: 6307487778281569154}
   - component: {fileID: 2755020186292879476}
-  - component: {fileID: 49080625091444126}
+  - component: {fileID: 1037228524195072752}
   m_Layer: 5
   m_Name: Delete Button
   m_TagString: Untagged
@@ -687,7 +687,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &49080625091444126
+--- !u!114 &1037228524195072752
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -696,8 +696,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 8729392745440279898}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bc64e3be8eb09ef4cb0028d6e26615c6, type: 3}
+  m_Script: {fileID: 11500000, guid: 5e4e5511c4cdd6b4c8bef1a90bb165d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  holdTimer: 1
-  isHoldingDown: 0

@@ -25,6 +25,7 @@ public class HoldDownButtonForDuration : MonoBehaviour, IPointerUpHandler, IPoin
             _timeButtonHeld = 0f;
         }
 
+        // When the user has held this button down for long enough, invoke an event
         if (_timeButtonHeld >= holdTimer && !_heldLongEnough)
         {
             Debug.Log($"User held button for long enough! {holdTimer} seconds.");
@@ -44,6 +45,7 @@ public class HoldDownButtonForDuration : MonoBehaviour, IPointerUpHandler, IPoin
         _isHoldingDown = false;
     }
     
+    // Called when the pointer is no longer on the button
     public void OnPointerExit(PointerEventData eventData)
     {
         _isHoldingDown = false;
