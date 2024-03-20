@@ -142,6 +142,15 @@ namespace UserTask
         }
 
         ///-///////////////////////////////////////////////////////////
+        /// Delete this task and place a new one on the screen.
+        /// 
+        public void ReplaceThisTaskForCurrency()
+        {
+            // Tell TaskPlacer to remove this task from display (will be replaced by a different task)
+            _myTaskPlacer.RemoveTaskFromDisplay(taskData);
+        }
+
+        ///-///////////////////////////////////////////////////////////
         /// Return the TaskData of this Task.
         /// 
         public TaskData GetCurrentTaskData()

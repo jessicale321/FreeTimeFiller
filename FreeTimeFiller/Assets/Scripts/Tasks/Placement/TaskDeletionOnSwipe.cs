@@ -8,7 +8,9 @@ using UnityEngine.UI;
 public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
 {
     [SerializeField] private Button deleteButton;
-    
+
+    private UserTask.Task _myTask;
+   
     private Vector2 _startPosition;
     private bool _isDragging;
 
@@ -18,8 +20,14 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
     // How much does user need to swipe this?
     [SerializeField, Range(5, 50f)] private float swipeThreshold = 5f;
 
+    private void Awake()
+    {
+        _myTask = GetComponentInParent<UserTask.Task>();
+    }
+
     private void OnEnable()
     {
+        deleteButton.onClick.AddListener(OnDeleteButtonClicked);
         deleteButton.gameObject.SetActive(false);
         _swipingLeft = false;
         _swipingLeft = false;
@@ -27,6 +35,7 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
 
     private void OnDisable()
     {
+        deleteButton.onClick.RemoveListener(OnDeleteButtonClicked);
         _swipingLeft = false;
         _swipingLeft = false;
     }
@@ -50,8 +59,10 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
         if (!_isDragging) return;
 
         Vector2 direction = eventData.position - _startPosition;
+        // Magnitude of the direction means length
         float distance = direction.magnitude;
 
+        // Is the drag length high enough (i.e. did the user swipe far enough?)
         if (distance >= swipeThreshold)
         {
             // Check if user swiped right
@@ -94,5 +105,14 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
                 
         // Hide delete button
         deleteButton.gameObject.SetActive(false);
+    }
+
+    private void OnDeleteButtonClicked()
+    {
+        if(_myTask != null)
+        {
+            Debug.Log($"Task delete button was clicked for: {_myTask.GetCurrentTaskData().taskName}");
+            _myTask.ReplaceThisTaskForCurrency();
+        }      
     }
 }
