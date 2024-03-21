@@ -21,6 +21,7 @@ namespace UserTask
         [SerializeField] private Button checkBoxButton;
 
         [SerializeField] private GameObject crossOutImage;
+        private float crossOutAnimationTimer = 0.15f;
 
         // Panel that stars are parented by
         [SerializeField] private GameObject difficultyLevelPanel;
@@ -32,6 +33,7 @@ namespace UserTask
 
         private bool _isCompleted = false;
         private bool _isHoldingDown;
+
 
         private void OnEnable()
         {
@@ -146,9 +148,9 @@ namespace UserTask
             crossOutImage.SetActive(true);
 
             if (isCrossedOut)
-                LeanTween.scaleX(crossOutImage, 1f, 0.15f);
+                LeanTween.scaleX(crossOutImage, 1f, crossOutAnimationTimer);
             else
-                LeanTween.scaleX(crossOutImage, 0f, 0.15f);
+                LeanTween.scaleX(crossOutImage, 0f, crossOutAnimationTimer);
         }
 
         ///-///////////////////////////////////////////////////////////
@@ -165,7 +167,7 @@ namespace UserTask
         /// 
         public void DestroyTask()
         {
-            //LeanTween.moveX(gameObject, -10f, 0.25f).setOnComplete(() => Destroy(gameObject));
+            //LeanTween.moveX(gameObject, -10f, 1f).setOnComplete(() => Destroy(gameObject));
             Destroy(gameObject);
         }
 
