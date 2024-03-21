@@ -124,6 +124,7 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
         
         _deleteButton.interactable = false;
         trashCanImage.SetActive(false);
+
         LeanTween.scaleX(_deleteButton.gameObject, _originalDeleteButtonScaleX, stretchTimer);
     }
 

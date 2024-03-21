@@ -804,7 +804,7 @@ RectTransform:
   m_GameObject: {fileID: 8608607588920503060}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6100344871143381881}
@@ -988,5 +988,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   trashCanImage: {fileID: 2570703489214605190}
   deleteButtonStretchX: 4
-  stretchTimer: 0.25
+  stretchTimer: 0.15
   swipeThreshold: 10

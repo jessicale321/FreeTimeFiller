@@ -33,31 +33,27 @@ namespace UserTask
         private bool _isCompleted = false;
         private bool _isHoldingDown;
 
-        private void Awake()
-        {
-            // Remove cross-out over this task
-            crossOutImage.SetActive(false);
-        }
-
         private void OnEnable()
         {
+            crossOutImage.SetActive(false);
+            crossOutImage.transform.localScale = new Vector3(0f, crossOutImage.transform.localScale.y, crossOutImage.transform.localScale.z);
+            
             checkBoxButton.onClick.AddListener(CompleteOnClick);
 
             if (_isCompleted)
             {
-                crossOutImage.SetActive(true);
+                PlayCrossOutAnimation(true);
             }
             else
             {
-                crossOutImage.SetActive(false);
+                PlayCrossOutAnimation(false);
             }
         }
 
         private void OnDisable()
         {
             checkBoxButton.onClick.RemoveListener(CompleteOnClick);
-        }
-        
+        }  
 
         ///-///////////////////////////////////////////////////////////
         /// Place a cross-out image on top of this task if the task hasn't been completed yet.
@@ -68,7 +64,7 @@ namespace UserTask
             if (_isCompleted)
             {
                 // Remove cross-out over this task, and enable its checkbox button
-                crossOutImage.SetActive(false);
+                PlayCrossOutAnimation(false);
 
                 _myTaskPlacer.UncompleteTask(this);
 
@@ -86,7 +82,7 @@ namespace UserTask
         public void CompleteOnCommand()
         {
             // Show a cross-out over this task, and disable its checkbox button
-            crossOutImage.SetActive(true);
+            PlayCrossOutAnimation(true);
             
             _myTaskPlacer.CompleteTask(this);
             
@@ -106,7 +102,7 @@ namespace UserTask
             _myTaskPlacer = taskPlacer;
 
             // Remove cross-out over this task
-            crossOutImage.SetActive(false);
+            PlayCrossOutAnimation(false);
 
             DisplayStars(data);
 
@@ -142,12 +138,35 @@ namespace UserTask
         }
 
         ///-///////////////////////////////////////////////////////////
+        /// Show cross out bar over this task when the user clicks on the checkbox.
+        /// If this task is already crossed out, remove the cross out bar.
+        /// 
+        private void PlayCrossOutAnimation(bool isCrossedOut)
+        {
+            crossOutImage.SetActive(true);
+
+            if (isCrossedOut)
+                LeanTween.scaleX(crossOutImage, 1f, 0.15f);
+            else
+                LeanTween.scaleX(crossOutImage, 0f, 0.15f);
+        }
+
+        ///-///////////////////////////////////////////////////////////
         /// Delete this task and place a new one on the screen.
         /// 
         public void ReplaceThisTaskForCurrency()
         {
             // Tell TaskPlacer to remove this task from display (will be replaced by a different task)
             _myTaskPlacer.RemoveTaskFromDisplay(taskData);
+        }
+
+        ///-///////////////////////////////////////////////////////////
+        /// Play an animation, then destroy this gameObject.
+        /// 
+        public void DestroyTask()
+        {
+            //LeanTween.moveX(gameObject, -10f, 0.25f).setOnComplete(() => Destroy(gameObject));
+            Destroy(gameObject);
         }
 
         ///-///////////////////////////////////////////////////////////
