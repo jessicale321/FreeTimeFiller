@@ -7,10 +7,17 @@ using UnityEngine.UI;
 
 public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
 {
-    [SerializeField] private Button deleteButton;
-
     private UserTask.Task _myTask;
-   
+    
+    private Button _deleteButton;
+    [SerializeField] private GameObject trashCanImage;
+    
+    [Header("Delete Button Animation")]
+    [SerializeField, Range(2, 8)] private float deleteButtonStretchX;
+
+    [SerializeField, Range(0.1f, .5f)] private float stretchTimer = 0.25f;
+    private float _originalDeleteButtonScaleX;
+
     private Vector2 _startPosition;
     private bool _isDragging;
 
@@ -22,20 +29,30 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
 
     private void Awake()
     {
+        _deleteButton = GetComponentInChildren<Button>();
         _myTask = GetComponentInParent<UserTask.Task>();
+
+        _originalDeleteButtonScaleX = _deleteButton.transform.localScale.x;
     }
 
     private void OnEnable()
     {
-        deleteButton.onClick.AddListener(OnDeleteButtonClicked);
-        deleteButton.gameObject.SetActive(false);
+        _deleteButton.onClick.AddListener(OnDeleteButtonClicked);
+        
+        // Don't allow button click until swiping left;
+        _deleteButton.interactable = false;
+        
+        trashCanImage.SetActive(false);
         _swipingLeft = false;
         _swipingLeft = false;
     }
 
     private void OnDisable()
     {
-        deleteButton.onClick.RemoveListener(OnDeleteButtonClicked);
+        _deleteButton.onClick.RemoveListener(OnDeleteButtonClicked);
+        
+        _deleteButton.interactable = false;
+        trashCanImage.SetActive(false);
         _swipingLeft = false;
         _swipingLeft = false;
     }
@@ -89,9 +106,11 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
         Debug.Log("Swiped left on delete button");
         _swipingLeft = true;
         _swipingRight = false;
-                
-        // Show delete button
-        deleteButton.gameObject.SetActive(true);
+        
+        _deleteButton.interactable = true;
+
+        // Show trash can image when delete button is finished stretching out
+        LeanTween.scaleX(_deleteButton.gameObject, deleteButtonStretchX, stretchTimer).setOnComplete(() => trashCanImage.SetActive(true));
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -102,11 +121,16 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
         Debug.Log("Swiped right on delete button");
         _swipingRight = true;
         _swipingLeft = false;
-                
-        // Hide delete button
-        deleteButton.gameObject.SetActive(false);
+        
+        _deleteButton.interactable = false;
+        trashCanImage.SetActive(false);
+        LeanTween.scaleX(_deleteButton.gameObject, _originalDeleteButtonScaleX, stretchTimer);
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// When user clicks on delete button, then ask for currency. If the user has enough currency,
+    /// tell the task to replace itself.
+    /// 
     private void OnDeleteButtonClicked()
     {
         if(_myTask != null)
