@@ -134,10 +134,22 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
     /// 
     private void OnDeleteButtonClicked()
     {
-        if(_myTask != null)
+        if (_myTask != null)
         {
             Debug.Log($"Task delete button was clicked for: {_myTask.GetCurrentTaskData().taskName}");
-            _myTask.ReplaceThisTaskForCurrency();
-        }      
+            Vector3 originalPosition = _myTask.gameObject.transform.position;
+
+            // Random direction only for horizontal movement
+            Vector3 randomDir = new Vector3(UnityEngine.Random.Range(-0.1f, 0.1f), 0f, 0f);
+
+            LeanTween.move(_myTask.gameObject, originalPosition + randomDir, 0.1f)
+                .setEase(LeanTweenType.easeInOutQuad)
+                .setLoopPingPong(5)
+                .setOnComplete(() => {
+                    // Return to original position
+                    Vector3 returnPosition = originalPosition;
+                    LeanTween.move(_myTask.gameObject, returnPosition, 0f);
+                });
+        }
     }
 }

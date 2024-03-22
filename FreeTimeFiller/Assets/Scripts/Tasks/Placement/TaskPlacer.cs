@@ -214,7 +214,7 @@ public class TaskPlacer : MonoBehaviour
 
         if (_tasksDisplayed.ContainsKey(dataToRemove))
         {
-            _tasksDisplayed[dataToRemove].DestroyTask();
+            Destroy((_tasksDisplayed[dataToRemove].gameObject));
             _tasksDisplayed.Remove(dataToRemove);
         }
         
@@ -378,7 +378,7 @@ public class TaskPlacer : MonoBehaviour
             
             if (_tasksDisplayed.TryGetValue(taskData, out UserTask.Task task))
             {
-                task.DestroyTask();
+                Destroy(task.gameObject);
                 _tasksDisplayed.Remove(taskData);
             }
         }

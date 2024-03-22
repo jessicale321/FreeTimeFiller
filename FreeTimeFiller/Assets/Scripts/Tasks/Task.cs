@@ -34,7 +34,6 @@ namespace UserTask
         private bool _isCompleted = false;
         private bool _isHoldingDown;
 
-
         private void OnEnable()
         {
             crossOutImage.SetActive(false);
@@ -160,15 +159,6 @@ namespace UserTask
         {
             // Tell TaskPlacer to remove this task from display (will be replaced by a different task)
             _myTaskPlacer.RemoveTaskFromDisplay(taskData);
-        }
-
-        ///-///////////////////////////////////////////////////////////
-        /// Play an animation, then destroy this gameObject.
-        /// 
-        public void DestroyTask()
-        {
-            //LeanTween.moveX(gameObject, -10f, 1f).setOnComplete(() => Destroy(gameObject));
-            Destroy(gameObject);
         }
 
         ///-///////////////////////////////////////////////////////////
