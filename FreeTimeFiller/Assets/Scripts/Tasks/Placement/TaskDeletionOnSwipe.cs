@@ -17,6 +17,9 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
 
     [SerializeField, Range(0.1f, .5f)] private float stretchTimer = 0.25f;
     private float _originalDeleteButtonScaleX;
+    [SerializeField] private Vector3 errorShakeDirection;
+
+    [SerializeField, Range(0.05f, 0.5f)] private float errorShakeDuration; 
 
     private Vector2 _startPosition;
     private bool _isDragging;
@@ -139,12 +142,10 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
             Debug.Log($"Task delete button was clicked for: {_myTask.GetCurrentTaskData().taskName}");
             Vector3 originalPosition = _myTask.gameObject.transform.position;
 
-            // Random direction only for horizontal movement
-            Vector3 randomDir = new Vector3(UnityEngine.Random.Range(-0.1f, 0.1f), 0f, 0f);
-
-            LeanTween.move(_myTask.gameObject, originalPosition + randomDir, 0.1f)
+            // Move the task button around to showcase that an error occurred
+            LeanTween.move(_myTask.gameObject, originalPosition + errorShakeDirection, errorShakeDuration)
                 .setEase(LeanTweenType.easeInOutQuad)
-                .setLoopPingPong(5)
+                .setLoopPingPong(3)
                 .setOnComplete(() => {
                     // Return to original position
                     Vector3 returnPosition = originalPosition;

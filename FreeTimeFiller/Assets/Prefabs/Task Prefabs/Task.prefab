@@ -989,4 +989,6 @@ MonoBehaviour:
   trashCanImage: {fileID: 2570703489214605190}
   deleteButtonStretchX: 4
   stretchTimer: 0.15
+  errorShakeDirection: {x: 0.3, y: 0, z: 0}
+  errorShakeDuration: 0.09
   swipeThreshold: 10
