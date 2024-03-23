@@ -106,7 +106,6 @@ namespace UserTask
             PlayCrossOutAnimation(false);
 
             DisplayStars(data);
-
         }
 
         ///-///////////////////////////////////////////////////////////
@@ -133,7 +132,6 @@ namespace UserTask
                 {
                     GameObject newStar = Instantiate(difficultyStar, difficultyLevelPanel.transform, false);
                     _allStars.Add(newStar);
-
                 }
             }
         }
