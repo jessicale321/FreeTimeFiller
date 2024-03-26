@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
 {
     private UserTask.Task _myTask;
+    private TaskData _myTaskData;
     
     private Button _deleteButton;
     [SerializeField] private GameObject trashCanImage;
@@ -58,6 +59,11 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
         trashCanImage.SetActive(false);
         _swipingLeft = false;
         _swipingLeft = false;
+    }
+
+    private void Start()
+    {
+        _myTaskData = _myTask.GetCurrentTaskData();
     }
 
     // Called when the pointer is pressed down on the button
@@ -114,6 +120,8 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
 
         // Show trash can image when delete button is finished stretching out
         LeanTween.scaleX(_deleteButton.gameObject, deleteButtonStretchX, stretchTimer).setOnComplete(() => trashCanImage.SetActive(true));
+
+        Debug.Log($"{_myTaskData.taskName} costs {_myTaskData.GetDeletePrice()} to delete!");
     }
 
     ///-///////////////////////////////////////////////////////////

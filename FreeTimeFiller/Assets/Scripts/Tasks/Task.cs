@@ -32,6 +32,7 @@ namespace UserTask
         private List<GameObject> _allStars = new List<GameObject>();
 
         private bool _isCompleted = false;
+        private bool _isRewardable = true;
         private bool _isHoldingDown;
 
         private void OnEnable()
@@ -64,12 +65,7 @@ namespace UserTask
         {
             if (_isCompleted)
             {
-                // Remove cross-out over this task, and enable its checkbox button
-                PlayCrossOutAnimation(false);
-
-                _myTaskPlacer.UncompleteTask(this);
-
-                _isCompleted = false;
+                UncompleteOnCommand();
             }
             else
             {
@@ -88,6 +84,24 @@ namespace UserTask
             _myTaskPlacer.CompleteTask(this);
             
             _isCompleted = true;
+
+            Debug.Log($"Give the user {taskData.GetRewardAmount()} coins.");
+      
+        }
+
+        ///-///////////////////////////////////////////////////////////
+        /// Notify the TaskPlacer that this task has been un-completed, also remove the cross-out image.
+        /// 
+        public void UncompleteOnCommand()
+        {
+            // Remove cross-out over this task, and enable its checkbox button
+            PlayCrossOutAnimation(false);
+
+            _myTaskPlacer.UncompleteTask(this);
+
+            _isCompleted = false;
+
+            Debug.Log($"Take away {taskData.GetRewardAmount()} coins from the user.");
         }
 
         ///-///////////////////////////////////////////////////////////
