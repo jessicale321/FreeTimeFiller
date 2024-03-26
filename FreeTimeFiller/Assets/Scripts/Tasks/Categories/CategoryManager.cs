@@ -69,8 +69,6 @@ public class CategoryManager : MonoBehaviour
         {
             // Spawn in a new button
             GameObject newButton =  Instantiate(taskCategoryButton, categoryPanel);
-            
-            Debug.Log($"Spawned in category button: {newButton}");
 
             CategoryButton categoryButtonComponent = newButton.GetComponent<CategoryButton>();
 
@@ -112,8 +110,7 @@ public class CategoryManager : MonoBehaviour
         ChosenTaskCategories = _unsavedTaskCategories;
 
         // Save list of custom tasks to the user's account
-        await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
-            { "chosenTaskCategories", ChosenTaskCategories} });
+        await DataManager.SaveData("chosenTaskCategories", ChosenTaskCategories);
 
         // Tell listeners that the user has changed their task category preferences
         TaskCategoriesChanged?.Invoke(ChosenTaskCategories);
@@ -127,47 +124,37 @@ public class CategoryManager : MonoBehaviour
     /// 
     public async Task LoadCategoriesFromCloud()
     {
-        // Load the list of custom tasks created by the user from their cloud account
-        var savedList = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string>
-        {
-            "chosenTaskCategories"
-        });
+        List<string> savedCategories = await DataManager.LoadData<List<string>>("chosenTaskCategories");
 
-        // If there's data loaded, deserialize it back into a list of strings
-        if (savedList.TryGetValue("chosenTaskCategories", out var data))
+        if(savedCategories != null)
         {
-            List<string> listLoaded = data.Value.GetAs<List<string>>();
-
-            if (listLoaded != null)
+            // Loop through each serialized string and try to convert them back to TaskCategories
+            foreach (string categoryAsJson in savedCategories)
             {
-                // Loop through each serialized string and try to convert them back to TaskCategories
-                foreach (string categoryAsJson in listLoaded)
+                // Parse each saved string back to the enum representation
+                if (Enum.TryParse(categoryAsJson, out TaskCategory category))
                 {
-                    // Parse each saved string back to the enum representation
-                    if (Enum.TryParse(categoryAsJson, out TaskCategory category))
-                    {
-                        ChosenTaskCategories.Add(category);
+                    ChosenTaskCategories.Add(category);
 
-                        // Re-select all buttons that the user selected in the past
-                        if (_taskButtons.TryGetValue(category, out CategoryButton button))
-                        {
-                            _taskButtons[category].SelectButtonOnCommand();
-                        }
-                        Debug.Log($"User loaded task category: {category}");
-                    }
-                    else
+                    // Re-select all buttons that the user selected in the past
+                    if (_taskButtons.TryGetValue(category, out CategoryButton button))
                     {
-                        Debug.LogWarning($"Failed to parse task category: {categoryAsJson}");
+                        _taskButtons[category].SelectButtonOnCommand();
                     }
+                    Debug.Log($"User loaded task category: {category}");
+                }
+                else
+                {
+                    Debug.LogWarning($"Failed to parse task category: {categoryAsJson}");
                 }
             }
-            else
-            {
-                Debug.Log("Could not find any saved Task Categories!");
-            }
-            // Tell listeners that the user has changed their task category preferences
-            TaskCategoriesChanged?.Invoke(ChosenTaskCategories);
         }
+        else
+        {
+            Debug.Log("Could not find any saved Task Categories!");
+        }
+        // Tell listeners that the user has changed their task category preferences
+        TaskCategoriesChanged?.Invoke(ChosenTaskCategories);
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -178,10 +165,7 @@ public class CategoryManager : MonoBehaviour
         _unsavedTaskCategories.Clear();
         ChosenTaskCategories.Clear();
 
-        // Overwrite the data with an empty string to "delete" it
-        await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> {
-        { "chosenTaskCategories", "" }
-    });
+        await DataManager.DeleteAllDataByName("chosenTaskCategories");
 
         Debug.Log("Task category preferences were reset!");
     }
