@@ -33,7 +33,6 @@ namespace UserTask
 
         private bool _isCompleted = false;
         private bool _isRewardable = true;
-        private bool _isHoldingDown;
 
         private void OnEnable()
         {
@@ -69,6 +68,7 @@ namespace UserTask
             }
             else
             {
+                GiveRewardOnCompletion();
                 CompleteOnCommand();
             }
         }
@@ -85,7 +85,7 @@ namespace UserTask
             
             _isCompleted = true;
 
-            Debug.Log($"Give the user {taskData.GetRewardAmount()} coins.");
+            //_isRewardable = false;
       
         }
 
@@ -102,6 +102,12 @@ namespace UserTask
             _isCompleted = false;
 
             Debug.Log($"Take away {taskData.GetRewardAmount()} coins from the user.");
+        }
+
+        public void GiveRewardOnCompletion()
+        {
+            //if(_isRewardable)
+            Debug.Log($"Give the user {taskData.GetRewardAmount()} coins.");
         }
 
         ///-///////////////////////////////////////////////////////////
