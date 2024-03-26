@@ -4,57 +4,33 @@ using Unity.Services.CloudSave;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ProfileScreenController : MenuScreen
+public class ProfileScreenController : MonoBehaviour
 {
-    [SerializeField] private GameObject profilePicture;
-    [SerializeField] private Profile userProfile; // reference this better
+    [SerializeField] private Image profilePicture;
 
     private void OnEnable()
     {
-        LoadProfilePic();
-        userProfile.OnProfilePicUpdated += GetNewProfilePic;
+        LoadImageFromCloudSave();
     }
 
-    private async void GetNewProfilePic()
+    // Load the image from the cloud save file
+    public async void LoadImageFromCloudSave()
     {
-        var loadedProfilePic = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string> { "profilePic" });
-        Image currentProfile = profilePicture.GetComponent<Image>();
-        if (loadedProfilePic.TryGetValue("profilePic", out var profilePic))
+        try
         {
-            /*            var loadedSprite = profilePic.Value.GetAs<Sprite>();
-                        currentProfile.sprite = loadedSprite;*/
-            Texture2D loadedTexture = profilePic.Value.GetAs<Texture2D>();
-            Sprite loadedSprite = Sprite.Create(loadedTexture, new Rect(0, 0, loadedTexture.width, loadedTexture.height), Vector2.zero);
-            currentProfile.sprite = loadedSprite;
+            // Load the cloud save file data
+            byte[] imageData = await CloudSaveService.Instance.Files.Player.LoadBytesAsync("profileImage.png");
+
+            // Convert the byte array to a Texture2D
+            Texture2D texture = new Texture2D(1, 1);
+            texture.LoadImage(imageData);
+
+            // Set the loaded texture to the Image component
+            profilePicture.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.one * 0.5f);
         }
-
-        /*var data = new Dictionary<string, object> { { "mainProfilePic", currentProfile.sprite.texture } };
-        await CloudSaveService.Instance.Data.Player.SaveAsync(data);*/
-        Texture2D profileTexture = currentProfile.sprite.texture;
-        byte[] imageData = profileTexture.EncodeToPNG(); // Encode the texture as PNG image data
-
-        var data = new Dictionary<string, object> { { "mainProfilePic", imageData } };
-        await CloudSaveService.Instance.Data.Player.SaveAsync(data);
-    }
-
-    private async void LoadProfilePic()
-    {
-        var loadedProfilePic = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string> { "mainProfilePic" });
-        Image currentProfile = profilePicture.GetComponent<Image>();
-        if (loadedProfilePic.TryGetValue("mainProfilePic", out var mainProfilePic))
+        catch (System.Exception e)
         {
-            byte[] imageData = mainProfilePic.Value.GetAs<byte[]>();
-            Texture2D loadedTexture = new Texture2D(1, 1); // Create a new texture
-            loadedTexture.LoadImage(imageData); // Load the image data into the texture
-            Sprite loadedSprite = Sprite.Create(loadedTexture, new Rect(0, 0, loadedTexture.width, loadedTexture.height), Vector2.zero);
-            //Image currentProfile = profilePicture.GetComponent<Image>();
-            currentProfile.sprite = loadedSprite;
+            Debug.LogError($"Failed to load image from cloud save file: {e.Message}");
         }
-    }
-
-    private async void SaveProfilePic()
-    {
-/*        var data = new Dictionary<string, object> { { "profilePic", currentProfile.sprite } };
-        await CloudSaveService.Instance.Data.Player.SaveAsync(data);*/
     }
 }
