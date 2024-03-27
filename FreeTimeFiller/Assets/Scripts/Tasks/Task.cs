@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace UserTask
 {
-    public class Task : MonoBehaviour//, IPointerUpHandler ,IPointerDownHandler
+    public class Task : MonoBehaviour
     {
         // Data that this task is currently using
         [SerializeField] private TaskData taskData;
@@ -32,7 +32,9 @@ namespace UserTask
         private List<GameObject> _allStars = new List<GameObject>();
 
         private bool _isCompleted = false;
-        private bool _isRewardable = true;
+
+        public Action onCompletion;
+        public Action onUncompletion;
 
         private void OnEnable()
         {
@@ -85,8 +87,7 @@ namespace UserTask
             
             _isCompleted = true;
 
-            //_isRewardable = false;
-      
+            onCompletion?.Invoke();
         }
 
         ///-///////////////////////////////////////////////////////////
@@ -102,11 +103,12 @@ namespace UserTask
             _isCompleted = false;
 
             Debug.Log($"Take away {taskData.GetRewardAmount()} coins from the user.");
+
+            onUncompletion?.Invoke();
         }
 
         public void GiveRewardOnCompletion()
         {
-            //if(_isRewardable)
             Debug.Log($"Give the user {taskData.GetRewardAmount()} coins.");
         }
 

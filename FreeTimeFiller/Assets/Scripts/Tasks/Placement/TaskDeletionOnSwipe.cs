@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -12,12 +13,14 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
     
     private Button _deleteButton;
     [SerializeField] private GameObject trashCanImage;
+    [SerializeField] private TMP_Text deletePriceText;
     
     [Header("Delete Button Animation")]
     [SerializeField, Range(2, 8)] private float deleteButtonStretchX;
 
     [SerializeField, Range(0.1f, .5f)] private float stretchTimer = 0.25f;
-    private float _originalDeleteButtonScaleX;
+    // Set the delete button's X scale to 0 when we swipe right
+    private float _rightSwipeScaleX = 0f;
     [SerializeField] private Vector3 errorShakeDirection;
 
     [SerializeField, Range(0.05f, 0.5f)] private float errorShakeDuration; 
@@ -27,6 +30,8 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
 
     private bool _swipingLeft;
     private bool _swipingRight;
+
+    private bool _canDelete = true;
     
     // How much does user need to swipe this?
     [SerializeField, Range(5, 50f)] private float swipeThreshold = 5f;
@@ -35,8 +40,6 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
     {
         _deleteButton = GetComponentInChildren<Button>();
         _myTask = GetComponentInParent<UserTask.Task>();
-
-        _originalDeleteButtonScaleX = _deleteButton.transform.localScale.x;
     }
 
     private void OnEnable()
@@ -45,10 +48,17 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
         
         // Don't allow button click until swiping left;
         _deleteButton.interactable = false;
-        
+        trashCanImage.SetActive(false);
+        deletePriceText.gameObject.SetActive(false);
+        // Shrink the delete button 
+        _deleteButton.transform.localScale = new Vector3(_rightSwipeScaleX, _deleteButton.transform.localScale.y, _deleteButton.transform.localScale.z);
+
         trashCanImage.SetActive(false);
         _swipingLeft = false;
         _swipingLeft = false;
+
+        _myTask.onCompletion += OnTaskCompleted;
+        _myTask.onUncompletion += OnTaskUncompleted;
     }
 
     private void OnDisable()
@@ -59,6 +69,9 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
         trashCanImage.SetActive(false);
         _swipingLeft = false;
         _swipingLeft = false;
+
+        _myTask.onCompletion -= OnTaskCompleted;
+        _myTask.onUncompletion -= OnTaskUncompleted;
     }
 
     private void Start()
@@ -112,6 +125,8 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
     /// 
     private void OnSwipeLeft()
     {
+        if (!_canDelete) return;
+
         Debug.Log("Swiped left on delete button");
         _swipingLeft = true;
         _swipingRight = false;
@@ -119,8 +134,12 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
         _deleteButton.interactable = true;
 
         // Show trash can image when delete button is finished stretching out
-        LeanTween.scaleX(_deleteButton.gameObject, deleteButtonStretchX, stretchTimer).setOnComplete(() => trashCanImage.SetActive(true));
+        LeanTween.scaleX(_deleteButton.gameObject, deleteButtonStretchX, stretchTimer).setOnComplete(() => {
+            trashCanImage.SetActive(true);
+            deletePriceText.gameObject.SetActive(true);
+        });
 
+        deletePriceText.text = "$" + _myTaskData.GetDeletePrice().ToString();
         Debug.Log($"{_myTaskData.taskName} costs {_myTaskData.GetDeletePrice()} to delete!");
     }
 
@@ -135,8 +154,9 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
         
         _deleteButton.interactable = false;
         trashCanImage.SetActive(false);
+        deletePriceText.gameObject.SetActive(false);
 
-        LeanTween.scaleX(_deleteButton.gameObject, _originalDeleteButtonScaleX, stretchTimer);
+        LeanTween.scaleX(_deleteButton.gameObject, _rightSwipeScaleX, stretchTimer);
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -160,5 +180,16 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
                     LeanTween.move(_myTask.gameObject, returnPosition, 0f);
                 });
         }
+    }
+
+    private void OnTaskCompleted()
+    {
+        _canDelete = false;
+        OnSwipeRight();
+    }
+
+    private void OnTaskUncompleted()
+    {
+        _canDelete = true;
     }
 }
