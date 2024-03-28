@@ -148,9 +148,9 @@ public class FriendsManager : MonoBehaviour
         }
         catch (FriendsServiceException e)
         {
-            Debug.Log("Hey we are here and something went wrong with friends");
-            //Debug.Log(
-            //"An error occurred while performing the action. Code: " + e.StatusCode + ", Message: " + e.Message);
+            //Debug.Log("Hey we are here and something went wrong with friends");
+            Debug.Log(
+            "An error occurred while performing the action. Code: " + e.StatusCode + ", Message: " + e.Message);
         }
     }
 

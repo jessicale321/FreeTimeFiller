@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "936695360959",
+    "project_id": "free-time-filler-5011e",
+    "storage_bucket": "free-time-filler-5011e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:936695360959:android:d322a13fd6904e9504050a",
+        "android_client_info": {
+          "package_name": "com.FTF.FreeTimeFiller"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA36ck6XcEMqUfDBePBYYqzaj-EEx4b17I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
