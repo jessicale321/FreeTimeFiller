@@ -19,6 +19,7 @@ namespace UserTask
         [SerializeField] private TMP_Text taskName;
 
         [SerializeField] private Button checkBoxButton;
+        [SerializeField] private GameObject checkMark;
 
         [SerializeField] private GameObject crossOutImage;
         private float crossOutAnimationTimer = 0.15f;
@@ -80,6 +81,9 @@ namespace UserTask
         /// 
         public void CompleteOnCommand()
         {
+            if(checkMark != null)
+                checkMark.SetActive(true);
+
             // Show a cross-out over this task, and disable its checkbox button
             PlayCrossOutAnimation(true);
             
@@ -95,6 +99,9 @@ namespace UserTask
         /// 
         public void UncompleteOnCommand()
         {
+            if (checkMark != null)
+                checkMark.SetActive(false);
+
             // Remove cross-out over this task, and enable its checkbox button
             PlayCrossOutAnimation(false);
 
