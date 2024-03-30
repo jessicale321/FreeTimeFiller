@@ -22,6 +22,17 @@ public class TaskData : ScriptableObject
     
     [TextArea(2,3), Space(10)]
     public string description;
+
+    public int GetDeletePrice()
+    {
+        return difficultyLevel * 5;
+    }
+
+    public int GetRewardAmount()
+    {
+        return difficultyLevel * 3;
+    }
+   
 }
 
 public enum TaskCategory

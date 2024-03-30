@@ -86,8 +86,8 @@ public class CategoryManager : MonoBehaviour
     /// 
     private void FinishChoosing()
     {
-        // Only attempt to save the task categories if the list isn't empty
-        if (_unsavedTaskCategories.Count > 0)
+        // Only attempt to save the task categories if they have atleast two categories selected
+        if (_unsavedTaskCategories.Count > 1)
         {
             Debug.Log("User finished picking categories!");
 
