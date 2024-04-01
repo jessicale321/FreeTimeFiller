@@ -21,11 +21,17 @@ public class TaskRefreshWithTime: MonoBehaviour
     
     public Action refreshTimerOccurred;
 
+    // Display refresh timer only if the text box isn't null
+    private bool _canDisplayOnScreen;
+
     private void Awake()
     {
         _currentlyRefreshingFromAppOpen = false;
         
         _lastTimeRefreshedWhileOpen = DateTime.Now;
+
+        if (refreshTimerDisplay != null)
+            _canDisplayOnScreen = true;
     }
 
     private void OnApplicationQuit()
@@ -37,7 +43,8 @@ public class TaskRefreshWithTime: MonoBehaviour
     private void Update()
     {
         // Always display time until refresh occurs
-        DisplayTimeUntilMidnight();
+        if(_canDisplayOnScreen)
+            DisplayTimeUntilMidnight();
         
         // Check every frame if the time should refresh
         if(DateTime.Now.Day != _lastTimeRefreshedWhileOpen.Day && !_currentlyRefreshingFromAppOpen)

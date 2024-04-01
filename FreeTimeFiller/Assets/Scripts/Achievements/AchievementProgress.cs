@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class AchievementProgress
 {
-    public AchievementData achievement;
+    public string achievementName;
     public int currentValue;
     public bool completed;
 
-    public AchievementProgress(AchievementData achievement)
+    public AchievementProgress(string nameOfAchievement)
     {
-        this.achievement = achievement;
+        achievementName = nameOfAchievement;
         currentValue = 0;
         completed = false;
     }
