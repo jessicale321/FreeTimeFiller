@@ -16,6 +16,8 @@ public class AchievementData : ScriptableObject
     
     [TextArea(2,3), Space(10)]
     public string description;
+
+    public TaskCategory taskCategory;
 }
 
 public enum AchievementConditionType

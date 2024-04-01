@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: tasks_deleted_1
   m_EditorClassIdentifier: 
   achievementName: I'll do it next time
-  conditionType: 1
+  conditionType: 3
   targetValue: 1
   description: Delete a task!
+  taskCategory: 0

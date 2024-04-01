@@ -16,3 +16,4 @@ MonoBehaviour:
   conditionType: 2
   targetValue: 5
   description: Complete 5 tasks!
+  taskCategory: 0

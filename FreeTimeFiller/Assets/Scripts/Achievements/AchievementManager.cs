@@ -109,7 +109,7 @@ public class AchievementManager : MonoBehaviour
                 AchievementProgress achievementProgress = _allAchievementProgress[achievement];
 
                 achievementProgress.currentValue += amount;
-                
+
                 if (!achievementProgress.completed && achievementProgress.currentValue >= achievement.targetValue)
                 {
                     CompleteAchievement(achievementProgress, achievement);
@@ -122,24 +122,29 @@ public class AchievementManager : MonoBehaviour
         }
     }
 
-    public void UpdateTaskOfTypeProgress(TaskCategory category, int amount = 1)
+    // TODO: REMOVE DUPLICATE CODE
+    public void UpdateTaskTypeProgress(TaskCategory completeTaskCategory, int amount = 1)
     {
         if (_achievementsByConditionType.TryGetValue(AchievementConditionType.TasksOfTypeCompleted, out List<AchievementData> conditionAchievements))
         {
             foreach (AchievementData achievement in conditionAchievements)
             {
-                AchievementProgress achievementProgress = _allAchievementProgress[achievement];
-
-                achievementProgress.currentValue += amount;
-                
-                if (!achievementProgress.completed && achievementProgress.currentValue >= achievement.targetValue)
+                // Only make progress for achievements of the correct task category type (i.e. Completing a sports task doesn't progress achievements for other achievements with different categories such as School)
+                if (completeTaskCategory == achievement.taskCategory)
                 {
-                    CompleteAchievement(achievementProgress, achievement);
-                }
+                    AchievementProgress achievementProgress = _allAchievementProgress[achievement];
+                    
+                    achievementProgress.currentValue += amount;
+
+                    if (!achievementProgress.completed && achievementProgress.currentValue >= achievement.targetValue)
+                    {
+                        CompleteAchievement(achievementProgress, achievement);
+                    }
                 
-                // Save after making any progress
-                // TODO: Might try to find a way to make this less slow
-                SaveAllAchievementProgress();
+                    // Save after making any progress
+                    // TODO: Might try to find a way to make this less slow
+                    SaveAllAchievementProgress();
+                }
             }
         }
     }
