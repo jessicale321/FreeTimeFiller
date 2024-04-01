@@ -90,57 +90,36 @@ public class AchievementManager : MonoBehaviour
             }
         }
     }
-
+    
     ///-///////////////////////////////////////////////////////////
     /// Track player actions and update tracked values.
     /// 
-    public void UpdateProgress(AchievementConditionType conditionType, int amount = 1)
+    public void UpdateProgress(AchievementConditionType conditionType, int amount = 1, TaskCategory? completedTaskCategory = null)
     {
         if (amount <= 0)
         {
-            Debug.Log("Can't lose or make an update with zero progress!");
+            Debug.Log("Can't lose progress or make an update with zero progress!");
             return;
         }
-        
+
         if (_achievementsByConditionType.TryGetValue(conditionType, out List<AchievementData> conditionAchievements))
         {
             foreach (AchievementData achievement in conditionAchievements)
             {
-                AchievementProgress achievementProgress = _allAchievementProgress[achievement];
-
-                achievementProgress.currentValue += amount;
-
-                if (!achievementProgress.completed && achievementProgress.currentValue >= achievement.targetValue)
-                {
-                    CompleteAchievement(achievementProgress, achievement);
-                }
-                
-                // Save after making any progress
-                // TODO: Might try to find a way to make this less slow
-                SaveAllAchievementProgress();
-            }
-        }
-    }
-
-    // TODO: REMOVE DUPLICATE CODE
-    public void UpdateTaskTypeProgress(TaskCategory completeTaskCategory, int amount = 1)
-    {
-        if (_achievementsByConditionType.TryGetValue(AchievementConditionType.TasksOfTypeCompleted, out List<AchievementData> conditionAchievements))
-        {
-            foreach (AchievementData achievement in conditionAchievements)
-            {
-                // Only make progress for achievements of the correct task category type (i.e. Completing a sports task doesn't progress achievements for other achievements with different categories such as School)
-                if (completeTaskCategory == achievement.taskCategory)
+                /* Check if the condition matches the achievement's condition type
+                If the condition type is TasksOfTypeCompleted, then...
+                Only make progress for achievements of the correct task category type (i.e. Completing a sports task doesn't progress achievements for other achievements with different categories such as School) */
+                if (conditionType != AchievementConditionType.TasksOfTypeCompleted || completedTaskCategory == achievement.taskCategory)
                 {
                     AchievementProgress achievementProgress = _allAchievementProgress[achievement];
-                    
+
                     achievementProgress.currentValue += amount;
 
                     if (!achievementProgress.completed && achievementProgress.currentValue >= achievement.targetValue)
                     {
                         CompleteAchievement(achievementProgress, achievement);
                     }
-                
+
                     // Save after making any progress
                     // TODO: Might try to find a way to make this less slow
                     SaveAllAchievementProgress();
