@@ -39,17 +39,17 @@ public class AchievementManager : MonoBehaviour
             Instance = this; 
         }
         await UnityServices.InitializeAsync();
-        AuthenticationService.Instance.SignedIn += OnAwake;
+        AuthenticationService.Instance.SignedIn += LoadAchievements;
 
         //ClearAllAchievementProgress();
     }
 
     private void OnDestroy()
     {
-        AuthenticationService.Instance.SignedIn -= OnAwake;
+        AuthenticationService.Instance.SignedIn -= LoadAchievements;
     }
 
-    private async void OnAwake()
+    private async void LoadAchievements()
     {
         // TODO: load all achievement progress first
         AchievementData[] loadedAchievementData = Resources.LoadAll<AchievementData>(_resourceDirectory);
@@ -73,7 +73,7 @@ public class AchievementManager : MonoBehaviour
             _allAchievementProgress.Add(achievementData, new AchievementProgress(achievementData.achievementName));
         }
         
-        List<AchievementProgress> achievementProgressLoaded = await LoadAllAchievementProgress();
+        List<AchievementProgress> achievementProgressLoaded = await LoadPreviousAchievementProgress();
 
         // If we loaded any previously saved achievement progress
         if (achievementProgressLoaded != null)
@@ -96,12 +96,18 @@ public class AchievementManager : MonoBehaviour
     /// 
     public void UpdateProgress(AchievementConditionType conditionType, int amount = 1)
     {
+        if (amount <= 0)
+        {
+            Debug.Log("Can't lose or make an update with zero progress!");
+            return;
+        }
+        
         if (_achievementsByConditionType.TryGetValue(conditionType, out List<AchievementData> conditionAchievements))
         {
             foreach (AchievementData achievement in conditionAchievements)
             {
                 AchievementProgress achievementProgress = _allAchievementProgress[achievement];
-                
+
                 achievementProgress.currentValue += amount;
                 
                 if (!achievementProgress.completed && achievementProgress.currentValue >= achievement.targetValue)
@@ -116,6 +122,28 @@ public class AchievementManager : MonoBehaviour
         }
     }
 
+    public void UpdateTaskOfTypeProgress(TaskCategory category, int amount = 1)
+    {
+        if (_achievementsByConditionType.TryGetValue(AchievementConditionType.TasksOfTypeCompleted, out List<AchievementData> conditionAchievements))
+        {
+            foreach (AchievementData achievement in conditionAchievements)
+            {
+                AchievementProgress achievementProgress = _allAchievementProgress[achievement];
+
+                achievementProgress.currentValue += amount;
+                
+                if (!achievementProgress.completed && achievementProgress.currentValue >= achievement.targetValue)
+                {
+                    CompleteAchievement(achievementProgress, achievement);
+                }
+                
+                // Save after making any progress
+                // TODO: Might try to find a way to make this less slow
+                SaveAllAchievementProgress();
+            }
+        }
+    }
+    
     ///-///////////////////////////////////////////////////////////
     /// Mark an achievement as completed.
     /// 
@@ -154,7 +182,7 @@ public class AchievementManager : MonoBehaviour
     ///-///////////////////////////////////////////////////////////
     /// Return all achievement progress saved to the user's account.
     /// 
-    private async Task<List<AchievementProgress>> LoadAllAchievementProgress()
+    private async Task<List<AchievementProgress>> LoadPreviousAchievementProgress()
     { 
         return await DataManager.LoadData<List<AchievementProgress>>("allAchievementProgress");
     }

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Task Data", menuName = "ScriptableObjects/Achievement Data")]
+[CreateAssetMenu(fileName = "New Achievement Data", menuName = "ScriptableObjects/Achievement Data/ Generic Achievement")]
 public class AchievementData : ScriptableObject
 {
     // Name of achievement displayed on screen
