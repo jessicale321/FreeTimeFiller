@@ -165,6 +165,7 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
     /// 
     private void OnDeleteButtonClicked()
     {
+        // TODO: Need to check for currency!
         if (_myTask != null)
         {
             Debug.Log($"Task delete button was clicked for: {_myTask.GetCurrentTaskData().taskName}");
@@ -180,6 +181,8 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
                     LeanTween.move(_myTask.gameObject, returnPosition, 0f);
                 });
         }
+        
+        //AchievementManager.Instance.UpdateProgress(AchievementConditionType.TasksDeleted);
     }
 
     private void OnTaskCompleted()

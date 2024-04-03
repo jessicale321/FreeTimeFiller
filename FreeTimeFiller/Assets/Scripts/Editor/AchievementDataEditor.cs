@@ -14,6 +14,7 @@ public class AchievementDataEditor : Editor
         // Draw default inspector fields except for conditionType
         EditorGUILayout.PropertyField(serializedObject.FindProperty("achievementName"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("targetValue"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("iconSprite"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("description"));
 
         // Draw conditionType field
@@ -40,7 +41,7 @@ public class AchievementDataEditor : Editor
             // Restore serializedObject state
             serializedObject.FindProperty("m_Script").objectReferenceValue = scriptProperty.objectReferenceValue;
         }
-
+        
         serializedObject.ApplyModifiedProperties();
     }
 }

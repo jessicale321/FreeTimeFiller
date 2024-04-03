@@ -28,6 +28,9 @@ public class AchievementManager : MonoBehaviour
     private Dictionary<AchievementData, AchievementProgress> _allAchievementProgress =
         new Dictionary<AchievementData, AchievementProgress>();
 
+    [SerializeField] private Transform achievementPanel;
+    [SerializeField] private GameObject displayableAchievementPrefab;
+
     private async void Awake()
     {
         if (Instance != null && Instance != this) 
@@ -40,8 +43,7 @@ public class AchievementManager : MonoBehaviour
         }
         await UnityServices.InitializeAsync();
         AuthenticationService.Instance.SignedIn += LoadAchievements;
-
-        //ClearAllAchievementProgress();
+        
     }
 
     private void OnDestroy()
@@ -51,6 +53,8 @@ public class AchievementManager : MonoBehaviour
 
     private async void LoadAchievements()
     {
+        //ClearAllAchievementProgress();
+        
         // TODO: load all achievement progress first
         AchievementData[] loadedAchievementData = Resources.LoadAll<AchievementData>(_resourceDirectory);
         
@@ -112,12 +116,15 @@ public class AchievementManager : MonoBehaviour
                 if (conditionType != AchievementConditionType.TasksOfTypeCompleted || completedTaskCategory == achievement.taskCategory)
                 {
                     AchievementProgress achievementProgress = _allAchievementProgress[achievement];
-
-                    achievementProgress.currentValue += amount;
-
-                    if (!achievementProgress.completed && achievementProgress.currentValue >= achievement.targetValue)
+                    
+                    // If an achievement hasn't been completed and it has reached its target value, it is complete
+                    // Also, don't progress achievements that are already completed
+                    if (!achievementProgress.completed)
                     {
-                        CompleteAchievement(achievementProgress, achievement);
+                        achievementProgress.currentValue += amount;
+                        
+                        if(achievementProgress.currentValue >= achievement.targetValue)
+                            CompleteAchievement(achievementProgress, achievement);
                     }
 
                     // Save after making any progress
@@ -134,7 +141,11 @@ public class AchievementManager : MonoBehaviour
     private void CompleteAchievement(AchievementProgress achievementProgress, AchievementData achievementData)
     {
         achievementProgress.completed = true;
-        Debug.Log("Achievement unlocked: " + achievementData.description);
+        Debug.Log($"Achievement unlocked: {achievementData.achievementName}");
+
+        // Spawn an achievement pop up on the screen
+        GameObject displayableAchievement = Instantiate(displayableAchievementPrefab, achievementPanel.transform);
+        displayableAchievement.GetComponent<DisplayableAchievement>().DisplayAchievementPopUp(achievementData);
     }
 
     ///-///////////////////////////////////////////////////////////

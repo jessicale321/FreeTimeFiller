@@ -32,7 +32,6 @@ public class TaskData : ScriptableObject
     {
         return difficultyLevel * 3;
     }
-   
 }
 
 public enum TaskCategory
