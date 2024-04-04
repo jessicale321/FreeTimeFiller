@@ -62,6 +62,7 @@ public class TaskPlacer : MonoBehaviour
     // Task that will be instantiated and placed on the canvas
     [SerializeField] private GameObject taskPrefab;
     [SerializeField] private Transform taskPanel;
+    [SerializeField] private Transform tasksLeavingPanel;
 
     private void Awake()
     {
@@ -201,7 +202,6 @@ public class TaskPlacer : MonoBehaviour
         {
             TryAddTask(taskDataEdited, userChosenCategories);
         }
-        
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -214,7 +214,7 @@ public class TaskPlacer : MonoBehaviour
 
         if (_tasksDisplayed.ContainsKey(dataToRemove))
         {
-            Destroy(_tasksDisplayed[dataToRemove].gameObject);
+            Destroy((_tasksDisplayed[dataToRemove].gameObject));
             _tasksDisplayed.Remove(dataToRemove);
         }
         
@@ -272,21 +272,30 @@ public class TaskPlacer : MonoBehaviour
     private void SpawnTask(TaskData data)
     {
         if (data == null) return;
-        
+    
         // Don't allow more tasks to be displayed, if we reached the current max amount
         if (_amountCurrentlyDisplayed >= _amountAllowedToDisplay) return;
-        
+    
         _activeTaskData[data] = true;
-        
-        // Spawn a new task and give it data
-        GameObject newTask = Instantiate(taskPrefab, taskPanel);
+    
+        // Task spawns off-screen
+        Vector3 spawnPosition = new Vector3(10f, 0f, 0f);
+    
+        // Spawn a new task
+        GameObject newTask = Instantiate(taskPrefab, spawnPosition, Quaternion.identity, taskPanel);
+
+        // Move on-screen with animation
+        LeanTween.moveX(newTask, 0f, 0.25f);
+    
+        // Give the new task its data
         UserTask.Task taskComponent = newTask.GetComponent<UserTask.Task>();
         taskComponent.UpdateTask(data, this);
-                
+            
         _tasksDisplayed.TryAdd(data, taskComponent);
 
         _amountCurrentlyDisplayed++;
     }
+
 
     ///-///////////////////////////////////////////////////////////
     /// Move elements around in taskPool list
@@ -370,19 +379,28 @@ public class TaskPlacer : MonoBehaviour
         // Create a copy of the keys to avoid modifying the dictionary while iterating
         List<TaskData> tasksToRemove = new List<TaskData>(_tasksDisplayed.Keys);
 
-        // Remove tasks on screen
         foreach (TaskData taskData in tasksToRemove)
         {
             // TaskData is no longer "active" and can reappear 
             _activeTaskData[taskData] = false;
-            
+    
             if (_tasksDisplayed.TryGetValue(taskData, out UserTask.Task task))
             {
-                Destroy(task.gameObject);
                 _tasksDisplayed.Remove(taskData);
+
+                if (tasksLeavingPanel != null)
+                {
+                    task.transform.SetParent(tasksLeavingPanel);
+                    
+                    // Play animation of task moving to the left of the screen
+                    LeanTween.moveX(task.gameObject, -10f, .25f).setOnComplete(() => Destroy(task.gameObject));
+                }
+                else
+                {
+                    Destroy(task.gameObject);
+                }
             }
         }
-
         // Reset the count of displayed tasks
         _amountCurrentlyDisplayed = 0;
     }
