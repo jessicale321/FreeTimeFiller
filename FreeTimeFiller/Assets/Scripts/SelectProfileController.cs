@@ -5,9 +5,9 @@ using Unity.Services.CloudSave;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ProfileSelectController : MonoBehaviour
+public class SelectProfileController : MonoBehaviour
 {
-    public static ProfileSelectController instance { get; private set; }
+    public static SelectProfileController instance { get; private set; }
 
     [SerializeField] private Image tempProfilePic;
     private Image[] profilePics;

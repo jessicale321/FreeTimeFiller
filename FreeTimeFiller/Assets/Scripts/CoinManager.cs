@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Services.CloudSave;
 using UnityEngine;
 
 public class CoinManager : MonoBehaviour
 {
     public static CoinManager instance { get; private set; }
-    public int coins { get; set; }
+    public int coins { get; private set; }
 
     private void Awake()
     {
@@ -19,8 +20,52 @@ public class CoinManager : MonoBehaviour
         }
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        coins = 100;
+        //coins = 100;
+        LoadCoins();
+        Debug.Log("coins: " + coins);
+    }
+
+    private void Update()
+    {
+        // get more coins
+        if (Input.GetKeyDown("2"))
+        {
+            EarnCoins(100);
+        }
+        if (Input.GetKeyDown("1"))
+        {
+            SpendCoins(100);
+        }
+    }
+
+    public void SpendCoins(int amt)
+    {
+        coins -= amt;
+        Debug.Log("coins: " + coins);
+        SaveCoins();
+    }
+
+    public void EarnCoins(int amt)
+    {
+        coins += amt;
+        Debug.Log("coins: " + coins);
+        SaveCoins();
+    }
+
+    private async void SaveCoins()
+    {
+        var data = new Dictionary<string, object> { { "coins", coins } };
+        await CloudSaveService.Instance.Data.Player.SaveAsync(data);
+    }
+
+    private async void LoadCoins()
+    {
+        var data = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string> { "coins" });
+        if (data.TryGetValue("coins", out var coinValue))
+        {
+            coins = coinValue.Value.GetAs<int>();
+        }
     }
 }
