@@ -10,6 +10,7 @@ using Unity.Services.Friends.Models;
 using Unity.Services.Friends.Exceptions;
 using System.Runtime.CompilerServices;
 using UnityEngine.SceneManagement;
+using Firebase.Firestore;
 
 public class FriendsManager : MonoBehaviour
 {
@@ -37,10 +38,18 @@ public class FriendsManager : MonoBehaviour
     // Defining the action that will be called by UI manager for displaying friends and friend requests on refresh
     public Action<List<PlayerProfile>> OnRequestsRefresh; //{ get; internal set; }
     public Action<List<PlayerProfile>> OnFriendsRefresh;  //{ get; internal set; }
+    public Action<List<PlayerProfile>> OnSearchRefresh;
+    // create database object
+    public UserDatabase userDatabase; 
 
     private void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void Start()
+    {
+        userDatabase = GetComponent<UserDatabase>();
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -100,6 +109,11 @@ public class FriendsManager : MonoBehaviour
         {
             Debug.Log(ex.Message);
         }
+    }
+
+    public void SearchFriend(string username)
+    {
+        RefreshSearch();
     }
 
     // Accepting friend requests, same thing as SendFriendRequest but this will refresh lists to show 
@@ -197,9 +211,35 @@ public class FriendsManager : MonoBehaviour
         OnFriendsRefresh?.Invoke(m_Friends);
     }
 
+    // This refreshses the search for other users
+    public async void RefreshSearch()
+    {
+        FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+        // clears previous searches
+        m_Search.Clear();
+        // get new searches
+        IReadOnlyList<Dictionary<string, string>> search = (IReadOnlyList<Dictionary<string, string>>)await userDatabase.SearchUsers("friend");
+
+        for (int i = 0; i < search.Count; i++)
+        {
+            Debug.Log(search[i]);
+        }
+
+
+        // create PlayerProfiles for each friend request, easier for displaying in UI
+       /* foreach (Relationship request in requests)
+        {
+            m_Requests.Add(new PlayerProfile(request.Member.Profile.Name, request.Member.Id));
+
+        }*/
+        // Show on UI
+        OnRequestsRefresh?.Invoke(m_Requests);
+    }
+
     // friends list
     private IReadOnlyList<Relationship> friends;
     // playerprofiles for friends and requests for displaying UI
     List<PlayerProfile> m_Requests = new List<PlayerProfile>();
     List<PlayerProfile> m_Friends = new List<PlayerProfile>();
+    List<PlayerProfile> m_Search = new List<PlayerProfile>();
 }

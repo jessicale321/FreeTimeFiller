@@ -16,11 +16,14 @@ namespace UI
         public TMP_Text playerUserID;
         public TMP_Text playerInfo;
         // This is the search bar for who the friend request is being sent to
-        [Header("From Control Area")] public TMP_InputField friendRecipientID;
+        [Header("From Control Area")] 
+        public TMP_InputField friendRecipientID;
+        public TMP_InputField friendUsername;
         // NOT REAL PREFABS, these are GameObjects that are being created for each friend request or new friend 
         [Header("From Info Area")]
         public RequestObjects requestPrefab;
         public FriendObject friendPrefab;
+        public SearchObject searchPrefab;
 
         // Start is called before the first frame update
        /* private void Awake()
@@ -34,6 +37,7 @@ namespace UI
             FriendsManager.Active.OnUserSignIn += OnUserSignIn;
             FriendsManager.Active.OnRequestsRefresh += OnRequestsRefresh;
             FriendsManager.Active.OnFriendsRefresh += OnFriendsRefresh;
+            FriendsManager.Active.OnSearchRefresh += OnSearchRefresh;
         }
 
         // 
@@ -51,6 +55,12 @@ namespace UI
         {
             FriendsManager.Active.SendFriendRequest_ID(friendRecipientID.text);
         }
+
+        public void SearchFriendName()
+        {
+            FriendsManager.Active.SearchFriend(friendUsername.text);
+        }
+
 
         // Displays all new friend requests
         private void OnRequestsRefresh(List<PlayerProfile> requests)
@@ -101,6 +111,28 @@ namespace UI
             }
         }
 
+        private void OnSearchRefresh(List<PlayerProfile> friends)
+        {
+            // remove all former requests
+            for (int i = 0; i < searchUIs.Count; i++)
+            {
+                Destroy(searchUIs[i].gameObject);
+                searchUIs.RemoveAt(i);
+            }
+
+            // create a new request object for each request
+            foreach (PlayerProfile fr in friends)
+            {
+                SearchObject newFriendItem = Instantiate(searchPrefab, searchPrefab.transform.parent) as SearchObject;
+                newFriendItem.gameObject.SetActive(true);
+
+                // set the data for the request CHANGED TO NAME
+                newFriendItem.SetData(fr.Name, onViewProfile);
+
+                searchUIs.Add(newFriendItem);
+            }
+        }
+
         // Connected to button for requestPrefab
         private void OnRequestAccept(string id)
         {
@@ -113,7 +145,14 @@ namespace UI
             FriendsManager.Active.DeleteFriend(id);
         }
 
+        private void onViewProfile(string id)
+        {
+            ScreenController control = new ScreenController();
+            control.OnViewProfileClicked();
+        }
+
         List<RequestObjects> requestUIs = new List<RequestObjects>();
         List<FriendObject> friendsUIs = new List<FriendObject>();
+        List<SearchObject> searchUIs = new List<SearchObject>();
     }
 }

@@ -10,6 +10,7 @@ public class ScreenController : MonoBehaviour
     [SerializeField] private GameObject homeScreen;
     [SerializeField] private GameObject searchScreen;
     [SerializeField] private GameObject profileScreen;
+    [SerializeField] private GameObject friendProfileScreen;
 
     [SerializeField] private Button homeButton;
     [SerializeField] private Button searchButton;
@@ -53,5 +54,13 @@ public class ScreenController : MonoBehaviour
         homeScreen.SetActive(false);
         searchScreen.SetActive(false);
         profileScreen.SetActive(true);
+    }
+
+    public void OnViewProfileClicked()
+    {
+        homeScreen.SetActive(false);
+        searchScreen.SetActive(false);
+        profileScreen.SetActive(false);
+        friendProfileScreen.SetActive(true);
     }
 }
