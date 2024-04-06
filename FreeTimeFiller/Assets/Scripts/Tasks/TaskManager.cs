@@ -33,7 +33,7 @@ public class TaskManager : MonoBehaviour
         // TODO: REMOVE THIS SOON
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
         
-        _taskPlacer.ClearTaskPlacement();
+        //_taskPlacer.ClearTaskPlacement();
     }
 
     private void OnEnable()
