@@ -43,7 +43,6 @@ public class AchievementManager : MonoBehaviour
         }
         await UnityServices.InitializeAsync();
         AuthenticationService.Instance.SignedIn += LoadAchievements;
-        
     }
 
     private void OnDestroy()
@@ -51,11 +50,14 @@ public class AchievementManager : MonoBehaviour
         AuthenticationService.Instance.SignedIn -= LoadAchievements;
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// Load previous achievement progress and any achievements that have no progress yet.
+    /// 
     private async void LoadAchievements()
     {
-        //ClearAllAchievementProgress();
+        ClearAllAchievementProgress();
         
-        // TODO: load all achievement progress first
+        // Load all previous achievement progress
         AchievementData[] loadedAchievementData = Resources.LoadAll<AchievementData>(_resourceDirectory);
         
         foreach (AchievementData achievementData in loadedAchievementData)
@@ -100,6 +102,7 @@ public class AchievementManager : MonoBehaviour
     /// 
     public void UpdateProgress(AchievementConditionType conditionType, int amount = 1, TaskCategory? completedTaskCategory = null)
     {
+        // Don't allow progress amount to be 0 or negative
         if (amount <= 0)
         {
             Debug.Log("Can't lose progress or make an update with zero progress!");

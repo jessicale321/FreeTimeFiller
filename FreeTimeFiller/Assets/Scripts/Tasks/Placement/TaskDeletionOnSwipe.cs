@@ -17,15 +17,14 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
     
     [Header("Delete Button Animation")]
     [SerializeField, Range(2, 8)] private float deleteButtonStretchX;
-
     [SerializeField, Range(0.1f, .5f)] private float stretchTimer = 0.25f;
     // Set the delete button's X scale to 0 when we swipe right
     private float _rightSwipeScaleX = 0f;
     [SerializeField] private Vector3 errorShakeDirection;
+    [SerializeField, Range(0.05f, 0.5f)] private float errorShakeDuration;
+    private bool _performingErrorAnimation;
 
-    [SerializeField, Range(0.05f, 0.5f)] private float errorShakeDuration; 
-
-    private Vector2 _startPosition;
+    private Vector2 _pointerStartPosition;
     private bool _isDragging;
 
     private bool _swipingLeft;
@@ -83,7 +82,7 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
     public void OnPointerDown(PointerEventData eventData)
     {
         _isDragging = true;
-        _startPosition = eventData.position;
+        _pointerStartPosition = eventData.position;
     }
 
     // Called when the pointer is released from the button
@@ -97,7 +96,7 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
     {
         if (!_isDragging) return;
 
-        Vector2 direction = eventData.position - _startPosition;
+        Vector2 direction = eventData.position - _pointerStartPosition;
         // Magnitude of the direction means length
         float distance = direction.magnitude;
 
@@ -168,29 +167,48 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
         // TODO: Need to check for currency!
         if (_myTask != null)
         {
-            Debug.Log($"Task delete button was clicked for: {_myTask.GetCurrentTaskData().taskName}");
-            Vector3 originalPosition = _myTask.gameObject.transform.position;
-
-            // Move the task button around to showcase that an error occurred
-            LeanTween.move(_myTask.gameObject, originalPosition + errorShakeDirection, errorShakeDuration)
-                .setEase(LeanTweenType.easeInOutQuad)
-                .setLoopPingPong(3)
-                .setOnComplete(() => {
-                    // Return to original position
-                    Vector3 returnPosition = originalPosition;
-                    LeanTween.move(_myTask.gameObject, returnPosition, 0f);
-                });
+            // Don't let animation play more than one at a time
+            if(!_performingErrorAnimation)
+                ErrorAnimation();
         }
         
         //AchievementManager.Instance.UpdateProgress(AchievementConditionType.TasksDeleted);
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// Animation of the task shaking left and right when the user doesn't have enough currency to delete the task.
+    /// 
+    private void ErrorAnimation()
+    {
+        // Position that the task should go back after performing an error animation
+        Vector3 originalPosition = _myTask.transform.position;
+            
+        _performingErrorAnimation = true;
+            
+        // Move the task button around to showcase that an error occurred
+        LeanTween.move(_myTask.gameObject, originalPosition + errorShakeDirection, errorShakeDuration)
+            .setEase(LeanTweenType.easeInOutQuad)
+            .setLoopPingPong(3)
+            .setOnComplete(() => {
+                // Return to original position
+                Vector3 returnPosition = originalPosition;
+                LeanTween.move(_myTask.gameObject, returnPosition, 0f);
+                _performingErrorAnimation = false;
+            });
+    }
+
+    ///-///////////////////////////////////////////////////////////
+    /// When a task is completed, don't allow deleting. Close the swipe bar.
+    /// 
     private void OnTaskCompleted()
     {
         _canDelete = false;
         OnSwipeRight();
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// If a completed task is un-completed, allow deleting again.
+    /// 
     private void OnTaskUncompleted()
     {
         _canDelete = true;
