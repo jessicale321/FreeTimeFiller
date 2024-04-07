@@ -125,8 +125,8 @@ namespace UI
             {
                 SearchObject newFriendItem = Instantiate(searchPrefab, searchPrefab.transform.parent) as SearchObject;
                 newFriendItem.gameObject.SetActive(true);
+                Debug.Log("Created game object for viewing friend profile.");
 
-                // set the data for the request CHANGED TO NAME
                 newFriendItem.SetData(fr.Name, onViewProfile);
 
                 searchUIs.Add(newFriendItem);

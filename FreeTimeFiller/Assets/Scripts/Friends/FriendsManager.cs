@@ -30,7 +30,7 @@ public class FriendsManager : MonoBehaviour
     }
     // create Friends Manager
     private static FriendsManager internalActive;
-    // This is unused at the moment. It was used in the tutorial for the person to log in
+    // Friend search Username Input
     public TMP_InputField usernameInput;
 
     // callbacks for external script authentication
@@ -40,7 +40,7 @@ public class FriendsManager : MonoBehaviour
     public Action<List<PlayerProfile>> OnFriendsRefresh;  //{ get; internal set; }
     public Action<List<PlayerProfile>> OnSearchRefresh;
     // create database object
-    public UserDatabase userDatabase; 
+    public UserDatabase userDatabase;
 
     private void OnEnable()
     {
@@ -49,7 +49,13 @@ public class FriendsManager : MonoBehaviour
 
     void Start()
     {
-        userDatabase = GetComponent<UserDatabase>();
+        // Attach the UserDatabase component to the new GameObject
+        userDatabase = FindObjectOfType<UserDatabase>();
+
+        if (userDatabase == null)
+        {
+            Debug.Log("UserDatabase not found in this scene");
+        }
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -215,25 +221,32 @@ public class FriendsManager : MonoBehaviour
     public async void RefreshSearch()
     {
         FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
-        // clears previous searches
-        m_Search.Clear();
-        // get new searches
-        IReadOnlyList<Dictionary<string, string>> search = (IReadOnlyList<Dictionary<string, string>>)await userDatabase.SearchUsers("friend");
 
-        for (int i = 0; i < search.Count; i++)
-        {
-            Debug.Log(search[i]);
-        }
+        // Clears previous searches
+        m_Search.Clear();
+
+        // originally written to take a list of users but now we are just doing one user that matches username
+        m_Search.Add(await userDatabase.SearchUsers(usernameInput.text));
+
+        Debug.Log("m_search contains: " + m_Search[0]);
+
+        /* foreach (KeyValuePair<string, string> kvp in search)
+         {
+             Debug.Log("Username: " + kvp.Key + ", User ID: " + kvp.Value);
+             // You can add each result to your list or perform any other operation you need.
+             // For example:
+             // m_Search.Add(kvp);
+         }*/
 
 
         // create PlayerProfiles for each friend request, easier for displaying in UI
-       /* foreach (Relationship request in requests)
-        {
-            m_Requests.Add(new PlayerProfile(request.Member.Profile.Name, request.Member.Id));
+        /* foreach (Relationship request in requests)
+         {
+             m_Requests.Add(new PlayerProfile(request.Member.Profile.Name, request.Member.Id));
 
-        }*/
+         }*/
         // Show on UI
-        OnRequestsRefresh?.Invoke(m_Requests);
+        OnSearchRefresh?.Invoke(m_Search);
     }
 
     // friends list

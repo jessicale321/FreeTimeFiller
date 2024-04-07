@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Firebase;
 using Firebase.Extensions;
 using Firebase.Firestore;
 using UnityEngine;
@@ -13,10 +14,23 @@ public class UserDatabase : MonoBehaviour
 
     private void Start()
     {
-        // Initialize Firestore instance
-        db = FirebaseFirestore.DefaultInstance;
+        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
+        {
+            var dependencyStatus = task.Result;
+            if (dependencyStatus == DependencyStatus.Available)
+            {
+                InitializeFirestore();
+            }
+            else
+            {
+                Debug.LogError("Could not resolve all Firebase dependencies: " + dependencyStatus);
+            }
+        });
+    }
 
-        //AddUser("username", "idtestexample");
+    void InitializeFirestore()
+    {
+        db = FirebaseFirestore.DefaultInstance;
     }
     public void AddUser(string username, string userId)
     {
@@ -28,7 +42,7 @@ public class UserDatabase : MonoBehaviour
         };
 
         // Add user document to Firestore
-        db.Collection("user_data").Document("users").SetAsync(userData)
+        db.Collection("user_data").AddAsync(userData)
             .ContinueWithOnMainThread(task =>
             {
                 if (task.IsCompleted)
@@ -42,27 +56,22 @@ public class UserDatabase : MonoBehaviour
             });
     }
 
-    public async Task<Dictionary<string, string>> SearchUsers(string searchString)
+    public async Task<PlayerProfile> SearchUsers(string username)
     {
-        Dictionary<string, string> results = new Dictionary<string, string>();
+        QuerySnapshot snapshot = await db.Collection("user_data")
+                                    .WhereEqualTo("username", username)
+                                    .GetSnapshotAsync();
 
-        // Query Firestore collection for usernames containing the search string
-        QuerySnapshot querySnapshot = await db.Collection("user_data")
-            .WhereArrayContains("username", searchString)
-            .GetSnapshotAsync();
-
-        // Iterate through the results and add username and userid pairs to the dictionary
-        foreach (DocumentSnapshot documentSnapshot in querySnapshot.Documents)
+        if (snapshot != null)
         {
-            Dictionary<string, object> userData = documentSnapshot.ToDictionary();
-            if (userData.ContainsKey("username") && userData.ContainsKey("user_id"))
+            foreach (DocumentSnapshot document in snapshot.Documents)
             {
-                string username = userData["username"].ToString();
-                string userId = userData["user_id"].ToString();
-                results.Add(username, userId);
+                string name = document.GetValue<string>("username");
+                string id = document.GetValue<string>("user_id");
+                return new PlayerProfile(name, id);
             }
         }
-
-        return results;
+        // User not found
+        return null;
     }
 }
