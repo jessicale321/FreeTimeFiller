@@ -14,6 +14,11 @@ public class DisplayableAchievement : MonoBehaviour
     [SerializeField] private TMP_Text achievementName;
     [SerializeField] private TMP_Text description;
 
+    [Header("Close Animation")] 
+    [SerializeField] private Vector2 targetScale = new Vector3(2f, 2f, 2f); // Scale to grow to
+    [SerializeField] private float growDuration = 1f;  // Time taken to grow the object
+    [SerializeField] private float pauseDuration = 1f; // Time to pause after growing before shrinking
+    [SerializeField] private float shrinkDuration = 1f; // Time taken to shrink the object
     private void OnEnable()
     {
         if(exitButton != null)
@@ -31,7 +36,7 @@ public class DisplayableAchievement : MonoBehaviour
     /// 
     public void DisplayAchievementPopUp(AchievementData achievementData)
     {
-        if(icon != null)
+        if(icon != null && achievementData.iconSprite != null)
             icon.sprite = achievementData.iconSprite;
         
         if(achievementName != null)
@@ -42,10 +47,23 @@ public class DisplayableAchievement : MonoBehaviour
     }
 
     ///-///////////////////////////////////////////////////////////
-    /// Destroy this button when the user hits the exit button
+    /// When the user hits the exit button, shrink this gameObject and then destroy it.
     /// 
     private void DestroyOnExit()
     {
-        Destroy(gameObject);
+        // Grow the object
+        LeanTween.scale(gameObject, targetScale, growDuration)
+            .setEase(LeanTweenType.easeOutExpo)
+            .setOnComplete(() =>
+            {
+                // Pause for a moment
+                LeanTween.delayedCall(pauseDuration, () =>
+                {
+                    // Shrink the object
+                    LeanTween.scale(gameObject, Vector3.zero, shrinkDuration)
+                        .setEase(LeanTweenType.easeInExpo)
+                        .setOnComplete(() => Destroy(gameObject));
+                });
+            });
     }
 }
