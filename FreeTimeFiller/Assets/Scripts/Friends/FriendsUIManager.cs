@@ -12,18 +12,20 @@ namespace UI
     {
         // Varibales to show user's name, id, and playerinfo
         // We shouldn't actually need playerinfo, i just kept it in case because he had it in the tutorial
-        public TMP_Text playerUserName;
-        public TMP_Text playerUserID;
-        public TMP_Text playerInfo;
+        [SerializeField] private TMP_Text playerUserName;
+        [SerializeField] private TMP_Text playerUserID;
+        [SerializeField] private TMP_Text playerInfo;
+        // Player username of profile being viewed
+        [SerializeField] private TMP_Text profileViewUsername;
         // This is the search bar for who the friend request is being sent to
-        [Header("From Control Area")] 
-        public TMP_InputField friendRecipientID;
-        public TMP_InputField friendUsername;
+        [Header("From Control Area")]
+        [SerializeField] private TMP_InputField friendRecipientID;
+        [SerializeField] private TMP_InputField friendUsername;
         // NOT REAL PREFABS, these are GameObjects that are being created for each friend request or new friend 
         [Header("From Info Area")]
-        public RequestObjects requestPrefab;
-        public FriendObject friendPrefab;
-        public SearchObject searchPrefab;
+        [SerializeField] private RequestObjects requestPrefab;
+        [SerializeField] private FriendObject friendPrefab;
+        [SerializeField] private SearchObject searchPrefab;
 
         // Start is called before the first frame update
        /* private void Awake()
@@ -147,8 +149,9 @@ namespace UI
 
         private void onViewProfile(string id)
         {
-            ScreenController control = new ScreenController();
+            ScreenController control = FindObjectOfType<ScreenController>();
             control.OnViewProfileClicked();
+
         }
 
         List<RequestObjects> requestUIs = new List<RequestObjects>();
