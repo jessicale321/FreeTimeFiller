@@ -32,9 +32,6 @@ public class AchievementManager : MonoBehaviour
     [SerializeField] private Transform achievementPanel;
     [SerializeField] private GameObject displayableAchievementPrefab;
 
-    // A queue of achievements (if the user earns more than one achievement at a time, then show them one at a time)
-    private Queue<AchievementData> _queuedAchievements = new Queue<AchievementData>();
-
     // Is there an achievement currently being displayed?
     private bool _displayingAchievement;
     
@@ -213,6 +210,8 @@ public class AchievementManager : MonoBehaviour
 
     private async void ClearAllAchievementProgress()
     {
-        await DataManager.DeleteAllDataByName("allAchievementProgress");
+        _allAchievementProgress.Clear();
+        //await DataManager.DeleteAllDataByName("allAchievementProgress");
+        await DataManager.SaveData("allAchievementProgress", _allAchievementProgress);
     }
 }
