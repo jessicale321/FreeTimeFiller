@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,6 +32,12 @@ public class AchievementManager : MonoBehaviour
     [SerializeField] private Transform achievementPanel;
     [SerializeField] private GameObject displayableAchievementPrefab;
 
+    // A queue of achievements (if the user earns more than one achievement at a time, then show them one at a time)
+    private Queue<AchievementData> _queuedAchievements = new Queue<AchievementData>();
+
+    // Is there an achievement currently being displayed?
+    private bool _displayingAchievement;
+    
     private async void Awake()
     {
         if (Instance != null && Instance != this) 
@@ -125,9 +132,9 @@ public class AchievementManager : MonoBehaviour
                     if (!achievementProgress.completed)
                     {
                         achievementProgress.currentValue += amount;
-                        
-                        if(achievementProgress.currentValue >= achievement.targetValue)
-                            CompleteAchievement(achievementProgress, achievement);
+
+                        if (achievementProgress.currentValue >= achievement.targetValue)
+                            StartCoroutine(CompleteAchievement(achievementProgress, achievement));
                     }
 
                     // Save after making any progress
@@ -141,14 +148,33 @@ public class AchievementManager : MonoBehaviour
     ///-///////////////////////////////////////////////////////////
     /// Mark an achievement as completed.
     /// 
-    private void CompleteAchievement(AchievementProgress achievementProgress, AchievementData achievementData)
+    private IEnumerator CompleteAchievement(AchievementProgress achievementProgress, AchievementData achievementData)
     {
+        // Don't allow more than one achievement to appear at a time
+        while (_displayingAchievement)
+            yield return null;
+        
         achievementProgress.completed = true;
         Debug.Log($"Achievement unlocked: {achievementData.achievementName}");
 
+        _displayingAchievement = true;
+        
         // Spawn an achievement pop up on the screen
-        GameObject displayableAchievement = Instantiate(displayableAchievementPrefab, achievementPanel.transform);
-        displayableAchievement.GetComponent<DisplayableAchievement>().DisplayAchievementPopUp(achievementData);
+        GameObject achievementGameObject = Instantiate(displayableAchievementPrefab, achievementPanel.transform);
+        DisplayableAchievement achievement =
+            achievementGameObject.GetComponent<DisplayableAchievement>();
+    
+        achievement.DisplayAchievementPopUp(achievementData);
+
+        // Wait for the achievement pop up to get closed, then allow another achievement to pop up
+        achievement.onAchievementClosed += AchievementPopUpWasClosed;
+
+    }
+
+    private void AchievementPopUpWasClosed(DisplayableAchievement achievement)
+    {
+        _displayingAchievement = false;
+        achievement.onAchievementClosed -= AchievementPopUpWasClosed;
     }
 
     ///-///////////////////////////////////////////////////////////

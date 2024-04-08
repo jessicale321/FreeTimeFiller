@@ -19,6 +19,9 @@ public class DisplayableAchievement : MonoBehaviour
     [SerializeField] private float growDuration = 1f;  // Time taken to grow the object
     [SerializeField] private float pauseDuration = 1f; // Time to pause after growing before shrinking
     [SerializeField] private float shrinkDuration = 1f; // Time taken to shrink the object
+
+    public Action<DisplayableAchievement> onAchievementClosed;
+    
     private void OnEnable()
     {
         if(exitButton != null)
@@ -29,6 +32,8 @@ public class DisplayableAchievement : MonoBehaviour
     {
         if(exitButton != null)
             exitButton.onClick.RemoveListener(DestroyOnExit);
+        
+        onAchievementClosed?.Invoke(this);
     }
 
     ///-///////////////////////////////////////////////////////////
