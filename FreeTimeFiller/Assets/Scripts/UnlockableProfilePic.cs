@@ -12,12 +12,15 @@ public class UnlockableProfilePic : MonoBehaviour
     private Button button;
     private Image image;
     private bool isCurrentSelection;
+    private string saveKey;
 
     public Action OnPictureClicked;
 
     // Start is called before the first frame update
     private void Awake()
     {
+        saveKey = "locked_" + gameObject.name;
+
         image = gameObject.GetComponentInChildren<Image>();
         button = gameObject.GetComponentInChildren<Button>();
 
@@ -26,6 +29,8 @@ public class UnlockableProfilePic : MonoBehaviour
 
     private void OnEnable()
     {
+        LoadLockedStatus();
+        Debug.Log("locked status: " + isLocked);
         if (isLocked)
         {
             image.color = new Color32(56, 56, 56, 80);
@@ -36,10 +41,11 @@ public class UnlockableProfilePic : MonoBehaviour
         }
     }
 
-    private void OnProfilePicClicked()
+    public void OnProfilePicClicked()
     {
         if (isLocked)
         {
+            Debug.Log("locked");
             if (CoinManager.instance.coins >= costToUnlock)
             {
                 isLocked = false;
@@ -48,12 +54,12 @@ public class UnlockableProfilePic : MonoBehaviour
                 SelectProfileController.instance.SetProfilePic(image); // swap profile pic with the new one
                 CoinManager.instance.SpendCoins(costToUnlock);
                 isCurrentSelection = true;
-                // todo: save coins and unlocked pic
             }
         }
 
         else
         {
+            Debug.Log("actually not locked");
             SelectProfileController.instance.SetProfilePic(image);
             isCurrentSelection = true;
         }
@@ -62,7 +68,16 @@ public class UnlockableProfilePic : MonoBehaviour
 
     private async void SaveLockedStatus()
     {
-        var data = new Dictionary<string, object> { { "locked", isLocked } };
+        var data = new Dictionary<string, object> { { saveKey, isLocked } };
         await CloudSaveService.Instance.Data.Player.SaveAsync(data);
+    }
+
+    private async void LoadLockedStatus()
+    {
+        var data = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string> { saveKey });
+        if (data.TryGetValue(saveKey, out var lockedValue))
+        {
+            isLocked = lockedValue.Value.GetAs<bool>();
+        }
     }
 }

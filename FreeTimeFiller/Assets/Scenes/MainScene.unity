@@ -181,6 +181,7 @@ MonoBehaviour:
   maxTaskDisplay: 0
   taskPrefab: {fileID: 7422696577987121108, guid: ebd48ffe12d1aaf4e8d245fff3b33d79, type: 3}
   taskPanel: {fileID: 1615929765}
+  tasksLeavingPanel: {fileID: 0}
 --- !u!4 &5076231
 Transform:
   m_ObjectHideFlags: 0

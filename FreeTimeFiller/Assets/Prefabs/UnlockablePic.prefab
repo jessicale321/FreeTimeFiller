@@ -120,13 +120,13 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: ProfileSelectController, Assembly-CSharp
-        m_MethodName: SetProfilePic
-        m_Mode: 2
+      - m_Target: {fileID: 3783252398957632003}
+        m_TargetAssemblyTypeName: UnlockableProfilePic, Assembly-CSharp
+        m_MethodName: OnProfilePicClicked
+        m_Mode: 1
         m_Arguments:
-          m_ObjectArgument: {fileID: 6451140075746148410}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.Image, UnityEngine.UI
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -181,3 +181,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e76b22de2cb8c5f428a132ba86ee2447, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isLocked: 1
