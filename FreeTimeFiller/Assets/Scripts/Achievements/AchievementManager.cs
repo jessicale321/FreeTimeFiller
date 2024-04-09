@@ -29,6 +29,8 @@ public class AchievementManager : MonoBehaviour
     private Dictionary<AchievementData, AchievementProgress> _allAchievementProgress =
         new Dictionary<AchievementData, AchievementProgress>();
 
+    private List<AchievementData> _allEarnedAchievements = new List<AchievementData>();
+
     [SerializeField] private Transform achievementPanel;
     [SerializeField] private GameObject displayableAchievementPrefab;
 
@@ -59,7 +61,7 @@ public class AchievementManager : MonoBehaviour
     /// 
     private async void LoadAchievements()
     {
-        ClearAllAchievementProgress();
+        //ClearAllAchievementProgress();
         
         // Load all previous achievement progress
         AchievementData[] loadedAchievementData = Resources.LoadAll<AchievementData>(_resourceDirectory);
@@ -95,8 +97,12 @@ public class AchievementManager : MonoBehaviour
                 
                 // Override the old achievement progress with the previously saved one
                 _allAchievementProgress[data] = achievementProgress;
+
+                // If the achievement was already completed, add it to a list
+                if(achievementProgress.completed)
+                    _allEarnedAchievements.Add(data);
                 
-                Debug.Log($"Found and loaded {achievementProgress.achievementName} from previous achievement progress save! \n It has {achievementProgress.currentValue} / {data.targetValue}");
+                //Debug.Log($"Found and loaded {achievementProgress.achievementName} from previous achievement progress save! \n It has {achievementProgress.currentValue} / {data.targetValue}");
             }
         }
     }
@@ -152,6 +158,9 @@ public class AchievementManager : MonoBehaviour
             yield return null;
         
         achievementProgress.completed = true;
+
+        _allEarnedAchievements.Add(achievementData);
+
         Debug.Log($"Achievement unlocked: {achievementData.achievementName}");
 
         _displayingAchievement = true;
@@ -172,6 +181,11 @@ public class AchievementManager : MonoBehaviour
     {
         _displayingAchievement = false;
         achievement.onAchievementClosed -= AchievementPopUpWasClosed;
+    }
+
+    public List<AchievementData> GetAllEarnedAchievements()
+    {
+        return _allEarnedAchievements;
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -211,7 +225,8 @@ public class AchievementManager : MonoBehaviour
     private async void ClearAllAchievementProgress()
     {
         _allAchievementProgress.Clear();
-        //await DataManager.DeleteAllDataByName("allAchievementProgress");
+        _allEarnedAchievements.Clear();
+
         await DataManager.SaveData("allAchievementProgress", _allAchievementProgress);
     }
 }
