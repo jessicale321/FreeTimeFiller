@@ -5,6 +5,8 @@ using Unity.Services.CloudSave;
 using UnityEngine;
 using UnityEngine.UI;
 
+///-///////////////////////////////////////////////////////////
+/// 
 public class UnlockableProfilePic : MonoBehaviour
 {
     [SerializeField] private bool isLocked = true;
@@ -16,7 +18,8 @@ public class UnlockableProfilePic : MonoBehaviour
 
     public Action OnPictureClicked;
 
-    // Start is called before the first frame update
+    ///-///////////////////////////////////////////////////////////
+    /// 
     private void Awake()
     {
         saveKey = "locked_" + gameObject.name;
@@ -27,6 +30,8 @@ public class UnlockableProfilePic : MonoBehaviour
         button.onClick.AddListener(OnProfilePicClicked);
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// 
     private void OnEnable()
     {
         LoadLockedStatus();
@@ -41,6 +46,8 @@ public class UnlockableProfilePic : MonoBehaviour
         }
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// 
     public void OnProfilePicClicked()
     {
         if (isLocked)
@@ -56,7 +63,6 @@ public class UnlockableProfilePic : MonoBehaviour
                 isCurrentSelection = true;
             }
         }
-
         else
         {
             Debug.Log("actually not locked");
@@ -66,12 +72,16 @@ public class UnlockableProfilePic : MonoBehaviour
 
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// 
     private async void SaveLockedStatus()
     {
         var data = new Dictionary<string, object> { { saveKey, isLocked } };
         await CloudSaveService.Instance.Data.Player.SaveAsync(data);
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// 
     private async void LoadLockedStatus()
     {
         var data = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string> { saveKey });

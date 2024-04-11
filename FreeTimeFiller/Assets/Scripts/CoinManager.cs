@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using Unity.Services.CloudSave;
 using UnityEngine;
 
+///-///////////////////////////////////////////////////////////
+/// 
 public class CoinManager : MonoBehaviour
 {
     public static CoinManager instance { get; private set; }
     public int coins { get; private set; }
 
+    ///-///////////////////////////////////////////////////////////
+    /// 
     private void Awake()
     {
         if (instance != null && instance != this)
@@ -20,13 +24,15 @@ public class CoinManager : MonoBehaviour
         }
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// 
     private void OnEnable()
     {
-        //coins = 100;
         LoadCoins();
-        Debug.Log("coins: " + coins);
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// 
     private void Update()
     {
         // get more coins
@@ -40,6 +46,8 @@ public class CoinManager : MonoBehaviour
         }
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// 
     public void SpendCoins(int amt)
     {
         coins -= amt;
@@ -47,6 +55,8 @@ public class CoinManager : MonoBehaviour
         SaveCoins();
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// 
     public void EarnCoins(int amt)
     {
         coins += amt;
@@ -54,12 +64,16 @@ public class CoinManager : MonoBehaviour
         SaveCoins();
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// 
     private async void SaveCoins()
     {
         var data = new Dictionary<string, object> { { "coins", coins } };
         await CloudSaveService.Instance.Data.Player.SaveAsync(data);
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// 
     private async void LoadCoins()
     {
         var data = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string> { "coins" });

@@ -5,6 +5,8 @@ using Unity.Services.CloudSave;
 using UnityEngine;
 using UnityEngine.UI;
 
+///-///////////////////////////////////////////////////////////
+/// 
 public class SelectProfileController : MonoBehaviour
 {
     public static SelectProfileController instance { get; private set; }
@@ -12,6 +14,8 @@ public class SelectProfileController : MonoBehaviour
     [SerializeField] private Image tempProfilePic;
     private Image[] profilePics;
 
+    ///-///////////////////////////////////////////////////////////
+    /// 
     private void Awake()
     {
         if (instance != null && instance != this)
@@ -24,11 +28,15 @@ public class SelectProfileController : MonoBehaviour
         }
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// 
     private void OnEnable()
     {
         LoadImageFromCloudSave(); // use Russell's data manager?
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// 
     public async void SetProfilePic(Image newProfilePic)
     {
         // current bug: might have duplicate with temp and in the grid
@@ -53,7 +61,9 @@ public class SelectProfileController : MonoBehaviour
         }
     }
 
-    // Convert Image to Texture2D
+    ///-///////////////////////////////////////////////////////////
+    /// Convert Image to Texture2D 
+    ///
     private Texture2D ImageToTexture2D(Image image)
     {
         Texture2D texture = new Texture2D((int)image.rectTransform.rect.width, (int)image.rectTransform.rect.height);
@@ -65,7 +75,9 @@ public class SelectProfileController : MonoBehaviour
         return texture;
     }
 
-    // same as ProfileScreenController.cs -- maybe use Russell's data manager to avoid redundancy
+    ///-///////////////////////////////////////////////////////////
+    /// Same as ProfileScreenController.cs -- maybe use Russell's data manager to avoid redundancy
+    ///
     public async void LoadImageFromCloudSave()
     {
         try

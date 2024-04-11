@@ -4,16 +4,22 @@ using Unity.Services.CloudSave;
 using UnityEngine;
 using UnityEngine.UI;
 
+///-///////////////////////////////////////////////////////////
+/// 
 public class ProfileScreenController : MonoBehaviour
 {
     [SerializeField] private Image profilePicture;
 
+    ///-///////////////////////////////////////////////////////////
+    /// 
     private void OnEnable()
     {
         LoadImageFromCloudSave();
     }
 
-    // Load the image from the cloud save file
+    ///-///////////////////////////////////////////////////////////
+    /// Load the image from the cloud save file
+    ///
     public async void LoadImageFromCloudSave()
     {
         try
