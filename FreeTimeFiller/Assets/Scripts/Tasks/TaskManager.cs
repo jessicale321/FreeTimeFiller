@@ -51,6 +51,11 @@ public class TaskManager : MonoBehaviour
         _taskRefreshWithTime.refreshTimerOccurred -= NotifyTaskPlacerOfRefresh;
     }
 
+    private void OnDestroy()
+    {
+        AuthenticationService.Instance.SignedIn -= BeginTaskPlacementProcess;
+    }
+
     ///-///////////////////////////////////////////////////////////
     /// Start the task placement process by loading the user's saved task category preferences and custom tasks
     /// 

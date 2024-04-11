@@ -22,7 +22,7 @@ namespace UserTask
         [SerializeField] private GameObject checkMark;
 
         [SerializeField] private GameObject crossOutImage;
-        private float crossOutAnimationTimer = 0.15f;
+        private float _crossOutAnimationTimer = 0.15f;
 
         // Panel that stars are parented by
         [SerializeField] private GameObject difficultyLevelPanel;
@@ -97,7 +97,7 @@ namespace UserTask
         ///-///////////////////////////////////////////////////////////
         /// Notify the TaskPlacer that this task has been un-completed, also remove the cross-out image.
         /// 
-        public void UncompleteOnCommand()
+        private void UncompleteOnCommand()
         {
             if (checkMark != null)
                 checkMark.SetActive(false);
@@ -114,9 +114,13 @@ namespace UserTask
             onUncompletion?.Invoke();
         }
 
-        public void GiveRewardOnCompletion()
+        private void GiveRewardOnCompletion()
         {
             Debug.Log($"Give the user {taskData.GetRewardAmount()} coins.");
+            
+            // A task was completed, progress towards any achievements
+            AchievementManager.Instance.UpdateProgress(AchievementConditionType.TasksCompleted, 1);
+            AchievementManager.Instance.UpdateProgress(AchievementConditionType.TasksOfTypeCompleted, 1, taskData.category);
         }
 
         ///-///////////////////////////////////////////////////////////
@@ -174,9 +178,9 @@ namespace UserTask
             crossOutImage.SetActive(true);
 
             if (isCrossedOut)
-                LeanTween.scaleX(crossOutImage, 1f, crossOutAnimationTimer);
+                LeanTween.scaleX(crossOutImage, 1f, _crossOutAnimationTimer);
             else
-                LeanTween.scaleX(crossOutImage, 0f, crossOutAnimationTimer);
+                LeanTween.scaleX(crossOutImage, 0f, _crossOutAnimationTimer);
         }
 
         ///-///////////////////////////////////////////////////////////

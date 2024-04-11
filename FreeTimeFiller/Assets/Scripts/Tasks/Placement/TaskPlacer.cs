@@ -263,6 +263,7 @@ public class TaskPlacer : MonoBehaviour
             
             SpawnTask(inactiveData);
         }
+        
         SaveTaskPlacement();
     }
 
@@ -358,6 +359,7 @@ public class TaskPlacer : MonoBehaviour
             Debug.Log($"What was count: {_completedTasks.Count} vs. amount currently displayed? {_amountCurrentlyDisplayed}");
             RefreshAllTasksOnFullCompletion();
         }
+        
         SaveCompletedTasks();
     }
 
