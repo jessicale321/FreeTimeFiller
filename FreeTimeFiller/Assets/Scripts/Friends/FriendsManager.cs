@@ -31,8 +31,8 @@ public class FriendsManager : MonoBehaviour
     // create Friends Manager
     private static FriendsManager internalActive;
     // Friend search Username Input
-    [SerializeField] private TMP_InputField usernameInput;
-    
+    public TMP_InputField usernameInput;
+
     // callbacks for external script authentication
     public Action OnUserSignIn;
     // Defining the action that will be called by UI manager for displaying friends and friend requests on refresh
