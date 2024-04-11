@@ -139,7 +139,6 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
         });
 
         deletePriceText.text = "$" + _myTaskData.GetDeletePrice().ToString();
-        Debug.Log($"{_myTaskData.taskName} costs {_myTaskData.GetDeletePrice()} to delete!");
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -164,15 +163,19 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
     /// 
     private void OnDeleteButtonClicked()
     {
-        // TODO: Need to check for currency!
-        if (_myTask != null)
+        // If the user has enough coins, allow the task to be deleted
+        if (CoinManager.instance.coins >= _myTaskData.GetDeletePrice())
+        {
+            CoinManager.instance.SpendCoins(_myTaskData.GetDeletePrice());
+            _myTask.ReplaceThisTaskForCurrency();
+            AchievementManager.Instance.UpdateProgress(AchievementConditionType.TasksDeleted);
+        }
+        else
         {
             // Don't let animation play more than one at a time
-            if(!_performingErrorAnimation)
+            if (!_performingErrorAnimation)
                 ErrorAnimation();
         }
-        
-        //AchievementManager.Instance.UpdateProgress(AchievementConditionType.TasksDeleted);
     }
 
     ///-///////////////////////////////////////////////////////////

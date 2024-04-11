@@ -117,6 +117,9 @@ namespace UserTask
         private void GiveRewardOnCompletion()
         {
             Debug.Log($"Give the user {taskData.GetRewardAmount()} coins.");
+
+            // Give coins 
+            CoinManager.instance.EarnCoins(taskData.GetRewardAmount());
             
             // A task was completed, progress towards any achievements
             AchievementManager.Instance.UpdateProgress(AchievementConditionType.TasksCompleted, 1);
