@@ -24,7 +24,7 @@ public class TestScript : MonoBehaviour
     {
         await UnityServices.InitializeAsync();
 
-        userDatabase = FindObjectOfType<UserDatabase>();
+        userDatabase = GetComponent<UserDatabase>();
     }
 
     /// <summary>
@@ -32,7 +32,7 @@ public class TestScript : MonoBehaviour
     /// It will take the data typed by the user, make sure the passwords match, and call 
     /// SignUpWithUsernamePassword
     /// </summary>
-    public async void CreateAccount()
+    public void CreateAccount()
     {
         string username = registerUsername.text;
         string password = registerPassword.text;
@@ -41,12 +41,13 @@ public class TestScript : MonoBehaviour
         if (userDatabase != null)
         {
             // Check if username is available
-            CheckUsernameAvailability(username, async (isAvailable) =>
+            userDatabase.CheckUsernameAvailability(username, async (isAvailable) =>
             {
                 if (isAvailable)
                 {
                     if (password == confirmedPassword)
                     {
+                        Debug.Log("Creating account for user");
                         await SignUpWithUsernamePassword(username, confirmedPassword);
                     }
                     else
@@ -63,7 +64,7 @@ public class TestScript : MonoBehaviour
         }
         else
         {
-            Debug.Log("FirestoreWriter not found!");
+            Debug.Log("Database not found!");
         }
     }
 
@@ -77,7 +78,9 @@ public class TestScript : MonoBehaviour
     {
         try
         {
+            Debug.LogFormat("Running SignUpWithUsernamePassword, Name:", username, password);
             await AuthenticationService.Instance.SignUpWithUsernamePasswordAsync(username, password);
+            Debug.Log("Calling function to add user to database.");
             await AuthenticationService.Instance.UpdatePlayerNameAsync(username);
             // add username and userid pair to database
             userDatabase.AddUser(username, AuthenticationService.Instance.PlayerId);
@@ -109,7 +112,7 @@ public class TestScript : MonoBehaviour
     /// If that username is already in use then don't allow the user to create an account
     /// <param name="username"></param> user's username
     /// <param name="callback"></param> invokes false or true for CreateAccount if statement
-    private void CheckUsernameAvailability(string username, System.Action<bool> callback)
+    /*private void CheckUsernameAvailability(string username, System.Action<bool> callback)
     {
         FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
 
@@ -129,5 +132,5 @@ public class TestScript : MonoBehaviour
                     callback?.Invoke(false); // Assume username is not available on error
                 }
             });
-    }
+    }*/
 }

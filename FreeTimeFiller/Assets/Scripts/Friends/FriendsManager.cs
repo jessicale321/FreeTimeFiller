@@ -109,12 +109,17 @@ public class FriendsManager : MonoBehaviour
         // if other user already sent a friend request relationship will be "friend"
         try
         {
-            await FriendsService.Instance.AddFriendByNameAsync(memberID);
+            await FriendsService.Instance.AddFriendAsync(memberID);
         }
         catch (Exception ex)
         {
             Debug.Log(ex.Message);
         }
+    }
+
+    public async void SendFriendRequestButton(string username)
+    {
+
     }
 
     public void SearchFriend(string username)
@@ -220,15 +225,13 @@ public class FriendsManager : MonoBehaviour
     // This refreshses the search for other users
     public async void RefreshSearch()
     {
-        FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
-
         // Clears previous searches
         m_Search.Clear();
 
         // originally written to take a list of users but now we are just doing one user that matches username
-        m_Search.Add(await userDatabase.SearchUsers(usernameInput.text));
+        userDatabase.SearchUsers(usernameInput.text, OnSearchComplete);
 
-        Debug.Log("m_search contains: " + m_Search[0]);
+        //Debug.Log("m_search contains: " + m_Search[0]);
 
         /* foreach (KeyValuePair<string, string> kvp in search)
          {
@@ -247,6 +250,15 @@ public class FriendsManager : MonoBehaviour
          }*/
         // Show on UI
         OnSearchRefresh?.Invoke(m_Search);
+    }
+
+    void OnSearchComplete(List<PlayerProfile> foundUsernames)
+    {
+        foreach (PlayerProfile player in foundUsernames)
+        {
+            Debug.Log("Found username: " + player.Name);
+            m_Search.Add(player);
+        }
     }
 
     // friends list

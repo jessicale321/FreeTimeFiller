@@ -58,6 +58,11 @@ namespace UI
             FriendsManager.Active.SendFriendRequest_ID(friendRecipientID.text);
         }
 
+        public void SendFriendRequestButton()
+        {
+            FriendsManager.Active.SendFriendRequestButton(profileViewUsername.text);
+        }
+
         public void SearchFriendName()
         {
             FriendsManager.Active.SearchFriend(friendUsername.text);
@@ -136,22 +141,22 @@ namespace UI
         }
 
         // Connected to button for requestPrefab
-        private void OnRequestAccept(string id)
+        public void OnRequestAccept(string id)
         {
             FriendsManager.Active.AcceptRequest(id);
         }
 
         // Connected to button for friendPrefab
-        private void OnDeleteFriend(string id)
+        public void OnDeleteFriend(string id)
         {
             FriendsManager.Active.DeleteFriend(id);
         }
 
-        private void onViewProfile(string id)
+        public void onViewProfile(string username)
         {
             ScreenController control = FindObjectOfType<ScreenController>();
+            profileViewUsername.text = username;
             control.OnViewProfileClicked();
-
         }
 
         List<RequestObjects> requestUIs = new List<RequestObjects>();

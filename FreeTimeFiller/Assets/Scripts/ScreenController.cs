@@ -23,6 +23,7 @@ public class ScreenController : MonoBehaviour
         homeScreen.SetActive(true);
         searchScreen.SetActive(false);
         profileScreen.SetActive(false);
+        friendProfileScreen.SetActive(false);
 
         homeButton.onClick.AddListener(OnHomeButtonClicked);
         searchButton.onClick.AddListener(OnSearchButtonClicked);
