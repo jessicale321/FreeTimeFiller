@@ -12,24 +12,27 @@ namespace UI
     {
         // Varibales to show user's name, id, and playerinfo
         // We shouldn't actually need playerinfo, i just kept it in case because he had it in the tutorial
-        public TMP_Text playerUserName;
-        public TMP_Text playerUserID;
-        public TMP_Text playerInfo;
+        [SerializeField] private TMP_Text playerUserName;
+        [SerializeField] private TMP_Text playerUserID;
+        [SerializeField] private TMP_Text playerInfo;
+        // Player username of profile being viewed
+        [SerializeField] private TMP_Text profileViewUsername;
         // This is the search bar for who the friend request is being sent to
-        [Header("From Control Area")] 
-        public TMP_InputField friendRecipientID;
-        public TMP_InputField friendUsername;
+        [Header("From Control Area")]
+        [SerializeField] private TMP_InputField friendRecipientID;
+        [SerializeField] private TMP_InputField friendUsername;
         // NOT REAL PREFABS, these are GameObjects that are being created for each friend request or new friend 
         [Header("From Info Area")]
-        public RequestObjects requestPrefab;
-        public FriendObject friendPrefab;
-        public SearchObject searchPrefab;
+        [SerializeField] private RequestObjects requestPrefab;
+        [SerializeField] private FriendObject friendPrefab;
+        [SerializeField] private SearchObject searchPrefab;
+        [SerializeField] private SearchObject userNotFoundPrefab;
 
         // Start is called before the first frame update
-       /* private void Awake()
-        {
-            FriendsManager.Active.OnUserSignIn += OnUserSignIn;
-        }*/
+        /* private void Awake()
+         {
+             FriendsManager.Active.OnUserSignIn += OnUserSignIn;
+         }*/
 
         private void OnEnable()
         {
@@ -68,7 +71,7 @@ namespace UI
 
 
         // Displays all new friend requests
-        private void OnRequestsRefresh(List<PlayerProfile> requests)
+        private async void OnRequestsRefresh(List<PlayerProfile> requests)
         {
             // remove all former requests
             for (int i = 0; i < requestUIs.Count; i++)
@@ -118,6 +121,7 @@ namespace UI
 
         private void OnSearchRefresh(List<PlayerProfile> friends)
         {
+            userNotFoundPrefab.gameObject.SetActive(false);
             // remove all former requests
             for (int i = 0; i < searchUIs.Count; i++)
             {
@@ -126,16 +130,24 @@ namespace UI
             }
 
             // create a new request object for each request
-            foreach (PlayerProfile fr in friends)
+            if (friends[0] != null)
             {
-                SearchObject newFriendItem = Instantiate(searchPrefab, searchPrefab.transform.parent) as SearchObject;
-                newFriendItem.gameObject.SetActive(true);
-                Debug.Log("Created game object for viewing friend profile.");
+                foreach (PlayerProfile fr in friends)
+                {
+                    SearchObject newFriendItem = Instantiate(searchPrefab, searchPrefab.transform.parent) as SearchObject;
+                    newFriendItem.gameObject.SetActive(true);
+                    Debug.Log("Created game object for viewing friend profile.");
 
-                newFriendItem.SetData(fr.Name, onViewProfile);
+                    newFriendItem.SetData(fr.Name, onViewProfile);
 
-                searchUIs.Add(newFriendItem);
+                    searchUIs.Add(newFriendItem);
+                }
             }
+            else
+            {
+                userNotFoundPrefab.gameObject.SetActive(true);
+            }
+            
         }
 
         // Connected to button for requestPrefab

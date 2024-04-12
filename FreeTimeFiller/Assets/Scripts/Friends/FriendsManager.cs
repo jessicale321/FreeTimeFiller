@@ -31,7 +31,7 @@ public class FriendsManager : MonoBehaviour
     // create Friends Manager
     private static FriendsManager internalActive;
     // Friend search Username Input
-    public TMP_InputField usernameInput;
+    [SerializeField] private TMP_InputField usernameInput;
 
     // callbacks for external script authentication
     public Action OnUserSignIn;
@@ -109,6 +109,7 @@ public class FriendsManager : MonoBehaviour
         // if other user already sent a friend request relationship will be "friend"
         try
         {
+            Debug.Log("Sending Friend Request");
             await FriendsService.Instance.AddFriendAsync(memberID);
         }
         catch (Exception ex)
@@ -119,7 +120,9 @@ public class FriendsManager : MonoBehaviour
 
     public async void SendFriendRequestButton(string username)
     {
-
+        string userID = await userDatabase.GetUseridByUsername(username);
+        Debug.LogFormat("Username: {0}, UserID: {1}", username, userID);
+        SendFriendRequest_ID(userID);
     }
 
     public void SearchFriend(string username)
@@ -229,9 +232,16 @@ public class FriendsManager : MonoBehaviour
         m_Search.Clear();
 
         // originally written to take a list of users but now we are just doing one user that matches username
-        userDatabase.SearchUsers(usernameInput.text, OnSearchComplete);
+        
+        m_Search.Add(await userDatabase.SearchUsers(usernameInput.text));
 
-        //Debug.Log("m_search contains: " + m_Search[0]);
+
+        Debug.Log("m_search contains: " + m_Search[0]);
+
+        // Show on UI
+        OnSearchRefresh?.Invoke(m_Search);
+        
+        
 
         /* foreach (KeyValuePair<string, string> kvp in search)
          {
@@ -248,18 +258,18 @@ public class FriendsManager : MonoBehaviour
              m_Requests.Add(new PlayerProfile(request.Member.Profile.Name, request.Member.Id));
 
          }*/
-        // Show on UI
-        OnSearchRefresh?.Invoke(m_Search);
+        
     }
 
-    void OnSearchComplete(List<PlayerProfile> foundUsernames)
+    // code for realtime database
+    /*void OnSearchComplete(List<PlayerProfile> foundUsernames)
     {
         foreach (PlayerProfile player in foundUsernames)
         {
             Debug.Log("Found username: " + player.Name);
             m_Search.Add(player);
         }
-    }
+    }*/
 
     // friends list
     private IReadOnlyList<Relationship> friends;

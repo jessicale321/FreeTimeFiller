@@ -37,6 +37,7 @@ public class ScreenController : MonoBehaviour
         homeScreen.SetActive(true);
         searchScreen.SetActive(false);
         profileScreen.SetActive(false);
+        friendProfileScreen.SetActive(false);
     }
 
     //-/////////////////////////////////////////////////////////////////////
@@ -46,6 +47,7 @@ public class ScreenController : MonoBehaviour
         homeScreen.SetActive(false);
         searchScreen.SetActive(true);
         profileScreen.SetActive(false);
+        friendProfileScreen.SetActive(false);
     }
 
     //-/////////////////////////////////////////////////////////////////////
@@ -55,6 +57,7 @@ public class ScreenController : MonoBehaviour
         homeScreen.SetActive(false);
         searchScreen.SetActive(false);
         profileScreen.SetActive(true);
+        friendProfileScreen.SetActive(false);
     }
 
     public void OnViewProfileClicked()

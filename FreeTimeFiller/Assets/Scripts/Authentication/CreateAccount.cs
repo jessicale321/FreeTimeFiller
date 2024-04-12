@@ -105,32 +105,4 @@ public class TestScript : MonoBehaviour
             logMessage.gameObject.SetActive(true);
         }
     }
-
-    /// </summary>
-    /// CheckUsernameAvailability() queries firestore database and returns isAvailable back to Create Account
-    /// If there are no conflicting usernames. 
-    /// If that username is already in use then don't allow the user to create an account
-    /// <param name="username"></param> user's username
-    /// <param name="callback"></param> invokes false or true for CreateAccount if statement
-    /*private void CheckUsernameAvailability(string username, System.Action<bool> callback)
-    {
-        FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
-
-        // Query Firestore to check if username exists
-        db.Collection("user_data").WhereEqualTo("username", username).GetSnapshotAsync()
-            .ContinueWithOnMainThread(task =>
-            {
-                if (task.IsCompleted && !task.IsFaulted && !task.IsCanceled)
-                {
-                    QuerySnapshot snapshot = task.Result;
-                    bool isAvailable = snapshot.Documents.Count() == 0; // Check if no documents returned
-                    callback?.Invoke(isAvailable);
-                }
-                else
-                {
-                    Debug.Log("Error checking username availability: " + task.Exception);
-                    callback?.Invoke(false); // Assume username is not available on error
-                }
-            });
-    }*/
 }

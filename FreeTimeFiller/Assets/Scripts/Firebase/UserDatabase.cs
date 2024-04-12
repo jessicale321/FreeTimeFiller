@@ -11,9 +11,9 @@ using UnityEngine;
 
 public class UserDatabase : MonoBehaviour
 {
-    //private FirebaseFirestore db;
+    private FirebaseFirestore db;
 
-    DatabaseReference databaseReference;
+    //DatabaseReference databaseReference;
     private void Start()
     {
         Debug.Log("Trying to initialize database.");
@@ -21,7 +21,7 @@ public class UserDatabase : MonoBehaviour
         {
             if (task.IsCompleted && !task.IsFaulted && !task.IsCanceled)
             {
-                InitializeDatabase();
+                InitializeFirestore();
             }
             else
             {
@@ -31,12 +31,12 @@ public class UserDatabase : MonoBehaviour
     }
 
     // NOOO FIRESTORE
-    /*void InitializeFirestore()
+    void InitializeFirestore()
     {
         db = FirebaseFirestore.DefaultInstance;
-    }*/
+    }
 
-    void InitializeDatabase()
+    /*void InitializeDatabase()
     {
         // Get the root reference location of the database
         FirebaseDatabase database = FirebaseDatabase.DefaultInstance;
@@ -56,9 +56,9 @@ public class UserDatabase : MonoBehaviour
         {
             Debug.Log("Firebase Realtime Database initialized successfully.");
         }
-    }
+    }*/
 
-    /*public void AddUser(string username, string userId)
+    public void AddUser(string username, string userId)
     {
         // Create a dictionary with user data
         var userData = new Dictionary<string, object>
@@ -80,9 +80,9 @@ public class UserDatabase : MonoBehaviour
                     Debug.Log("Error adding user document: " + task.Exception);
                 }
             });
-    }*/
+    }
 
-    public void AddUser(string username, string userId)
+    /*public void AddUser(string username, string userId)
     {
         if (databaseReference == null)
         {
@@ -109,9 +109,9 @@ public class UserDatabase : MonoBehaviour
                     Debug.Log("User added successfully to database");
                 }
             });
-    }
+    }*/
 
-    /*public async Task<PlayerProfile> SearchUsers(string username)
+    public async Task<PlayerProfile> SearchUsers(string username)
     {
         QuerySnapshot snapshot = await db.Collection("user_data")
                                     .WhereEqualTo("username", username)
@@ -128,9 +128,9 @@ public class UserDatabase : MonoBehaviour
         }
         // User not found
         return null;
-    }*/
+    }
 
-    public void SearchUsers(string substring, Action<List<PlayerProfile>> onComplete)
+    /*public void SearchUsers(string substring, Action<List<PlayerProfile>> onComplete)
     {
         if (databaseReference == null)
         {
@@ -158,9 +158,9 @@ public class UserDatabase : MonoBehaviour
 
                 onComplete?.Invoke(foundUsernames);
             });
-    }
+    }*/
 
-    public void CheckUsernameAvailability(string username, System.Action<bool> callback)
+    /*public void CheckUsernameAvailability(string username, System.Action<bool> callback)
     {
         if (databaseReference == null)
         {
@@ -182,19 +182,61 @@ public class UserDatabase : MonoBehaviour
                 bool isAvailable = snapshot.ChildrenCount == 0; // Check if no documents returned
                 callback?.Invoke(isAvailable);
             });
+    }*/
+
+    /// </summary>
+    /// CheckUsernameAvailability() queries firestore database and returns isAvailable back to Create Account
+    /// If there are no conflicting usernames. 
+    /// If that username is already in use then don't allow the user to create an account
+    /// <param name="username"></param> user's username
+    /// <param name="callback"></param> invokes false or true for CreateAccount if statement
+    public void CheckUsernameAvailability(string username, System.Action<bool> callback)
+    {
+        FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+
+        // Query Firestore to check if username exists
+        db.Collection("user_data").WhereEqualTo("username", username).GetSnapshotAsync()
+            .ContinueWithOnMainThread(task =>
+            {
+                if (task.IsCompleted && !task.IsFaulted && !task.IsCanceled)
+                {
+                    QuerySnapshot snapshot = task.Result;
+                    bool isAvailable = snapshot.Documents.Count() == 0; // Check if no documents returned
+                    callback?.Invoke(isAvailable);
+                }
+                else
+                {
+                    Debug.Log("Error checking username availability: " + task.Exception);
+                    callback?.Invoke(false); // Assume username is not available on error
+                }
+            });
     }
 
-    /* public async Task<string> GetUseridByUsername(string username)
-     {
-         QuerySnapshot snapshot = await db.Collection("user_data")
-                                         .WhereEqualTo("username", username)
-                                         .GetSnapshotAsync();
+    public async Task<string> GetUseridByUsername(string username)
+    {
+        QuerySnapshot snapshot = await db.Collection("user_data")
+                                        .WhereEqualTo("username", username)
+                                        .GetSnapshotAsync();
 
-         if (snapshot != null)
-         {
-             DocumentSnapshot document = snapshot.Documents[0];
+        if (snapshot != null)
+        {
+            DocumentSnapshot document = snapshot.Documents.ElementAt(0);
+            return document.GetValue<string>("user_id");
+        }
+        else { return null; }
+    }
 
-         }
-         else { return null; }
-     }*/
+    public async Task<string> GetUsernameByUserid(string userID)
+    {
+        QuerySnapshot snapshot = await db.Collection("user_data")
+                                        .WhereEqualTo("user_id", userID)
+                                        .GetSnapshotAsync();
+
+        if (snapshot != null)
+        {
+            DocumentSnapshot document = snapshot.Documents.ElementAt(0);
+            return document.GetValue<string>("username");
+        }
+        else { return null; }
+    }
 }
