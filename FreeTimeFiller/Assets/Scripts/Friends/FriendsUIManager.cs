@@ -12,35 +12,35 @@ namespace UI
     {
         // Varibales to show user's name, id, and playerinfo
         // We shouldn't actually need playerinfo, i just kept it in case because he had it in the tutorial
-        public TMP_Text playerUserName;
-        public TMP_Text playerUserID;
-        public TMP_Text playerInfo;
-        // Friends loby is connnected to the canvas that shows the screen manager Jessica created
-        public GameObject friendsLobby;
+        [SerializeField] private TMP_Text playerUserName;
+        [SerializeField] private TMP_Text playerUserID;
+        [SerializeField] private TMP_Text playerInfo;
+        // Player username of profile being viewed
+        [SerializeField] private TMP_Text profileViewUsername;
         // This is the search bar for who the friend request is being sent to
-        [Header("From Control Area")] public TMP_InputField friendRecipientID;
+        [Header("From Control Area")]
+        [SerializeField] private TMP_InputField friendRecipientID;
+        [SerializeField] private TMP_InputField friendUsername;
         // NOT REAL PREFABS, these are GameObjects that are being created for each friend request or new friend 
         [Header("From Info Area")]
-        public RequestObjects requestPrefab;
-        public FriendObject friendPrefab;
+        [SerializeField] private RequestObjects requestPrefab;
+        [SerializeField] private FriendObject friendPrefab;
+        [SerializeField] private SearchObject searchPrefab;
+        [SerializeField] private SearchObject userNotFoundPrefab;
 
         // Start is called before the first frame update
-       /* private void Awake()
-        {
-            FriendsManager.Active.OnUserSignIn += OnUserSignIn;
-        }*/
+        /* private void Awake()
+         {
+             FriendsManager.Active.OnUserSignIn += OnUserSignIn;
+         }*/
 
-        private void Start()
+        private void OnEnable()
         {
-            // Game objects are hidden on start, this actually might be my issue with canvas not showing lol
-            foreach (object o in transform)
-            {
-                (o as Transform).gameObject.SetActive(false);
-            }
             // subscribing to event callbacks for each method in FriendsManager
             FriendsManager.Active.OnUserSignIn += OnUserSignIn;
             FriendsManager.Active.OnRequestsRefresh += OnRequestsRefresh;
             FriendsManager.Active.OnFriendsRefresh += OnFriendsRefresh;
+            FriendsManager.Active.OnSearchRefresh += OnSearchRefresh;
         }
 
         // 
@@ -51,8 +51,6 @@ namespace UI
             playerUserName.text = AuthenticationService.Instance.PlayerName;
             playerInfo.text = AuthenticationService.Instance.Profile;
             Debug.Log("We accessed the stuff");
-            // we could probably attach this to just the start(), it all depends how we want the UI to interact
-            friendsLobby.SetActive(true);
         }
 
         // Calls SendFriendRequest from FriendManager
@@ -61,8 +59,19 @@ namespace UI
             FriendsManager.Active.SendFriendRequest_ID(friendRecipientID.text);
         }
 
+        public void SendFriendRequestButton()
+        {
+            FriendsManager.Active.SendFriendRequestButton(profileViewUsername.text);
+        }
+
+        public void SearchFriendName()
+        {
+            FriendsManager.Active.SearchFriend(friendUsername.text);
+        }
+
+
         // Displays all new friend requests
-        private void OnRequestsRefresh(List<PlayerProfile> requests)
+        private async void OnRequestsRefresh(List<PlayerProfile> requests)
         {
             // remove all former requests
             for (int i = 0; i < requestUIs.Count; i++)
@@ -110,19 +119,58 @@ namespace UI
             }
         }
 
+        private void OnSearchRefresh(List<PlayerProfile> friends)
+        {
+            userNotFoundPrefab.gameObject.SetActive(false);
+            // remove all former requests
+            for (int i = 0; i < searchUIs.Count; i++)
+            {
+                Destroy(searchUIs[i].gameObject);
+                searchUIs.RemoveAt(i);
+            }
+
+            // create a new request object for each request
+            if (friends[0] != null)
+            {
+                foreach (PlayerProfile fr in friends)
+                {
+                    SearchObject newFriendItem = Instantiate(searchPrefab, searchPrefab.transform.parent) as SearchObject;
+                    newFriendItem.gameObject.SetActive(true);
+                    Debug.Log("Created game object for viewing friend profile.");
+
+                    newFriendItem.SetData(fr.Name, onViewProfile);
+
+                    searchUIs.Add(newFriendItem);
+                }
+            }
+            else
+            {
+                userNotFoundPrefab.gameObject.SetActive(true);
+            }
+            
+        }
+
         // Connected to button for requestPrefab
-        private void OnRequestAccept(string id)
+        public void OnRequestAccept(string id)
         {
             FriendsManager.Active.AcceptRequest(id);
         }
 
         // Connected to button for friendPrefab
-        private void OnDeleteFriend(string id)
+        public void OnDeleteFriend(string id)
         {
             FriendsManager.Active.DeleteFriend(id);
         }
 
+        public void onViewProfile(string username)
+        {
+            ScreenController control = FindObjectOfType<ScreenController>();
+            profileViewUsername.text = username;
+            control.OnViewProfileClicked();
+        }
+
         List<RequestObjects> requestUIs = new List<RequestObjects>();
         List<FriendObject> friendsUIs = new List<FriendObject>();
+        List<SearchObject> searchUIs = new List<SearchObject>();
     }
 }
