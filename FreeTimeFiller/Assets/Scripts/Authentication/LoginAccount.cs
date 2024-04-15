@@ -38,12 +38,12 @@ public class LoginAccount : MonoBehaviour
     /// </summary>
     public async void QuickLoginA()
     {
-        await SignInWithUsernamePasswordAsync("jessica1", "Password1!");
+        await SignInWithUsernamePasswordAsync("jessica2", "Password2!");
     }
 
     public async void QuickLoginB()
     {
-        await SignInWithUsernamePasswordAsync("jessica8", "Password8!");
+        await SignInWithUsernamePasswordAsync("jessica3", "Password3!");
     }
 
     /// <summary>
