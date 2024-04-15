@@ -12,6 +12,7 @@ public class ScreenController : MonoBehaviour
     [SerializeField] private MenuScreen profileScreen;
     [SerializeField] private MenuScreen profileSelectScreen;
     [SerializeField] private MenuScreen categoryChoiceScreen;
+    [SerializeField] private MenuScreen friendProfileScreen;
 
     [SerializeField] private Button homeBtn;
     [SerializeField] private Button searchBtn;
@@ -77,5 +78,14 @@ public class ScreenController : MonoBehaviour
     {
         categoryChoiceScreen.Hide();
         lastShownScreen = categoryChoiceScreen;
+    }
+
+    //-/////////////////////////////////////////////////////////////////////
+    ///
+    public void OnViewProfileClicked()
+    {
+        lastShownScreen.Hide();
+        friendProfileScreen.Show();
+        lastShownScreen = friendProfileScreen;
     }
 }
