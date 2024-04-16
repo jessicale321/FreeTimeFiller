@@ -803,6 +803,50 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &205759346
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 205759348}
+  - component: {fileID: 205759347}
+  m_Layer: 0
+  m_Name: UserDatabase
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &205759347
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 205759346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82590f7bf35ee0a4d95a342cc74b41e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &205759348
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 205759346}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 90}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &280255606
 GameObject:
   m_ObjectHideFlags: 0
@@ -3220,7 +3264,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -153.65002}
+  m_AnchoredPosition: {x: 0, y: -153.65001}
   m_SizeDelta: {x: 0, y: -307.3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1445528029
@@ -4472,6 +4516,7 @@ GameObject:
   - component: {fileID: 1765296690}
   - component: {fileID: 1765296689}
   - component: {fileID: 1765296688}
+  - component: {fileID: 1765296691}
   m_Layer: 0
   m_Name: AuthManager
   m_TagString: Untagged
@@ -4510,6 +4555,7 @@ MonoBehaviour:
   registerPassword: {fileID: 1313431801}
   registerConfirmedPassword: {fileID: 111533533}
   logMessage: {fileID: 308371702}
+  userDatabase: {fileID: 205759347}
 --- !u!4 &1765296690
 Transform:
   m_ObjectHideFlags: 0
@@ -4525,6 +4571,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1765296691
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1765296687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82590f7bf35ee0a4d95a342cc74b41e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1826399865
 GameObject:
   m_ObjectHideFlags: 0
@@ -5707,3 +5765,4 @@ SceneRoots:
   - {fileID: 1543242351}
   - {fileID: 2098476409}
   - {fileID: 1765296690}
+  - {fileID: 205759348}
