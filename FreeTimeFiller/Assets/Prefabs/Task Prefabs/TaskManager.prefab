@@ -48,6 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc613e234f5f0f04cb389ffff408504e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  login: {fileID: 0}
 --- !u!114 &7393821257441908569
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -60,9 +61,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2808742a61c7a3042a1ad819c3c3c433, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  completionMessage: {fileID: 0}
   maxTaskDisplay: 5
   taskPrefab: {fileID: 7422696577987121108, guid: ebd48ffe12d1aaf4e8d245fff3b33d79, type: 3}
+  specialTaskPrefab: {fileID: 7422696577987121108, guid: 96a707da30d9dc5458317953c0ca86fa, type: 3}
   taskPanel: {fileID: 0}
+  tasksLeavingPanel: {fileID: 0}
 --- !u!114 &7073630200094953449
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -114,3 +118,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8218e7b8e158e9e499bf7bfe28939f12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  refreshTimerDisplay: {fileID: 0}

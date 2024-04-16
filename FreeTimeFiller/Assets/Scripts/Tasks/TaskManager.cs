@@ -30,11 +30,8 @@ public class TaskManager : MonoBehaviour
         
         // When the user is signed in, begin the task placement process
         await UnityServices.InitializeAsync();
-        //AuthenticationService.Instance.SignedIn += BeginTaskPlacementProcess;
+
         BeginTaskPlacementProcess();
-        
-        // TODO: REMOVE THIS SOON
-        //await AuthenticationService.Instance.SignInAnonymouslyAsync();
         
         _taskPlacer.ClearTaskPlacement();
     }
@@ -52,11 +49,6 @@ public class TaskManager : MonoBehaviour
         _customTaskCreator.CustomTaskWasCreatedWithoutLoad -= AddOneCustomTask;
         _taskPool.TaskCategoriesChanged -= UpdatePremadeTasks;
         _taskRefreshWithTime.refreshTimerOccurred -= NotifyTaskPlacerOfRefresh;
-    }
-
-    private void OnDestroy()
-    {
-        AuthenticationService.Instance.SignedIn -= BeginTaskPlacementProcess;
     }
 
     ///-///////////////////////////////////////////////////////////

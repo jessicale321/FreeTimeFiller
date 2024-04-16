@@ -6,5 +6,5 @@ using UnityEngine;
 public class SpecialTaskData : TaskData
 {
     // What is the index of the scene to load?
-    [Min(0)] public int sceneIndex;
+    public string sceneName;
 }

@@ -18,7 +18,7 @@ namespace UserTask
         [Header("UI Components")]
         [SerializeField] private TMP_Text taskName;
 
-        [SerializeField] private Button checkBoxButton;
+        [SerializeField] protected Button checkBoxButton;
         [SerializeField] private GameObject checkMark;
 
         [SerializeField] private GameObject crossOutImage;
@@ -79,7 +79,7 @@ namespace UserTask
         ///-///////////////////////////////////////////////////////////
         /// Notify the TaskPlacer that this task has been completed, also place a cross-out image.
         /// 
-        public void CompleteOnCommand()
+        public virtual void CompleteOnCommand()
         {
             if(checkMark != null)
                 checkMark.SetActive(true);

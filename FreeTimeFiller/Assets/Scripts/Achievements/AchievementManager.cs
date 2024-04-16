@@ -47,13 +47,10 @@ public class AchievementManager : MonoBehaviour
         { 
             Instance = this; 
         }
-        await UnityServices.InitializeAsync();
-        AuthenticationService.Instance.SignedIn += LoadAchievements;
-    }
 
-    private void OnDestroy()
-    {
-        AuthenticationService.Instance.SignedIn -= LoadAchievements;
+        await UnityServices.InitializeAsync();
+
+        LoadAchievements();
     }
 
     ///-///////////////////////////////////////////////////////////
