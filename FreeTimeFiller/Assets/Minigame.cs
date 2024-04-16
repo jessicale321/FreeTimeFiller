@@ -17,7 +17,9 @@ public class Minigame : MonoBehaviour
 
     protected virtual void OnMinigameConcluded()
     {
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+
         // Unload the current scene (go back to home page)
-        SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene().buildIndex);
+        SceneManager.UnloadSceneAsync(currentSceneIndex);
     }
 }
