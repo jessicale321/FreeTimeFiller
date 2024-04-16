@@ -34,6 +34,19 @@ public class LoginAccount : MonoBehaviour
     }
 
     /// <summary>
+    /// Hardcoded credentials for quick login bc typing is annoying
+    /// </summary>
+    public async void QuickLoginA()
+    {
+        await SignInWithUsernamePasswordAsync("jessica1", "Password1!");
+    }
+
+    public async void QuickLoginB()
+    {
+        await SignInWithUsernamePasswordAsync("jessica8", "Password8!");
+    }
+
+    /// <summary>
     /// SignInWithUsernamePassword() 
     /// Attempts to loggin with username and password, notifies user if username and/or login were incorrect
     /// </summary>

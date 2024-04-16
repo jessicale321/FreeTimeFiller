@@ -53,7 +53,7 @@ public static class DataManager
         }
         catch (Exception e)
         {
-            Debug.Log($"Could not delete {dataName}: " + e);
+            throw new Exception($"Could not delete {dataName}: " + e);
         }
     }
 }

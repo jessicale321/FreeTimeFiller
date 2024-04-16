@@ -82,6 +82,7 @@ public class TestScript : MonoBehaviour
             await AuthenticationService.Instance.SignUpWithUsernamePasswordAsync(username, password);
             Debug.Log("Calling function to add user to database.");
             await AuthenticationService.Instance.UpdatePlayerNameAsync(username);
+            SaveCredentials();
             // add username and userid pair to database
             userDatabase.AddUser(username, AuthenticationService.Instance.PlayerId);
             Debug.Log("SignUp is successful.");
@@ -104,5 +105,19 @@ public class TestScript : MonoBehaviour
             logMessage.text = "Please include 1 uppercase, 1 lowercase, 1 digit and 1 symbol in password with min 8 characters and max of 30";
             logMessage.gameObject.SetActive(true);
         }
+    }
+
+    /// <summary>
+    /// Saves the user's credentials when a new account is made. Will be displayed on Unity dashboard under their ID > Cloud Save > Data
+    /// </summary>
+    public async void SaveCredentials()
+    {
+        var credentials = new Dictionary<string, object>
+        {
+            {"username", registerUsername.text },
+            {"password", registerPassword.text }
+        };
+
+        await CloudSaveService.Instance.Data.Player.SaveAsync(credentials);
     }
 }

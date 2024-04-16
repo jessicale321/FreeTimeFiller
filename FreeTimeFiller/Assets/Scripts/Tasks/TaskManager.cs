@@ -31,7 +31,7 @@ public class TaskManager : MonoBehaviour
         AuthenticationService.Instance.SignedIn += BeginTaskPlacementProcess;
         
         // TODO: REMOVE THIS SOON
-        //await AuthenticationService.Instance.SignInAnonymouslyAsync();
+        await AuthenticationService.Instance.SignInAnonymouslyAsync();
         
         //_taskPlacer.ClearTaskPlacement();
     }
@@ -49,6 +49,11 @@ public class TaskManager : MonoBehaviour
         _customTaskCreator.CustomTaskWasCreatedWithoutLoad -= AddOneCustomTask;
         _taskPool.TaskCategoriesChanged -= UpdatePremadeTasks;
         _taskRefreshWithTime.refreshTimerOccurred -= NotifyTaskPlacerOfRefresh;
+    }
+
+    private void OnDestroy()
+    {
+        AuthenticationService.Instance.SignedIn -= BeginTaskPlacementProcess;
     }
 
     ///-///////////////////////////////////////////////////////////
