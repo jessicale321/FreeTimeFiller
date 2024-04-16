@@ -11,6 +11,7 @@ using Unity.Services.Friends.Exceptions;
 using System.Runtime.CompilerServices;
 using UnityEngine.SceneManagement;
 using Firebase.Firestore;
+using UnityEditor.PackageManager.Requests;
 
 public class FriendsManager : MonoBehaviour
 {
@@ -134,7 +135,7 @@ public class FriendsManager : MonoBehaviour
     // friends instead of appearing in friend requests
     public async void AcceptRequest(string memberID)
     {
-        Relationship relationship = await FriendsService.Instance.AddFriendByNameAsync(memberID);
+        Relationship relationship = await FriendsService.Instance.AddFriendAsync(memberID);
 
         Debug.Log($"Friend request accepted from {memberID}. New relationship status is {relationship.Type}");
 
@@ -190,7 +191,7 @@ public class FriendsManager : MonoBehaviour
     }
 
     // This refreshses the requests from other users
-    public void RefreshRequests()
+    public async void RefreshRequests()
     {
         // clears previous requests
         m_Requests.Clear();
@@ -200,7 +201,7 @@ public class FriendsManager : MonoBehaviour
         // create PlayerProfiles for each friend request, easier for displaying in UI
         foreach (Relationship request in requests)
         {
-            m_Requests.Add(new PlayerProfile(request.Member.Profile.Name, request.Member.Id));
+            m_Requests.Add(new PlayerProfile(await userDatabase.GetUsernameByUserid(request.Member.Id), request.Member.Id));
 
         }
         // Show on UI
@@ -208,7 +209,7 @@ public class FriendsManager : MonoBehaviour
     }
 
     // Refershes the friends list of user
-    public void RefreshFriends()
+    public async void RefreshFriends()
     {
         // clear previous list to not show old data
         m_Friends.Clear();
@@ -218,7 +219,7 @@ public class FriendsManager : MonoBehaviour
         // create PlayerProfiles for displaying
         foreach(Relationship friend in friends)
         {
-            m_Friends.Add(new PlayerProfile(friend.Member.Profile.Name, friend.Member.Id));
+            m_Friends.Add(new PlayerProfile(await userDatabase.GetUsernameByUserid(friend.Member.Id), friend.Member.Id));
         }
 
         // show on UI

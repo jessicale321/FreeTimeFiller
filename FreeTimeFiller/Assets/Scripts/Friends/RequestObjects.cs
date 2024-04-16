@@ -15,13 +15,13 @@ namespace UI
 
         private string m_userID;
         
-        public void SetData(string UserID, Action<string> onAccept)
+        public void SetData(PlayerProfile user, Action<string> onAccept)
         {
             // save information
-            m_userID = UserID;
+            m_userID = user.Id;
 
             // display information
-            userIDDisplay.SetText(UserID);
+            userIDDisplay.SetText(user.Name);
 
             // add callback
             acceptButton.onClick.AddListener(() =>
