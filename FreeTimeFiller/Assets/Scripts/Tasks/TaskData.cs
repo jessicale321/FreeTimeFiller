@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Task Data", menuName = "ScriptableObjects/Task Data")]
+[CreateAssetMenu(fileName = "New Task Data", menuName = "ScriptableObjects/Task Data/Regular")]
 public class TaskData : ScriptableObject
 {
     // Name of task displayed on screen

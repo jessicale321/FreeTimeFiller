@@ -42,7 +42,7 @@ namespace UserTask
             crossOutImage.SetActive(false);
             crossOutImage.transform.localScale = new Vector3(0f, crossOutImage.transform.localScale.y, crossOutImage.transform.localScale.z);
             
-            checkBoxButton.onClick.AddListener(CompleteOnClick);
+            checkBoxButton.onClick.AddListener(OnCheckboxClick);
 
             if (_isCompleted)
             {
@@ -56,14 +56,14 @@ namespace UserTask
 
         private void OnDisable()
         {
-            checkBoxButton.onClick.RemoveListener(CompleteOnClick);
+            checkBoxButton.onClick.RemoveListener(OnCheckboxClick);
         }  
 
         ///-///////////////////////////////////////////////////////////
         /// Place a cross-out image on top of this task if the task hasn't been completed yet.
         /// If the task was already completed, then un-complete the task.
         /// 
-        private void CompleteOnClick()
+        protected virtual void OnCheckboxClick()
         {
             if (_isCompleted)
             {

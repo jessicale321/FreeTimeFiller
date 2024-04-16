@@ -60,7 +60,9 @@ public class TaskPlacer : MonoBehaviour
     private List<UserTask.Task> _completedTasks = new List<UserTask.Task>();
 
     // Task that will be instantiated and placed on the canvas
+    [Header("Required GameObjects")]
     [SerializeField] private GameObject taskPrefab;
+    [SerializeField] private GameObject specialTaskPrefab;
     [SerializeField] private Transform taskPanel;
     [SerializeField] private Transform tasksLeavingPanel;
 
@@ -281,9 +283,18 @@ public class TaskPlacer : MonoBehaviour
     
         // Task spawns off-screen
         Vector3 spawnPosition = new Vector3(10f, 0f, 0f);
+
+        GameObject newTask = null;
     
-        // Spawn a new task
-        GameObject newTask = Instantiate(taskPrefab, spawnPosition, Quaternion.identity, taskPanel);
+        // Spawn a new task (depends on task data type)
+        if(data is SpecialTaskData)
+        {
+            newTask = Instantiate(specialTaskPrefab, spawnPosition, Quaternion.identity, taskPanel);
+        }
+        else
+        {
+            newTask = Instantiate(taskPrefab, spawnPosition, Quaternion.identity, taskPanel);
+        }
 
         // Move on-screen with animation
         LeanTween.moveX(newTask, 0f, 0.25f);

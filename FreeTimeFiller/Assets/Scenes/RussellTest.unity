@@ -926,6 +926,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1078970243}
     - target: {fileID: 7393821257441908569, guid: 2373d6712405580488bed190e3758603, type: 3}
+      propertyPath: specialTaskPrefab
+      value: 
+      objectReference: {fileID: 7422696577987121108, guid: 96a707da30d9dc5458317953c0ca86fa, type: 3}
+    - target: {fileID: 7393821257441908569, guid: 2373d6712405580488bed190e3758603, type: 3}
       propertyPath: tasksLeavingPanel
       value: 
       objectReference: {fileID: 1862584457}
