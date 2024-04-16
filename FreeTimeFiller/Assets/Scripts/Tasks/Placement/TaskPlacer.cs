@@ -548,13 +548,17 @@ public class TaskPlacer : MonoBehaviour
         {
             // Load how many tasks the user was allowed to display in the previous session
             string loadedAmountToDisplay = await DataManager.LoadData<string>("tasksCurrentlyAllowedToDisplay");
-            
+
             // Check that the value isn't null, then set the amountAllowedToDisplay to what was loaded
             if (!string.IsNullOrEmpty(loadedAmountToDisplay))
+            {
                 _amountAllowedToDisplay = int.Parse(loadedAmountToDisplay);
+            }
             else
+            {
                 _amountAllowedToDisplay = maxTaskDisplay;
-
+            }
+                
             // Load all previously completed tasks (by name)
             List<string> loadedCompletedTasks = await DataManager.LoadData<List<string>>("tasksCurrentlyMarkedOff");
 
