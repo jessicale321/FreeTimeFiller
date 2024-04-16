@@ -138,7 +138,7 @@ namespace UI
                     newFriendItem.gameObject.SetActive(true);
                     Debug.Log("Created game object for viewing friend profile.");
 
-                    newFriendItem.SetData(fr.Name, onViewProfile);
+                    newFriendItem.SetData(fr.Name, OnViewProfile);
 
                     searchUIs.Add(newFriendItem);
                 }
@@ -162,7 +162,7 @@ namespace UI
             FriendsManager.Active.DeleteFriend(id);
         }
 
-        public void onViewProfile(string username)
+        public void OnViewProfile(string username)
         {
             ScreenController control = FindObjectOfType<ScreenController>();
             profileViewUsername.text = username;
