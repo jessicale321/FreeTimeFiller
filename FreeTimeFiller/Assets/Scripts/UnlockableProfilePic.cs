@@ -9,7 +9,8 @@ using UnityEngine.UI;
 /// 
 public class UnlockableProfilePic : MonoBehaviour
 {
-    [SerializeField] private bool isLocked = true;
+    [SerializeField] private bool isLocked;
+    [SerializeField] private GameObject lockedMask;
     private int costToUnlock = 100;
     private Button button;
     private Image image;
@@ -22,7 +23,8 @@ public class UnlockableProfilePic : MonoBehaviour
     /// 
     private void Awake()
     {
-        saveKey = "locked_" + gameObject.name;
+        string uniqueId = System.Guid.NewGuid().ToString();
+        saveKey = "locked_" + uniqueId;
 
         image = gameObject.GetComponentInChildren<Image>();
         button = gameObject.GetComponentInChildren<Button>();
@@ -32,17 +34,17 @@ public class UnlockableProfilePic : MonoBehaviour
 
     ///-///////////////////////////////////////////////////////////
     /// 
-    private void OnEnable()
+    private void Start()
     {
         LoadLockedStatus();
-        Debug.Log("locked status: " + isLocked);
+        Debug.Log(this.gameObject.name + " is locked: " + isLocked);
         if (isLocked)
         {
-            image.color = new Color32(56, 56, 56, 80);
+            lockedMask.SetActive(true);
         }
         else
         {
-            image.color = new Color32(255, 255, 255, 255);
+            lockedMask.SetActive(false);
         }
     }
 
@@ -57,8 +59,8 @@ public class UnlockableProfilePic : MonoBehaviour
             {
                 isLocked = false;
                 SaveLockedStatus();
-                image.color = new Color32(255, 255, 255, 255);
-                SelectProfileController.instance.SetProfilePic(image); // swap profile pic with the new one
+                lockedMask.SetActive(false);
+                SelectProfileController.instance.SetProfilePic(image); 
                 CoinManager.instance.SpendCoins(costToUnlock);
                 isCurrentSelection = true;
             }

@@ -15,6 +15,8 @@ public class TaskManager : MonoBehaviour
     private TaskPlacer _taskPlacer;
     private CustomTaskCreator _customTaskCreator;
     private TaskRefreshWithTime _taskRefreshWithTime;
+
+    [SerializeField] private LoginAccount login;
     
     private async void Awake()
     {
@@ -28,12 +30,13 @@ public class TaskManager : MonoBehaviour
         
         // When the user is signed in, begin the task placement process
         await UnityServices.InitializeAsync();
-        AuthenticationService.Instance.SignedIn += BeginTaskPlacementProcess;
+        //AuthenticationService.Instance.SignedIn += BeginTaskPlacementProcess;
+        BeginTaskPlacementProcess();
         
         // TODO: REMOVE THIS SOON
-        await AuthenticationService.Instance.SignInAnonymouslyAsync();
+        //await AuthenticationService.Instance.SignInAnonymouslyAsync();
         
-        //_taskPlacer.ClearTaskPlacement();
+        _taskPlacer.ClearTaskPlacement();
     }
 
     private void OnEnable()

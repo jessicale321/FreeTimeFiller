@@ -6,6 +6,7 @@ using Unity.Services.Core;
 using UnityEngine;
 using System.Threading.Tasks;
 using UnityEngine.SceneManagement;
+using System;
 
 public class LoginAccount : MonoBehaviour
 {
@@ -38,12 +39,12 @@ public class LoginAccount : MonoBehaviour
     /// </summary>
     public async void QuickLoginA()
     {
-        await SignInWithUsernamePasswordAsync("jessica1", "Password1!");
+        await SignInWithUsernamePasswordAsync("jessica3", "Password3!");
     }
 
     public async void QuickLoginB()
     {
-        await SignInWithUsernamePasswordAsync("jessica8", "Password8!");
+        await SignInWithUsernamePasswordAsync("jessica4", "Password4!");
     }
 
     /// <summary>

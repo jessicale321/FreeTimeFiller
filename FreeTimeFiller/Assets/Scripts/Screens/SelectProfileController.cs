@@ -42,9 +42,9 @@ public class SelectProfileController : MonoBehaviour
         // current bug: might have duplicate with temp and in the grid
         Image currentProfile = tempProfilePic.GetComponent<Image>(); // might not need this line?
 
-        var tempPicToSwap = tempProfilePic.sprite;
+        //var tempPicToSwap = tempProfilePic.sprite;
         tempProfilePic.sprite = newProfilePic.sprite;
-        newProfilePic.sprite = tempPicToSwap;
+        //newProfilePic.sprite = tempPicToSwap;
 
         Texture2D texture = ImageToTexture2D(currentProfile);
 
