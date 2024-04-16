@@ -129,7 +129,7 @@ namespace UserTask
         ///-///////////////////////////////////////////////////////////
         /// Change displayed values of the task.
         /// 
-        public void UpdateTask(TaskData data, TaskPlacer taskPlacer)
+        public virtual void UpdateTask(TaskData data, TaskPlacer taskPlacer)
         {
             taskData = data;
 

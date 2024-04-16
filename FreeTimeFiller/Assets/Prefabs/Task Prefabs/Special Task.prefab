@@ -847,7 +847,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7407721251045051130}
-  - component: {fileID: 1256137763659980786}
   - component: {fileID: 6994551527215010337}
   m_Layer: 5
   m_Name: Special Task
@@ -881,25 +880,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1256137763659980786
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7422696577987121108}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e58b70a589d74ca499057be0b0390576, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  taskData: {fileID: 0}
-  taskName: {fileID: 2098337257427441640}
-  checkBoxButton: {fileID: 2973579142245709208}
-  checkMark: {fileID: 6348612152319872427}
-  crossOutImage: {fileID: 562226970384664679}
-  difficultyLevelPanel: {fileID: 5466846729764156817}
-  difficultyStar: {fileID: 530224997194326478, guid: 3b94b81594def24428df2903f1e16a94, type: 3}
 --- !u!114 &6994551527215010337
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -912,6 +892,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ca75b2faccc3a9419a2275c2ab5b907, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  taskData: {fileID: 0}
+  taskName: {fileID: 2098337257427441640}
+  checkBoxButton: {fileID: 2973579142245709208}
+  checkMark: {fileID: 6348612152319872427}
+  crossOutImage: {fileID: 562226970384664679}
+  difficultyLevelPanel: {fileID: 5466846729764156817}
+  difficultyStar: {fileID: 530224997194326478, guid: 3b94b81594def24428df2903f1e16a94, type: 3}
 --- !u!1 &8608607588920503060
 GameObject:
   m_ObjectHideFlags: 0
