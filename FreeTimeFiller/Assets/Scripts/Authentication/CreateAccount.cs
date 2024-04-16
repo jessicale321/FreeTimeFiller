@@ -6,7 +6,9 @@ using Unity.Services.Authentication;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine.SceneManagement;
-using Unity.Services.CloudSave;
+using Firebase.Firestore;
+using Firebase.Extensions;
+using System.Linq;
 
 public class TestScript : MonoBehaviour
 {
@@ -16,9 +18,13 @@ public class TestScript : MonoBehaviour
     [SerializeField] private TMP_InputField registerConfirmedPassword;
 
     [SerializeField] private TMP_Text logMessage;
+
+    public UserDatabase userDatabase;
     async void Start()
     {
         await UnityServices.InitializeAsync();
+
+        userDatabase = GetComponent<UserDatabase>();
     }
 
     /// <summary>
@@ -26,19 +32,39 @@ public class TestScript : MonoBehaviour
     /// It will take the data typed by the user, make sure the passwords match, and call 
     /// SignUpWithUsernamePassword
     /// </summary>
-    public async void CreateAccount()
+    public void CreateAccount()
     {
         string username = registerUsername.text;
         string password = registerPassword.text;
         string confirmedPassword = registerConfirmedPassword.text;
 
-        if (password == confirmedPassword)
+        if (userDatabase != null)
         {
-            await SignUpWithUsernamePassword(username, confirmedPassword);
+            // Check if username is available
+            userDatabase.CheckUsernameAvailability(username, async (isAvailable) =>
+            {
+                if (isAvailable)
+                {
+                    if (password == confirmedPassword)
+                    {
+                        Debug.Log("Creating account for user");
+                        await SignUpWithUsernamePassword(username, confirmedPassword);
+                    }
+                    else
+                    {
+                        Debug.Log("Passwords do not match.");
+                    }
+                }
+                else
+                {
+                    Debug.Log("Username is already taken. Please choose a different username.");
+                    // Notify the user that the username is unavailable
+                }
+            });
         }
         else
         {
-            Debug.Log("Passwords do not match.");
+            Debug.Log("Database not found!");
         }
     }
 
@@ -52,9 +78,13 @@ public class TestScript : MonoBehaviour
     {
         try
         {
+            Debug.LogFormat("Running SignUpWithUsernamePassword, Name:", username, password);
             await AuthenticationService.Instance.SignUpWithUsernamePasswordAsync(username, password);
+            Debug.Log("Calling function to add user to database.");
             await AuthenticationService.Instance.UpdatePlayerNameAsync(username);
             SaveCredentials();
+            // add username and userid pair to database
+            userDatabase.AddUser(username, AuthenticationService.Instance.PlayerId);
             Debug.Log("SignUp is successful.");
             SceneManager.LoadScene(1);
         }

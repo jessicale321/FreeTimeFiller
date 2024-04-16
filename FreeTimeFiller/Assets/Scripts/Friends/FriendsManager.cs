@@ -8,6 +8,9 @@ using Unity.Services.Authentication;
 using Unity.Services.Friends;
 using Unity.Services.Friends.Models;
 using Unity.Services.Friends.Exceptions;
+using System.Runtime.CompilerServices;
+using UnityEngine.SceneManagement;
+using Firebase.Firestore;
 
 public class FriendsManager : MonoBehaviour
 {
@@ -27,25 +30,43 @@ public class FriendsManager : MonoBehaviour
     }
     // create Friends Manager
     private static FriendsManager internalActive;
-    // This is unused at the moment. It was used in the tutorial for the person to log in
-    public TMP_InputField usernameInput;
+    // Friend search Username Input
+    [SerializeField] private TMP_InputField usernameInput;
 
     // callbacks for external script authentication
     public Action OnUserSignIn;
     // Defining the action that will be called by UI manager for displaying friends and friend requests on refresh
     public Action<List<PlayerProfile>> OnRequestsRefresh; //{ get; internal set; }
     public Action<List<PlayerProfile>> OnFriendsRefresh;  //{ get; internal set; }
+    public Action<List<PlayerProfile>> OnSearchRefresh;
+    // create database object
+    public UserDatabase userDatabase;
 
-    private void Awake()
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void Start()
+    {
+        // Attach the UserDatabase component to the new GameObject
+        userDatabase = FindObjectOfType<UserDatabase>();
+
+        if (userDatabase == null)
+        {
+            Debug.Log("UserDatabase not found in this scene");
+        }
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         // when the scene starts, the friends are initialized if the user wants them. PlayerSignIn() should be called when the scene
         // opens, but it doesn't right now. So PlayerSignIn() is attached to the home button
-        AuthenticationService.Instance.SignedIn += PlayerSignIn;
         if (UseFriends)
         {
             InitializeFriends();
         }
-        PlayerSignIn();
+        OnUserSignIn?.Invoke();
     }
 
     // Calls Unity's built in Friend system. Allowing users to have friends
@@ -72,23 +93,41 @@ public class FriendsManager : MonoBehaviour
         SubscribeToFriendsEventCallbacks();
     }
 
-    // If the player signs in, call the OnUserSign in from UI manager, displaying what's needed
-    public async void PlayerSignIn()
+    // If the player signs in, call the OnUserSign in from UI manager, displaying what's needed. No longer needed
+  /*  public async void PlayerSignIn()
     {
         if (AuthenticationService.Instance.IsSignedIn)
             OnUserSignIn?.Invoke();
         else
             Debug.Log("User was not signed in!");
-    }
+    }*/
 
     // Creates a relationship with the friend request sent to another user using memberID
     public async void SendFriendRequest_ID(string memberID)
     {
         // relationship will appear as "friendRequest" if other user has not sent a friend request
         // if other user already sent a friend request relationship will be "friend"
-        var relationship = await FriendsService.Instance.AddFriendByNameAsync(memberID);
+        try
+        {
+            Debug.Log("Sending Friend Request");
+            await FriendsService.Instance.AddFriendAsync(memberID);
+        }
+        catch (Exception ex)
+        {
+            Debug.Log(ex.Message);
+        }
+    }
 
-        Debug.Log($"Friend request send to {memberID}. New relationship is {relationship.Type}");
+    public async void SendFriendRequestButton(string username)
+    {
+        string userID = await userDatabase.GetUseridByUsername(username);
+        Debug.LogFormat("Username: {0}, UserID: {1}", username, userID);
+        SendFriendRequest_ID(userID);
+    }
+
+    public void SearchFriend(string username)
+    {
+        RefreshSearch();
     }
 
     // Accepting friend requests, same thing as SendFriendRequest but this will refresh lists to show 
@@ -137,8 +176,9 @@ public class FriendsManager : MonoBehaviour
         }
         catch (FriendsServiceException e)
         {
+            //Debug.Log("Hey we are here and something went wrong with friends");
             Debug.Log(
-                "An error occurred while performing teh action. Code: " + e.StatusCode + ", Message: " + e.Message);
+            "An error occurred while performing the action. Code: " + e.StatusCode + ", Message: " + e.Message);
         }
     }
 
@@ -185,9 +225,56 @@ public class FriendsManager : MonoBehaviour
         OnFriendsRefresh?.Invoke(m_Friends);
     }
 
+    // This refreshses the search for other users
+    public async void RefreshSearch()
+    {
+        // Clears previous searches
+        m_Search.Clear();
+
+        // originally written to take a list of users but now we are just doing one user that matches username
+        
+        m_Search.Add(await userDatabase.SearchUsers(usernameInput.text));
+
+
+        Debug.Log("m_search contains: " + m_Search[0]);
+
+        // Show on UI
+        OnSearchRefresh?.Invoke(m_Search);
+        
+        
+
+        /* foreach (KeyValuePair<string, string> kvp in search)
+         {
+             Debug.Log("Username: " + kvp.Key + ", User ID: " + kvp.Value);
+             // You can add each result to your list or perform any other operation you need.
+             // For example:
+             // m_Search.Add(kvp);
+         }*/
+
+
+        // create PlayerProfiles for each friend request, easier for displaying in UI
+        /* foreach (Relationship request in requests)
+         {
+             m_Requests.Add(new PlayerProfile(request.Member.Profile.Name, request.Member.Id));
+
+         }*/
+        
+    }
+
+    // code for realtime database
+    /*void OnSearchComplete(List<PlayerProfile> foundUsernames)
+    {
+        foreach (PlayerProfile player in foundUsernames)
+        {
+            Debug.Log("Found username: " + player.Name);
+            m_Search.Add(player);
+        }
+    }*/
+
     // friends list
     private IReadOnlyList<Relationship> friends;
     // playerprofiles for friends and requests for displaying UI
     List<PlayerProfile> m_Requests = new List<PlayerProfile>();
     List<PlayerProfile> m_Friends = new List<PlayerProfile>();
+    List<PlayerProfile> m_Search = new List<PlayerProfile>();
 }
