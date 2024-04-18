@@ -88,7 +88,7 @@ namespace UI
                 newRequestItem.gameObject.SetActive(true);
 
                 // set the data for the new request CHANGED TO NAME
-                newRequestItem.SetData(req.Name, OnRequestAccept);
+                newRequestItem.SetData(req, OnRequestAccept);
 
                 requestUIs.Add(newRequestItem);
             }
@@ -154,6 +154,7 @@ namespace UI
         public void OnRequestAccept(string id)
         {
             FriendsManager.Active.AcceptRequest(id);
+            Debug.LogFormat("Accepting friend request from {0}", id);
         }
 
         // Connected to button for friendPrefab
