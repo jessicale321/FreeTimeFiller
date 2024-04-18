@@ -226,7 +226,7 @@ GameObject:
   - component: {fileID: 2114076301}
   - component: {fileID: 2114076302}
   m_Layer: 0
-  m_Name: Game Test
+  m_Name: Minigame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -259,6 +259,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ba1672e2dbc46842bdc6a6683b426d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameTimer: 180
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
