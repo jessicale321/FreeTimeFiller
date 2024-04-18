@@ -791,9 +791,13 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 519420031}
+    - target: {fileID: 3592390892430122387, guid: e284f064cb9960643a83794040d19e44, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3619546222135519861, guid: e284f064cb9960643a83794040d19e44, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -100.000015
+      value: -100.00001
       objectReference: {fileID: 0}
     - target: {fileID: 3702952629482027791, guid: e284f064cb9960643a83794040d19e44, type: 3}
       propertyPath: m_AnchorMax.y
@@ -995,6 +999,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 510bbe17ff0568f41ace6b0cb6957f4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1631591543 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6717000325240475285, guid: e284f064cb9960643a83794040d19e44, type: 3}
+  m_PrefabInstance: {fileID: 1349388459}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1746644989 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5528749900625675279, guid: e284f064cb9960643a83794040d19e44, type: 3}
@@ -1058,6 +1073,14 @@ PrefabInstance:
       propertyPath: settingsScreen
       value: 
       objectReference: {fileID: 1349388465}
+    - target: {fileID: 1825773299623807902, guid: 4aa6980bb11211448b166225185ab2b8, type: 3}
+      propertyPath: editCategoriesBtn
+      value: 
+      objectReference: {fileID: 1631591543}
+    - target: {fileID: 1825773299623807902, guid: 4aa6980bb11211448b166225185ab2b8, type: 3}
+      propertyPath: editProfilePicBtn
+      value: 
+      objectReference: {fileID: 1349388462}
     - target: {fileID: 1825773299623807902, guid: 4aa6980bb11211448b166225185ab2b8, type: 3}
       propertyPath: profileSelectScreen
       value: 

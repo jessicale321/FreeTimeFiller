@@ -25,7 +25,8 @@ public class ScreenController : MonoBehaviour
 
     [Header("Assorted Buttons")]
     [SerializeField] private Button settingsBtn;
-    [SerializeField] private Button editProfilePicButton;
+    [SerializeField] private Button editProfilePicBtn;
+    [SerializeField] private Button editCategoriesBtn;
     [SerializeField] private Button finishChoosingCategoriesBtn;
 
     private MenuScreen lastShownScreen;
@@ -40,9 +41,11 @@ public class ScreenController : MonoBehaviour
         homeBtn.onClick.AddListener(OnHomeButtonClicked);
         searchBtn.onClick.AddListener(OnSearchButtonClicked);
         profileBtn.onClick.AddListener(OnProfileButtonClicked);
+
         settingsBtn.onClick.AddListener(OnSettingsButtonClicked);
         finishChoosingCategoriesBtn.onClick.AddListener(OnFinishChoosingCategoriesButtonClicked);
-        editProfilePicButton.onClick.AddListener(OnEditProfilePicButtonClicked);
+        editProfilePicBtn.onClick.AddListener(OnEditProfilePicButtonClicked);
+        editCategoriesBtn.onClick.AddListener(OnEditCategoriesButtonClicked);
     }
 
     //-/////////////////////////////////////////////////////////////////////
@@ -91,10 +94,16 @@ public class ScreenController : MonoBehaviour
 
     //-/////////////////////////////////////////////////////////////////////
     ///
+    public void OnEditCategoriesButtonClicked()
+    {
+        SwitchScreen(categoryChoiceScreen);
+    }
+
+    //-/////////////////////////////////////////////////////////////////////
+    ///
     public void OnFinishChoosingCategoriesButtonClicked()
     {
-        categoryChoiceScreen.Hide();
-        lastShownScreen = categoryChoiceScreen;
+        SwitchScreen(settingsScreen);
     }
 
     //-/////////////////////////////////////////////////////////////////////
