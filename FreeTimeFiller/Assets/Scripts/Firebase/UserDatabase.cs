@@ -30,33 +30,10 @@ public class UserDatabase : MonoBehaviour
         });
     }
 
-    // NOOO FIRESTORE
     void InitializeFirestore()
     {
         db = FirebaseFirestore.DefaultInstance;
     }
-
-    /*void InitializeDatabase()
-    {
-        // Get the root reference location of the database
-        FirebaseDatabase database = FirebaseDatabase.DefaultInstance;
-        if (database == null)
-        {
-            Debug.Log("Failed to get Firebase Realtime Database instance.");
-            return;
-        }
-
-        databaseReference = database.RootReference;
-
-        if (databaseReference == null)
-        {
-            Debug.Log("Failed to get database reference.");
-        }
-        else
-        {
-            Debug.Log("Firebase Realtime Database initialized successfully.");
-        }
-    }*/
 
     public void AddUser(string username, string userId)
     {
@@ -82,35 +59,11 @@ public class UserDatabase : MonoBehaviour
             });
     }
 
-    /*public void AddUser(string username, string userId)
-    {
-        if (databaseReference == null)
-        {
-            Debug.LogError("Database reference is not initialized.");
-            return;
-        }
-        // Create a new user object with the provided user ID and username
-        // Create a dictionary to hold the user data
-        Debug.Log("Adding user to database");
-        Dictionary<string, object> userData = new Dictionary<string, object>();
-        userData["username"] = username;
-        userData["user_id"] = userId;
-
-        // Add the user data to the "users" node in the database with the user ID as the key
-        databaseReference.Child("users").Child(userId).SetValueAsync(userData)
-            .ContinueWith(task =>
-            {
-                if (task.IsFaulted)
-                {
-                    Debug.LogError("Error adding user to database: " + task.Exception);
-                }
-                else
-                {
-                    Debug.Log("User added successfully to database");
-                }
-            });
-    }*/
-
+    /// SearchUsers() Searches the database for a specific user
+    /// 
+    /// </summary>
+    /// <param name="username"></param> username that will be searched
+    /// <returns></returns> A Task<PlayerProfile> that will either contain a player's profile or be null
     public async Task<PlayerProfile> SearchUsers(string username)
     {
         QuerySnapshot snapshot = await db.Collection("user_data")
@@ -129,60 +82,6 @@ public class UserDatabase : MonoBehaviour
         // User not found
         return null;
     }
-
-    /*public void SearchUsers(string substring, Action<List<PlayerProfile>> onComplete)
-    {
-        if (databaseReference == null)
-        {
-            Debug.Log("Database reference is not initialized.");
-            return;
-        }
-        databaseReference.Child("users").OrderByChild("username").StartAt(substring).EndAt(substring + "\uf8ff").GetValueAsync()
-            .ContinueWith(task =>
-            {
-                if (task.IsFaulted)
-                {
-                    Debug.Log("Error searching users by substring: " + task.Exception);
-                    onComplete?.Invoke(new List<PlayerProfile>());
-                    return;
-                }
-
-                DataSnapshot snapshot = task.Result;
-                List<PlayerProfile> foundUsernames = new List<PlayerProfile>();
-                foreach (DataSnapshot userSnapshot in snapshot.Children)
-                {
-                    string username = userSnapshot.Child("username").GetValue(true).ToString();
-                    string userId = userSnapshot.Child("user_id").GetValue(true).ToString();
-                    foundUsernames.Add(new PlayerProfile(username, userId));
-                }
-
-                onComplete?.Invoke(foundUsernames);
-            });
-    }*/
-
-    /*public void CheckUsernameAvailability(string username, System.Action<bool> callback)
-    {
-        if (databaseReference == null)
-        {
-            Debug.Log("Database reference is not initialized.");
-            return;
-        }
-        Debug.Log("Checking username availability");
-        databaseReference.Child("users").OrderByChild("username").EqualTo(username).GetValueAsync()
-            .ContinueWith(task =>
-            {
-                if (task.IsFaulted)
-                {
-                    Debug.Log("Error checking username availability: " + task.Exception);
-                    callback?.Invoke(false); // Assume username is not available on error
-                    return;
-                }
-                Debug.Log("Found no issues: Sign in allowed");
-                DataSnapshot snapshot = task.Result;
-                bool isAvailable = snapshot.ChildrenCount == 0; // Check if no documents returned
-                callback?.Invoke(isAvailable);
-            });
-    }*/
 
     /// </summary>
     /// CheckUsernameAvailability() queries firestore database and returns isAvailable back to Create Account
