@@ -12,13 +12,19 @@ public class ProfileScreenController : MonoBehaviour
 {
     [SerializeField] private Image profilePicture;
     [SerializeField] private TMP_Text username;
+    [SerializeField] private UserDatabase userDatabase;
 
     ///-///////////////////////////////////////////////////////////
     /// 
     private void OnEnable()
     {
         LoadImageFromCloudSave();
-        username.text = AuthenticationService.Instance.PlayerName;
+        SetUsername();
+    }
+    
+    private async void SetUsername()
+    {
+        username.text = await userDatabase.GetUsernameByUserid(AuthenticationService.Instance.PlayerId);
     }
 
     ///-///////////////////////////////////////////////////////////
