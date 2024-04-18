@@ -18,7 +18,7 @@ namespace UserTask
         [Header("UI Components")]
         [SerializeField] private TMP_Text taskName;
 
-        [SerializeField] private Button checkBoxButton;
+        [SerializeField] protected Button checkBoxButton;
         [SerializeField] private GameObject checkMark;
 
         [SerializeField] private GameObject crossOutImage;
@@ -42,7 +42,7 @@ namespace UserTask
             crossOutImage.SetActive(false);
             crossOutImage.transform.localScale = new Vector3(0f, crossOutImage.transform.localScale.y, crossOutImage.transform.localScale.z);
             
-            checkBoxButton.onClick.AddListener(CompleteOnClick);
+            checkBoxButton.onClick.AddListener(OnCheckboxClick);
 
             if (_isCompleted)
             {
@@ -56,14 +56,14 @@ namespace UserTask
 
         private void OnDisable()
         {
-            checkBoxButton.onClick.RemoveListener(CompleteOnClick);
+            checkBoxButton.onClick.RemoveListener(OnCheckboxClick);
         }  
 
         ///-///////////////////////////////////////////////////////////
         /// Place a cross-out image on top of this task if the task hasn't been completed yet.
         /// If the task was already completed, then un-complete the task.
         /// 
-        private void CompleteOnClick()
+        protected virtual void OnCheckboxClick()
         {
             if (_isCompleted)
             {
@@ -79,7 +79,7 @@ namespace UserTask
         ///-///////////////////////////////////////////////////////////
         /// Notify the TaskPlacer that this task has been completed, also place a cross-out image.
         /// 
-        public void CompleteOnCommand()
+        public virtual void CompleteOnCommand()
         {
             if(checkMark != null)
                 checkMark.SetActive(true);
@@ -117,6 +117,9 @@ namespace UserTask
         private void GiveRewardOnCompletion()
         {
             Debug.Log($"Give the user {taskData.GetRewardAmount()} coins.");
+
+            // Give coins 
+            CoinManager.instance.EarnCoins(taskData.GetRewardAmount());
             
             // A task was completed, progress towards any achievements
             AchievementManager.Instance.UpdateProgress(AchievementConditionType.TasksCompleted, 1);
@@ -126,7 +129,7 @@ namespace UserTask
         ///-///////////////////////////////////////////////////////////
         /// Change displayed values of the task.
         /// 
-        public void UpdateTask(TaskData data, TaskPlacer taskPlacer)
+        public virtual void UpdateTask(TaskData data, TaskPlacer taskPlacer)
         {
             taskData = data;
 

@@ -166,7 +166,7 @@ namespace UI
         {
             ScreenController control = FindObjectOfType<ScreenController>();
             profileViewUsername.text = username;
-            control.OnViewProfileClicked();
+            //control.OnViewProfileClicked();
         }
 
         List<RequestObjects> requestUIs = new List<RequestObjects>();
