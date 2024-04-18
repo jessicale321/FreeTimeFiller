@@ -7,17 +7,25 @@ using UnityEngine.UI;
 ///
 public class ScreenController : MonoBehaviour
 {
+    [Header("Main Scenes")]
     [SerializeField] private MenuScreen homeScreen;
     [SerializeField] private MenuScreen searchScreen;
     [SerializeField] private MenuScreen profileScreen;
+
+    [Header("Smaller Scenes")]
+    [SerializeField] private MenuScreen settingsScreen;
     [SerializeField] private MenuScreen profileSelectScreen;
     [SerializeField] private MenuScreen categoryChoiceScreen;
     [SerializeField] private MenuScreen friendProfileScreen;
 
+    [Header("NavBar Buttons")]
     [SerializeField] private Button homeBtn;
     [SerializeField] private Button searchBtn;
     [SerializeField] private Button profileBtn;
+
+    [Header("Assorted Buttons")]
     [SerializeField] private Button settingsBtn;
+    [SerializeField] private Button editProfilePicButton;
     [SerializeField] private Button finishChoosingCategoriesBtn;
 
     private MenuScreen lastShownScreen;
@@ -34,42 +42,51 @@ public class ScreenController : MonoBehaviour
         profileBtn.onClick.AddListener(OnProfileButtonClicked);
         settingsBtn.onClick.AddListener(OnSettingsButtonClicked);
         finishChoosingCategoriesBtn.onClick.AddListener(OnFinishChoosingCategoriesButtonClicked);
+        editProfilePicButton.onClick.AddListener(OnEditProfilePicButtonClicked);
+    }
+
+    //-/////////////////////////////////////////////////////////////////////
+    ///
+    public void SwitchScreen(MenuScreen newScreen)
+    {
+        lastShownScreen.Hide();
+        newScreen.Show();
+        lastShownScreen = newScreen;
     }
 
     //-/////////////////////////////////////////////////////////////////////
     ///
     public void OnHomeButtonClicked()
     {
-        lastShownScreen.Hide();
-        homeScreen.Show();
-        lastShownScreen = homeScreen;
+        SwitchScreen(homeScreen);
     }
 
     //-/////////////////////////////////////////////////////////////////////
     ///
     public void OnSearchButtonClicked()
     {
-        lastShownScreen.Hide();
-        searchScreen.Show();
-        lastShownScreen = searchScreen;
+        SwitchScreen(searchScreen);
     }
 
     //-/////////////////////////////////////////////////////////////////////
     ///
     public void OnProfileButtonClicked()
     {
-        lastShownScreen.Hide();
-        profileScreen.Show();
-        lastShownScreen = profileScreen;
+        SwitchScreen(profileScreen);
     }
 
     //-/////////////////////////////////////////////////////////////////////
     ///
     public void OnSettingsButtonClicked()
     {
-        lastShownScreen.Hide();
-        profileSelectScreen.Show();
-        lastShownScreen = profileSelectScreen;
+        SwitchScreen(settingsScreen);
+    }
+
+    //-/////////////////////////////////////////////////////////////////////
+    ///
+    public void OnEditProfilePicButtonClicked()
+    {
+        SwitchScreen(profileSelectScreen);
     }
 
     //-/////////////////////////////////////////////////////////////////////

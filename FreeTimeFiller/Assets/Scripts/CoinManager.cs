@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.Services.CloudSave;
 using UnityEngine;
 
@@ -9,6 +10,7 @@ public class CoinManager : MonoBehaviour
 {
     public static CoinManager instance { get; private set; }
     public int coins { get; private set; }
+    [SerializeField] private TMP_Text coinsDisplayText;
 
     ///-///////////////////////////////////////////////////////////
     /// 
@@ -29,6 +31,7 @@ public class CoinManager : MonoBehaviour
     private void OnEnable()
     {
         LoadCoins();
+        coinsDisplayText.text = coins.ToString();
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -51,6 +54,7 @@ public class CoinManager : MonoBehaviour
     public void SpendCoins(int amt)
     {
         coins -= amt;
+        coinsDisplayText.text = coins.ToString();
         Debug.Log("coins: " + coins);
         SaveCoins();
     }
@@ -60,6 +64,7 @@ public class CoinManager : MonoBehaviour
     public void EarnCoins(int amt)
     {
         coins += amt;
+        coinsDisplayText.text = coins.ToString();
         Debug.Log("coins: " + coins);
         SaveCoins();
     }

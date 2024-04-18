@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+using Unity.Services.Authentication;
 using Unity.Services.CloudSave;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,12 +11,14 @@ using UnityEngine.UI;
 public class ProfileScreenController : MonoBehaviour
 {
     [SerializeField] private Image profilePicture;
+    [SerializeField] private TMP_Text username;
 
     ///-///////////////////////////////////////////////////////////
     /// 
     private void OnEnable()
     {
         LoadImageFromCloudSave();
+        username.text = AuthenticationService.Instance.PlayerName;
     }
 
     ///-///////////////////////////////////////////////////////////
