@@ -1,18 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class Minigame : MonoBehaviour
 {
     [SerializeField, Range(1f, 300f)] private float gameTimer;
+    private float _currentGameTimer;
 
     private string _currentSceneName;
 
-    private void Start()
-    {
-        Invoke(nameof(OnMinigameConcluded), 3f);
-    }
+    private bool _gameIsPlaying;
+
+    [Header("UI")]
+    [SerializeField] private TMP_Text timerUI;
 
     private void OnEnable()
     {
@@ -23,6 +25,12 @@ public class Minigame : MonoBehaviour
     {
         // Unsubscribe from the sceneLoaded event
         SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void Start()
+    {
+        _currentGameTimer = gameTimer;
+        OnMinigameLoaded();
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -36,7 +44,27 @@ public class Minigame : MonoBehaviour
 
     protected virtual void OnMinigameLoaded()
     {
-        
+        _gameIsPlaying = true;
+    }
+
+    private void Update()
+    {
+        // Countdown game timer only while it's playing
+        if (_gameIsPlaying)
+        {
+            _currentGameTimer -= Time.deltaTime;
+
+            // Display timer
+            timerUI.text = ((int)_currentGameTimer).ToString();
+        }
+
+        // Conclude the game when the timer reaches 0
+        if (_currentGameTimer <= 0f && _gameIsPlaying)
+        {
+            _gameIsPlaying = false;
+
+            OnMinigameConcluded();
+        }
     }
 
     protected virtual void OnMinigameConcluded()

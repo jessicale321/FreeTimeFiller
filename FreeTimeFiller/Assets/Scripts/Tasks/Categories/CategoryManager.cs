@@ -12,6 +12,7 @@ using UnityEngine.UI;
 public class CategoryManager : MonoBehaviour
 {
     [Header("UI Components")]
+    [SerializeField] private MenuScreen categoryScreen;
     // Where to place buttons under
     [SerializeField] private Transform categoryPanel;
     // The button to spawn and put text inside of
@@ -92,6 +93,9 @@ public class CategoryManager : MonoBehaviour
             Debug.Log("User finished picking categories!");
 
             SaveCategoriesToCloud();
+
+            // Close menu upon finalizing choices
+            categoryScreen.Hide();
         }
         else
         {

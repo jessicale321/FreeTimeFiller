@@ -147,6 +147,7 @@ GameObject:
   - component: {fileID: 8564722845460746262}
   - component: {fileID: 6309308365571430533}
   - component: {fileID: 4630465245001836309}
+  - component: {fileID: 1687154430216369477}
   m_Layer: 5
   m_Name: Task Category Button
   m_TagString: Untagged
@@ -271,6 +272,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1687154430216369477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5826458050106275573}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e24a3fe33eacde34e9563aea1850b6a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scaleFactor: 1.1
+  duration: 0.15
 --- !u!1 &6244964504891174077
 GameObject:
   m_ObjectHideFlags: 0
@@ -329,7 +344,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.18882577, g: 0.059006754, b: 0.24528301, a: 0.7607843}
+  m_Color: {r: 0.35911915, g: 0.19446424, b: 0.4339623, a: 0.7607843}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   taskName: Dinner with friends
   category: 3
-  difficultyLevel: 4
+  difficultyLevel: 2
   refreshCountdown: 1
   description: Schedule a time and have dinner with your friends!

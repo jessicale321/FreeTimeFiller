@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   taskName: Study for a class
   category: 5
-  difficultyLevel: 4
+  difficultyLevel: 3
   refreshCountdown: 1
   description: Study for any class you feel needs focusing.

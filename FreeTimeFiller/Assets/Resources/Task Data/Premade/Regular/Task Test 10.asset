@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   taskName: Clean your bedroom
   category: 1
-  difficultyLevel: 3
+  difficultyLevel: 4
   refreshCountdown: 1
   description: Clean your bedroom if it's dirty!

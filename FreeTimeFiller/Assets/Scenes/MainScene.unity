@@ -180,6 +180,7 @@ MonoBehaviour:
   completionMessage: {fileID: 0}
   maxTaskDisplay: 0
   taskPrefab: {fileID: 7422696577987121108, guid: ebd48ffe12d1aaf4e8d245fff3b33d79, type: 3}
+  specialTaskPrefab: {fileID: 0}
   taskPanel: {fileID: 0}
   tasksLeavingPanel: {fileID: 0}
 --- !u!4 &5076231
@@ -209,6 +210,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cbdc13095f4bcc4594e35fbbfb9aa5b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  categoryScreen: {fileID: 0}
   categoryPanel: {fileID: 0}
   taskCategoryButton: {fileID: 5826458050106275573, guid: f562d74845b9d4e40883c6d071608fe6, type: 3}
   finalizeChoicesButton: {fileID: 0}
@@ -512,10 +514,18 @@ PrefabInstance:
       propertyPath: refreshTimerDisplay
       value: 
       objectReference: {fileID: 1349388460}
+    - target: {fileID: 4496924817488256833, guid: 2373d6712405580488bed190e3758603, type: 3}
+      propertyPath: categoriesScreen
+      value: 
+      objectReference: {fileID: 1062399317}
     - target: {fileID: 6411565594699745052, guid: 2373d6712405580488bed190e3758603, type: 3}
       propertyPath: categoryPanel
       value: 
       objectReference: {fileID: 2065513268}
+    - target: {fileID: 6411565594699745052, guid: 2373d6712405580488bed190e3758603, type: 3}
+      propertyPath: categoryScreen
+      value: 
+      objectReference: {fileID: 2065513270}
     - target: {fileID: 6411565594699745052, guid: 2373d6712405580488bed190e3758603, type: 3}
       propertyPath: resetChoicesButton
       value: 
@@ -596,6 +606,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1062399317 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3592390892430122387, guid: e284f064cb9960643a83794040d19e44, type: 3}
+  m_PrefabInstance: {fileID: 1349388459}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1318935687
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -797,7 +812,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3619546222135519861, guid: e284f064cb9960643a83794040d19e44, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -100.00001
+      value: -100.000015
       objectReference: {fileID: 0}
     - target: {fileID: 3702952629482027791, guid: e284f064cb9960643a83794040d19e44, type: 3}
       propertyPath: m_AnchorMax.y
@@ -1340,7 +1355,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3434909209487859628, guid: e284f064cb9960643a83794040d19e44, type: 3}
   m_PrefabInstance: {fileID: 1349388459}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1062399317}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 510bbe17ff0568f41ace6b0cb6957f4a, type: 3}

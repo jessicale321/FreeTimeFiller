@@ -266,6 +266,12 @@ public class TaskPlacer : MonoBehaviour
             SpawnTask(inactiveData);
         }
         
+        // If we displayed a task, then the user is no longer complete with all their tasks
+        if(_tasksDisplayed.Count > 0)
+        {
+            completionMessage.gameObject.SetActive(false);
+        }
+
         SaveTaskPlacement();
     }
 
@@ -627,9 +633,10 @@ public class TaskPlacer : MonoBehaviour
         if (completionMessage != null)
         {
             // If there are tasks displayed, don't show the completion message
+            // Don't show completion message if the user just doesn't have any tasks at all
             if(_tasksDisplayed.Count > 0)
                 completionMessage.gameObject.SetActive(false);
-            else
+            else if (_displayableTasks.Count > 0)
                 completionMessage.gameObject.SetActive(true);
         }
     }

@@ -16,6 +16,8 @@ public class TaskManager : MonoBehaviour
     private CustomTaskCreator _customTaskCreator;
     private TaskRefreshWithTime _taskRefreshWithTime;
 
+    [SerializeField] private GameObject categoriesScreen;
+
     [SerializeField] private LoginAccount login;
     
     private async void Awake()
@@ -36,7 +38,7 @@ public class TaskManager : MonoBehaviour
         // TODO: REMOVE THIS SOON
         //await AuthenticationService.Instance.SignInAnonymouslyAsync();
         
-        //_taskPlacer.ClearTaskPlacement();
+        _taskPlacer.ClearTaskPlacement();
     }
 
     private void OnEnable()
@@ -74,6 +76,12 @@ public class TaskManager : MonoBehaviour
 
         // Wait for task categories and custom tasks to be loaded in before placement
         await Task.WhenAll(methodsToWait);
+
+        // If no categories have been chosen yet, display the choose category screen
+        if (_taskPool.ChosenTaskCategories.Count <= 0)
+        {
+            categoriesScreen.SetActive(true);
+        }
 
         // All multiple custom tasks to the TaskPlacer and send it the category filter
         foreach (TaskData data in _customTaskCreator.LoadedCustomTasks)
