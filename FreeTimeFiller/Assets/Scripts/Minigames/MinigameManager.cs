@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Minigame : MonoBehaviour
+public class MinigameManager : MonoBehaviour
 {
     [SerializeField, Range(1f, 300f)] private float gameTimer;
     private float _currentGameTimer;
@@ -34,7 +34,7 @@ public class Minigame : MonoBehaviour
     }
 
     ///-///////////////////////////////////////////////////////////
-    /// Get the name of the current scene that just loaded
+    /// Get the name of the current scene that just loaded.
     /// 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
@@ -42,6 +42,9 @@ public class Minigame : MonoBehaviour
             _currentSceneName = scene.name;
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// Do something when the minigame has loaded.
+    /// 
     protected virtual void OnMinigameLoaded()
     {
         _gameIsPlaying = true;
@@ -67,9 +70,11 @@ public class Minigame : MonoBehaviour
         }
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// // Unload the current scene (go back to home page).
+    /// 
     protected virtual void OnMinigameConcluded()
     {
-        // Unload the current scene (go back to home page)
         SceneManager.UnloadSceneAsync(_currentSceneName);
     }
 }
