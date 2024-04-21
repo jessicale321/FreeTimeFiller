@@ -8,6 +8,8 @@ public class SnakeMovement : MonoBehaviour
 {
     private Vector2 _direction;
 
+    [SerializeField, Range(1, 100f)] private float speed = 5f;
+
     private void Start()
     {
         Reset();
@@ -25,7 +27,7 @@ public class SnakeMovement : MonoBehaviour
 
     private void Reset()
     {
-        transform.position = new Vector2(0, -1);
+        transform.position = new Vector2(-2, 0);
         transform.rotation = Quaternion.Euler(0, 0, -90);
         _direction = Vector2.right;
         Time.timeScale = 0.05f;
@@ -65,6 +67,7 @@ public class SnakeMovement : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        // When snake hits an obstacle, the game ends
         if (other.gameObject.CompareTag("Obstacle"))
         {
             Debug.Log("Snake collided with obstacle! End the game.");
