@@ -18,8 +18,12 @@ public class Snake : MonoBehaviour
 
     [SerializeField, Range(1, 50f)] private float speed = 3f;
 
-    private bool _canMove;
+    // Besides head, how many segments should snake start with?
+    private int _startingSegmentCount = 1;
     
+    private bool _canMove;
+    private bool _snakeIsMoving;
+
     public enum SnakeMovementDirection
     {
         Up,
@@ -49,10 +53,13 @@ public class Snake : MonoBehaviour
     /// 
     private void Reset()
     {
+        _snakeIsMoving = false;
         transform.position = new Vector2(-1, 0);
         transform.rotation = Quaternion.Euler(0, 0, -90);
-        ChangeDirection(SnakeMovementDirection.Right);
         
+        _currentDirectionType = SnakeMovementDirection.Right;
+
+        Time.timeScale = 0.15f;
         ResetSegments();
         
         _canMove = true;
@@ -70,7 +77,7 @@ public class Snake : MonoBehaviour
         _segments.Add(gameObject);
 
         // Put initial segments on top of the head
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < _startingSegmentCount; i++)
         {
             AddSegment();
         }
@@ -111,12 +118,11 @@ public class Snake : MonoBehaviour
     private void MoveSnake()
     {
         if (!_canMove) return;
-        
-        float moveDistance = speed * Time.fixedDeltaTime;
-        
-        Vector2 newPosition = (Vector2) transform.position + _direction * moveDistance;
-        
-        transform.position = newPosition;
+
+        // Move the snake
+        float x = transform.position.x + _direction.x;
+        float y = transform.position.y + _direction.y;
+        transform.position = new Vector2(x, y);
     }
 
     private void MoveSegments()
@@ -132,7 +138,6 @@ public class Snake : MonoBehaviour
             _segments[i].transform.position = newPosition;
         }
     }
-
     
     ///-///////////////////////////////////////////////////////////
     /// Move the snake in a different direction, but don't allow changing to the opposite direction.
@@ -140,43 +145,48 @@ public class Snake : MonoBehaviour
     public void ChangeDirection(SnakeMovementDirection direction)
     {
         if (!_canMove) return;
-        
+
         switch (direction)
         {
             case SnakeMovementDirection.Up:
                 if (_currentDirectionType == SnakeMovementDirection.Down) return;
-                _direction = Vector2.up;
+                _direction = new Vector2(0f, 0.5f);
                 _currentDirectionType = SnakeMovementDirection.Up;
                 transform.rotation = Quaternion.Euler(0, 0, 0);
                 break;
             case SnakeMovementDirection.Down:
                 if (_currentDirectionType == SnakeMovementDirection.Up) return;
-                _direction = Vector2.down;
+                _direction = new Vector2(0f, -0.5f);
                 _currentDirectionType = SnakeMovementDirection.Down;
                 transform.rotation = Quaternion.Euler(0, 0, 180);
                 break;
             case SnakeMovementDirection.Left:
                 if (_currentDirectionType == SnakeMovementDirection.Right) return;
-                _direction = Vector2.left;
+                _direction = new Vector2(-0.5f, 0f);
                 _currentDirectionType = SnakeMovementDirection.Left;
                 transform.rotation = Quaternion.Euler(0, 0, 90);
                 break;
             case SnakeMovementDirection.Right:
                 if (_currentDirectionType == SnakeMovementDirection.Left) return;
-                _direction = Vector2.right;
+                _direction = new Vector2(0.5f, 0f);
                 _currentDirectionType = SnakeMovementDirection.Right;
                 transform.rotation = Quaternion.Euler(0, 0, -90);
                 break;
         }
+        
+        _snakeIsMoving = true;
     }
     
     private void OnTriggerEnter2D(Collider2D other)
     {
         // When snake hits an obstacle, the game ends
-        if (other.gameObject.CompareTag("Obstacle"))
+        if (other.gameObject.CompareTag("Obstacle") && _snakeIsMoving)
         {
             Debug.Log("Snake collided with obstacle! End the game.");
             _canMove = false;
+            
+            // Reset timescale
+            Time.timeScale = 1f;
             
             // TODO: Add delay or fade for this
             minigameManager.OnMinigameConcluded();

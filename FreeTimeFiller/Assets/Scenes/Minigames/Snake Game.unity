@@ -5511,7 +5511,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.465, y: 0.5, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1223670093}
@@ -5787,6 +5787,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dcd734354963ae4785300a0139705d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2114076304 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2781747180116429746, guid: e0a96224f05fe3843bd0db3b36a8a2d1, type: 3}
+  m_PrefabInstance: {fileID: 6124667411755800100}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ba1672e2dbc46842bdc6a6683b426d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2461163740383100650
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5808,6 +5819,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 2823967950059028483, guid: 549a65c32128efb48b336aa0cea214fe, type: 3}
+      propertyPath: minigameManager
+      value: 
+      objectReference: {fileID: 2114076304}
+    - target: {fileID: 2823967950059028483, guid: 549a65c32128efb48b336aa0cea214fe, type: 3}
       propertyPath: offsetTransform
       value: 
       objectReference: {fileID: 0}
@@ -5817,11 +5832,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7348754524318079862, guid: 549a65c32128efb48b336aa0cea214fe, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0.237
       objectReference: {fileID: 0}
     - target: {fileID: 7348754524318079862, guid: 549a65c32128efb48b336aa0cea214fe, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1
+      value: 1.229
       objectReference: {fileID: 0}
     - target: {fileID: 7348754524318079862, guid: 549a65c32128efb48b336aa0cea214fe, type: 3}
       propertyPath: m_LocalPosition.z
