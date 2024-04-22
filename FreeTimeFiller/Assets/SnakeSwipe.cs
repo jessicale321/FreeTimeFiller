@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 
 public class SnakeSwipe : MonoBehaviour, IPointerUpHandler, IPointerDownHandler ,IDragHandler
 {
-    [SerializeField] private SnakeMovement snakeMovement;
+    [FormerlySerializedAs("snakeMovement")] [SerializeField] private Snake snake;
     
     private bool _isDragging;
     private Vector2 _pointerStartPosition;
@@ -47,22 +48,22 @@ public class SnakeSwipe : MonoBehaviour, IPointerUpHandler, IPointerDownHandler 
             if (angle > -45 && angle <= 45)
             {
                 Debug.Log("Snake swipe right");
-                snakeMovement.ChangeDirection(SnakeMovement.SnakeMovementDirection.Right);
+                snake.ChangeDirection(Snake.SnakeMovementDirection.Right);
             }
             else if (angle > 45 && angle <= 135)
             {
                 Debug.Log("Snake swipe up");
-                snakeMovement.ChangeDirection(SnakeMovement.SnakeMovementDirection.Up);
+                snake.ChangeDirection(Snake.SnakeMovementDirection.Up);
             }
             else if (angle > -135 && angle <= -45)
             {
                 Debug.Log("Snake swipe down");
-                snakeMovement.ChangeDirection(SnakeMovement.SnakeMovementDirection.Down);
+                snake.ChangeDirection(Snake.SnakeMovementDirection.Down);
             }
             else
             {
                 Debug.Log("Snake swipe left");
-                snakeMovement.ChangeDirection(SnakeMovement.SnakeMovementDirection.Left);
+                snake.ChangeDirection(Snake.SnakeMovementDirection.Left);
             }
 
             // Reset isDragging after detecting a swipe

@@ -11,10 +11,13 @@ public class SnakeFood : MonoBehaviour
         SetRandomPosition();
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// Food will teleport to a random location on start, and whenever the snake collides with it.
+    /// 
     private void SetRandomPosition()
     {
-        int x = Random.Range(-8, 8);
-        int y = Random.Range(-8, 6);
+        float x = Random.Range(-2f, 2f);
+        float y = Random.Range(-3.5f, 3.5f);
 
         transform.position = new Vector2(x, y);
     }

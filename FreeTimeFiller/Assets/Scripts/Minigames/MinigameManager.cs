@@ -45,7 +45,7 @@ public class MinigameManager : MonoBehaviour
     ///-///////////////////////////////////////////////////////////
     /// Do something when the minigame has loaded.
     /// 
-    protected virtual void OnMinigameLoaded()
+    private void OnMinigameLoaded()
     {
         _gameIsPlaying = true;
     }
@@ -73,7 +73,7 @@ public class MinigameManager : MonoBehaviour
     ///-///////////////////////////////////////////////////////////
     /// // Unload the current scene (go back to home page).
     /// 
-    protected virtual void OnMinigameConcluded()
+    public void OnMinigameConcluded()
     {
         SceneManager.UnloadSceneAsync(_currentSceneName);
     }
