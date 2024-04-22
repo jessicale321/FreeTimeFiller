@@ -3,12 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class SnakeMovement : MonoBehaviour
 {
     private Vector2 _direction;
 
-    [SerializeField, Range(1, 100f)] private float speed = 5f;
+    [SerializeField, Range(1, 50f)] private float speed = 3f;
+
+    public enum SnakeMovementDirection
+    {
+        Up,
+        Down,
+        Left,
+        Right
+    }
 
     private void Start()
     {
@@ -17,7 +26,7 @@ public class SnakeMovement : MonoBehaviour
 
     private void Update()
     {
-        GetUserInput();
+        GetKeyboardInput();
     }
 
     private void FixedUpdate()
@@ -25,46 +34,71 @@ public class SnakeMovement : MonoBehaviour
         MoveSnake();
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// Reset the position of the snake.
+    /// 
     private void Reset()
     {
         transform.position = new Vector2(-2, 0);
         transform.rotation = Quaternion.Euler(0, 0, -90);
         _direction = Vector2.right;
-        Time.timeScale = 0.05f;
     }
-
-    private void GetUserInput()
+    
+    private void GetKeyboardInput()
     {
         if (Input.GetKeyDown(KeyCode.W))
         {
-            _direction = Vector2.up;
-            transform.rotation = Quaternion.Euler(0, 0, 0);
+            ChangeDirection(SnakeMovementDirection.Up);
         }
         else if (Input.GetKeyDown(KeyCode.S))
         {
-            _direction = Vector2.down;
-            transform.rotation = Quaternion.Euler(0, 0, 180);
+            ChangeDirection(SnakeMovementDirection.Down);
         }
         else if (Input.GetKeyDown(KeyCode.D))
         {
-            _direction = Vector2.right;
-            transform.rotation = Quaternion.Euler(0, 0, -90);
+            ChangeDirection(SnakeMovementDirection.Right);
         }
         else if (Input.GetKeyDown(KeyCode.A))
         {
-            _direction = Vector2.left;
-            transform.rotation = Quaternion.Euler(0, 0, 90);
+            ChangeDirection(SnakeMovementDirection.Left);
         }
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// Calculate a new position using speed for the snake to move towards.
+    /// 
     private void MoveSnake()
     {
-        float x = transform.position.x + _direction.x;
-        float y = transform.position.y + _direction.y;
-
-        transform.position = new Vector2(x, y);
+        float moveDistance = speed * Time.fixedDeltaTime;
+        
+        Vector2 newPosition = (Vector2) transform.position + _direction * moveDistance;
+        
+        transform.position = newPosition;
     }
 
+    public void ChangeDirection(SnakeMovementDirection direction)
+    {
+        switch (direction)
+        {
+            case SnakeMovementDirection.Up:
+                _direction = Vector2.up;
+                transform.rotation = Quaternion.Euler(0, 0, 0);
+                break;
+            case SnakeMovementDirection.Down:
+                _direction = Vector2.down;
+                transform.rotation = Quaternion.Euler(0, 0, 180);
+                break;
+            case SnakeMovementDirection.Left:
+                _direction = Vector2.left;
+                transform.rotation = Quaternion.Euler(0, 0, 90);
+                break;
+            case SnakeMovementDirection.Right:
+                _direction = Vector2.right;
+                transform.rotation = Quaternion.Euler(0, 0, -90);
+                break;
+        }
+    }
+    
     private void OnTriggerEnter2D(Collider2D other)
     {
         // When snake hits an obstacle, the game ends
