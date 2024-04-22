@@ -6,6 +6,7 @@ using Random = UnityEngine.Random;
 
 public class SnakeFood : MonoBehaviour
 {
+    [SerializeField] private MinigameScore minigameScore;
     private void Start()
     {
         SetRandomPosition();
@@ -24,6 +25,11 @@ public class SnakeFood : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        SetRandomPosition();
+        if (other.gameObject.CompareTag("Player"))
+        {
+            // Update score when collecting this
+            minigameScore.ModifyScore(1);
+            SetRandomPosition();
+        }
     }
 }

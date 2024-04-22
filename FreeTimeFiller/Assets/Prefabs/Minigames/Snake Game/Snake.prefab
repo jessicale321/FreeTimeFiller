@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2823967950059028483}
   m_Layer: 0
   m_Name: Snake
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -172,6 +172,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c74384780ab135f449316c456b01ad8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  minigameManager: {fileID: 0}
   segmentPrefab: {fileID: 8959691581425314150, guid: ad20d6f22491a8a4a933c9bad70650be, type: 3}
   speed: 2.5
 --- !u!1 &4527718244093233353

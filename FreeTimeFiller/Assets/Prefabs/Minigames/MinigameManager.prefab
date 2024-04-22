@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2827711634520867530}
   - component: {fileID: 2781747180116429746}
+  - component: {fileID: 6794579890168803136}
   m_Layer: 0
   m_Name: MinigameManager
   m_TagString: Untagged
@@ -46,3 +47,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameTimer: 5
   timerUI: {fileID: 0}
+--- !u!114 &6794579890168803136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 538740996778245669}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dcd734354963ae4785300a0139705d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scoreText: {fileID: 0}

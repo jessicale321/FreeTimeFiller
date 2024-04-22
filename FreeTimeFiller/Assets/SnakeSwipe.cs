@@ -69,6 +69,5 @@ public class SnakeSwipe : MonoBehaviour, IPointerUpHandler, IPointerDownHandler 
             // Reset isDragging after detecting a swipe
             _isDragging = false;
         }
-
     }
 }
