@@ -32,7 +32,8 @@ public class SnakeSwipe : MonoBehaviour, IPointerUpHandler, IPointerDownHandler 
         if (!_isDragging) return;
 
         Vector2 direction = eventData.position - _pointerStartPosition;
-        // Magnitude of the direction means length
+        
+        // Get length of the swipe
         float distance = direction.magnitude;
 
         // Is the drag length high enough (i.e. did the user swipe far enough?)
@@ -41,7 +42,8 @@ public class SnakeSwipe : MonoBehaviour, IPointerUpHandler, IPointerDownHandler 
             // Calculate the angle of the swipe direction vector
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
-            // Determine the swipe direction based on the angle
+            // Determine the swipe direction based on the angle (makes swiping in directions not too sensitive)
+            // Ex. Fixes swiping left when trying to swipe down
             if (angle > -45 && angle <= 45)
             {
                 Debug.Log("Snake swipe right");
