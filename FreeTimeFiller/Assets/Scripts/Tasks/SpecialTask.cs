@@ -18,7 +18,7 @@ namespace UserTask
             {
                 Debug.Log($"Load scene for {specialTaskData.sceneName}");
 
-                SceneManager.LoadSceneAsync(specialTaskData.sceneName, LoadSceneMode.Additive);
+                SceneManager.LoadSceneAsync(specialTaskData.sceneName, LoadSceneMode.Single);
             }
             
         }

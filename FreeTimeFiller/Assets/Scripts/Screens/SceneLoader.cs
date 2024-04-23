@@ -8,6 +8,4 @@ public class SceneLoader : MonoBehaviour
     // Disable these two components when loading a new scene
     [SerializeField] private AudioListener audioListener;
     [SerializeField] private EventSystem eventSystem;
-
-
 }

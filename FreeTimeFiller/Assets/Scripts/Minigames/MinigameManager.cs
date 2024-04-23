@@ -49,8 +49,7 @@ public class MinigameManager : MonoBehaviour
     /// 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if(mode == LoadSceneMode.Additive)
-            _currentSceneName = scene.name;
+        _currentSceneName = scene.name;
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -89,9 +88,9 @@ public class MinigameManager : MonoBehaviour
     /// 
     public void OnMinigameConcluded()
     {
-        // Reset timescale before unloading scene
+        // Reset timescale before loading back
         Time.timeScale = 1f;
 
-        SceneManager.UnloadSceneAsync(_currentSceneName);
+        SceneManager.LoadSceneAsync(1);
     }
 }
