@@ -454,6 +454,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   profilePicture: {fileID: 8295249202377228335}
+  username: {fileID: 0}
+  userDatabase: {fileID: 0}
 --- !u!114 &6708382399748871897
 MonoBehaviour:
   m_ObjectHideFlags: 0

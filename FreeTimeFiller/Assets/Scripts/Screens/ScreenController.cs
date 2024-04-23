@@ -28,6 +28,7 @@ public class ScreenController : MonoBehaviour
     [SerializeField] private Button editProfilePicBtn;
     [SerializeField] private Button editCategoriesBtn;
     [SerializeField] private Button finishChoosingCategoriesBtn;
+    [SerializeField] private Button viewFriendProfileButton;
 
     private MenuScreen lastShownScreen;
 
@@ -46,6 +47,7 @@ public class ScreenController : MonoBehaviour
         finishChoosingCategoriesBtn.onClick.AddListener(OnFinishChoosingCategoriesButtonClicked);
         editProfilePicBtn.onClick.AddListener(OnEditProfilePicButtonClicked);
         editCategoriesBtn.onClick.AddListener(OnEditCategoriesButtonClicked);
+        viewFriendProfileButton.onClick.AddListener(OnViewProfileClicked);
     }
 
     //-/////////////////////////////////////////////////////////////////////
@@ -110,8 +112,6 @@ public class ScreenController : MonoBehaviour
     ///
     public void OnViewProfileClicked()
     {
-        lastShownScreen.Hide();
-        friendProfileScreen.Show();
-        lastShownScreen = friendProfileScreen;
+        SwitchScreen(friendProfileScreen);
     }
 }

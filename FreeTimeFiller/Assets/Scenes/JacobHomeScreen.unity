@@ -579,6 +579,7 @@ MonoBehaviour:
   editProfilePicBtn: {fileID: 0}
   editCategoriesBtn: {fileID: 0}
   finishChoosingCategoriesBtn: {fileID: 0}
+  viewFriendProfileButton: {fileID: 0}
 --- !u!4 &240780896
 Transform:
   m_ObjectHideFlags: 0
@@ -2252,17 +2253,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a21337f25c42e7c4fa1e4dcf56485ff3, type: 3}
---- !u!114 &1414775729 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5011381197970132605, guid: a21337f25c42e7c4fa1e4dcf56485ff3, type: 3}
-  m_PrefabInstance: {fileID: 1414775728}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2da0c512f12947e489f739169773d7ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1418136492
 GameObject:
   m_ObjectHideFlags: 0
@@ -2430,7 +2420,7 @@ MonoBehaviour:
   playerUserID: {fileID: 133977681}
   playerInfo: {fileID: 1172655202}
   profileViewUsername: {fileID: 2025174250}
-  friendRecipientID: {fileID: 1414775729}
+  friendRecipientID: {fileID: 0}
   friendUsername: {fileID: 15746628}
   requestPrefab: {fileID: 1777273592}
   friendPrefab: {fileID: 680963982}
@@ -3248,6 +3238,10 @@ PrefabInstance:
     - target: {fileID: 7679894837162815950, guid: 5dfec09fc6eaa804aa627c7efd752556, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -40
+      objectReference: {fileID: 0}
+    - target: {fileID: 7966581086232269664, guid: 5dfec09fc6eaa804aa627c7efd752556, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7966651882034625219, guid: 5dfec09fc6eaa804aa627c7efd752556, type: 3}
       propertyPath: m_AnchorMax.y
