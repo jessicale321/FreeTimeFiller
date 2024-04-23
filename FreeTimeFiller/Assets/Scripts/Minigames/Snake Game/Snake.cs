@@ -16,8 +16,6 @@ public class Snake : MonoBehaviour
     [SerializeField] private GameObject segmentPrefab;
     private List<GameObject> _segments = new List<GameObject>();
 
-    [SerializeField, Range(1, 50f)] private float speed = 3f;
-
     // Besides head, how many segments should snake start with?
     private int _startingSegmentCount = 1;
     
@@ -37,6 +35,17 @@ public class Snake : MonoBehaviour
         Reset();
     }
 
+    private void OnDisable()
+    {
+        // Destroy all segments of the snake when disabled
+        foreach(GameObject segment in _segments)
+        {
+            Destroy(segment);
+        }
+
+        _segments.Clear();
+    }
+
     private void Update()
     {
         GetKeyboardInput();
@@ -54,12 +63,12 @@ public class Snake : MonoBehaviour
     private void Reset()
     {
         _snakeIsMoving = false;
-        transform.position = new Vector2(-1, 0);
+        transform.position = new Vector2(-1.75f, 0.25f);
         transform.rotation = Quaternion.Euler(0, 0, -90);
+        _direction = Vector2.zero;
         
         _currentDirectionType = SnakeMovementDirection.Right;
 
-        Time.timeScale = 0.15f;
         ResetSegments();
         
         _canMove = true;
@@ -150,25 +159,25 @@ public class Snake : MonoBehaviour
         {
             case SnakeMovementDirection.Up:
                 if (_currentDirectionType == SnakeMovementDirection.Down) return;
-                _direction = new Vector2(0f, 0.5f);
+                _direction = new Vector2(0f, .5f);
                 _currentDirectionType = SnakeMovementDirection.Up;
                 transform.rotation = Quaternion.Euler(0, 0, 0);
                 break;
             case SnakeMovementDirection.Down:
                 if (_currentDirectionType == SnakeMovementDirection.Up) return;
-                _direction = new Vector2(0f, -0.5f);
+                _direction = new Vector2(0f, -.5f);
                 _currentDirectionType = SnakeMovementDirection.Down;
                 transform.rotation = Quaternion.Euler(0, 0, 180);
                 break;
             case SnakeMovementDirection.Left:
                 if (_currentDirectionType == SnakeMovementDirection.Right) return;
-                _direction = new Vector2(-0.5f, 0f);
+                _direction = new Vector2(-.5f, 0f);
                 _currentDirectionType = SnakeMovementDirection.Left;
                 transform.rotation = Quaternion.Euler(0, 0, 90);
                 break;
             case SnakeMovementDirection.Right:
                 if (_currentDirectionType == SnakeMovementDirection.Left) return;
-                _direction = new Vector2(0.5f, 0f);
+                _direction = new Vector2(.5f, 0f);
                 _currentDirectionType = SnakeMovementDirection.Right;
                 transform.rotation = Quaternion.Euler(0, 0, -90);
                 break;
@@ -182,19 +191,23 @@ public class Snake : MonoBehaviour
         // When snake hits an obstacle, the game ends
         if (other.gameObject.CompareTag("Obstacle") && _snakeIsMoving)
         {
-            Debug.Log("Snake collided with obstacle! End the game.");
-            _canMove = false;
-            
-            // Reset timescale
-            Time.timeScale = 1f;
-            
-            // TODO: Add delay or fade for this
-            minigameManager.OnMinigameConcluded();
+            Debug.Log("Snake collided with obstacle! Reset the user.");
+            StartCoroutine(LoseDelay());
         }
         // When snake touches collectable, add a segment
         else if (other.gameObject.CompareTag("Collectable"))
         {
             AddSegment();
         }
+    }
+
+    ///-///////////////////////////////////////////////////////////
+    /// When the snake collides with an obstacle, activate a small delay before it resets.
+    /// 
+    private IEnumerator LoseDelay()
+    {
+        _canMove = false;
+        yield return new WaitForSecondsRealtime(2f);
+        Reset();
     }
 }

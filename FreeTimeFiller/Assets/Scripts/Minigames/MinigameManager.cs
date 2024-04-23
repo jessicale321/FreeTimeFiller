@@ -3,10 +3,16 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MinigameManager : MonoBehaviour
 {
     [SerializeField, Range(1f, 300f)] private float gameTimer;
+
+    [SerializeField, Range(0.1f, 1f)] private float gameTimeScale;
+
+    [SerializeField] private Button quitButton;
+
     private float _currentGameTimer;
 
     private string _currentSceneName;
@@ -20,17 +26,22 @@ public class MinigameManager : MonoBehaviour
     {
         // Subscribe to the sceneLoaded event
         SceneManager.sceneLoaded += OnSceneLoaded;
+
+        quitButton.onClick.AddListener(OnMinigameConcluded);
     }
     private void OnDisable()
     {
         // Unsubscribe from the sceneLoaded event
         SceneManager.sceneLoaded -= OnSceneLoaded;
+
+        quitButton.onClick.RemoveListener(OnMinigameConcluded);
     }
 
     private void Start()
     {
+        Time.timeScale = gameTimeScale;
         _currentGameTimer = gameTimer;
-        OnMinigameLoaded();
+        StartGame();
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -45,7 +56,7 @@ public class MinigameManager : MonoBehaviour
     ///-///////////////////////////////////////////////////////////
     /// Do something when the minigame has loaded.
     /// 
-    private void OnMinigameLoaded()
+    private void StartGame()
     {
         _gameIsPlaying = true;
     }
@@ -55,7 +66,10 @@ public class MinigameManager : MonoBehaviour
         // Countdown game timer only while it's playing
         if (_gameIsPlaying)
         {
-            _currentGameTimer -= Time.deltaTime;
+            float deltaTime = Time.deltaTime/gameTimeScale;
+
+            // Update remaining time
+            _currentGameTimer -= deltaTime;
 
             // Display timer
             timerUI.text = ((int)_currentGameTimer).ToString();
@@ -75,6 +89,9 @@ public class MinigameManager : MonoBehaviour
     /// 
     public void OnMinigameConcluded()
     {
+        // Reset timescale before unloading scene
+        Time.timeScale = 1f;
+
         SceneManager.UnloadSceneAsync(_currentSceneName);
     }
 }
