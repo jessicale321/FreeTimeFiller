@@ -111,6 +111,8 @@ namespace UserTask
 
             Debug.Log($"Take away {taskData.GetRewardAmount()} coins from the user.");
 
+            CoinManager.instance.SpendCoins(taskData.GetRewardAmount());
+
             onUncompletion?.Invoke();
         }
 

@@ -25,12 +25,12 @@ public class TaskData : ScriptableObject
 
     public int GetDeletePrice()
     {
-        return difficultyLevel * 5;
+        return difficultyLevel * 10;
     }
 
     public int GetRewardAmount()
     {
-        return difficultyLevel * 3;
+        return difficultyLevel * 5;
     }
 }
 
