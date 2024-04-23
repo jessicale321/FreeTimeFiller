@@ -47,6 +47,11 @@ public class LoginAccount : MonoBehaviour
         await SignInWithUsernamePasswordAsync("jessica4", "Password4!");
     }
 
+    public async void QuickLoginC()
+    {
+        await SignInWithUsernamePasswordAsync("jessica5", "Password5!");
+    }
+
     /// <summary>
     /// SignInWithUsernamePassword() 
     /// Attempts to loggin with username and password, notifies user if username and/or login were incorrect
