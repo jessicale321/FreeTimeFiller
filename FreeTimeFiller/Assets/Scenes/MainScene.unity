@@ -210,6 +210,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cbdc13095f4bcc4594e35fbbfb9aa5b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  categoryScreen: {fileID: 0}
   categoryPanel: {fileID: 0}
   taskCategoryButton: {fileID: 5826458050106275573, guid: f562d74845b9d4e40883c6d071608fe6, type: 3}
   finalizeChoicesButton: {fileID: 0}
@@ -688,6 +689,10 @@ PrefabInstance:
       propertyPath: categoryPanel
       value: 
       objectReference: {fileID: 2065513268}
+    - target: {fileID: 6411565594699745052, guid: 2373d6712405580488bed190e3758603, type: 3}
+      propertyPath: categoryScreen
+      value: 
+      objectReference: {fileID: 2065513270}
     - target: {fileID: 6411565594699745052, guid: 2373d6712405580488bed190e3758603, type: 3}
       propertyPath: resetChoicesButton
       value: 
