@@ -65,6 +65,7 @@ public class FriendsManager : MonoBehaviour
         // opens, but it doesn't right now. So PlayerSignIn() is attached to the home button
         if (UseFriends)
         {
+            Debug.Log("Initializing Friends Service");
             InitializeFriends();
         }
         OnUserSignIn?.Invoke();

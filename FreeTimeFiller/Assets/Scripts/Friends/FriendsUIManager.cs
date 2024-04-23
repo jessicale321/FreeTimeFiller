@@ -71,7 +71,7 @@ namespace UI
 
 
         // Displays all new friend requests
-        private async void OnRequestsRefresh(List<PlayerProfile> requests)
+        public void OnRequestsRefresh(List<PlayerProfile> requests)
         {
             // remove all former requests
             for (int i = 0; i < requestUIs.Count; i++)
@@ -97,7 +97,7 @@ namespace UI
         }
 
         // Displays all Friends for friends list
-        private void OnFriendsRefresh(List<PlayerProfile> friends)
+        public void OnFriendsRefresh(List<PlayerProfile> friends)
         {
             // remove all former requests
             for (int i = 0; i < friendsUIs.Count; i++)
@@ -119,7 +119,7 @@ namespace UI
             }
         }
 
-        private void OnSearchRefresh(List<PlayerProfile> friends)
+        public void OnSearchRefresh(List<PlayerProfile> friends)
         {
             userNotFoundPrefab.gameObject.SetActive(false);
             // remove all former requests
@@ -165,9 +165,7 @@ namespace UI
 
         public void OnViewProfile(string username)
         {
-            ScreenController control = FindObjectOfType<ScreenController>();
             profileViewUsername.text = username;
-            //control.OnViewProfileClicked();
         }
 
         List<RequestObjects> requestUIs = new List<RequestObjects>();
