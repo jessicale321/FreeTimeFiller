@@ -31,7 +31,6 @@ public class CoinManager : MonoBehaviour
     private void OnEnable()
     {
         LoadCoins();
-        coinsDisplayText.text = coins.ToString();
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -73,18 +72,14 @@ public class CoinManager : MonoBehaviour
     /// 
     private async void SaveCoins()
     {
-        var data = new Dictionary<string, object> { { "coins", coins } };
-        await CloudSaveService.Instance.Data.Player.SaveAsync(data);
+        await DataManager.SaveData("coins", coins);
     }
 
     ///-///////////////////////////////////////////////////////////
     /// 
     private async void LoadCoins()
     {
-        var data = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string> { "coins" });
-        if (data.TryGetValue("coins", out var coinValue))
-        {
-            coins = coinValue.Value.GetAs<int>();
-        }
+        coins = await DataManager.LoadData<int>("coins");
+        coinsDisplayText.text = coins.ToString();
     }
 }
