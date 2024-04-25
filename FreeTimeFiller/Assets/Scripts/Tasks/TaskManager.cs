@@ -35,9 +35,6 @@ public class TaskManager : MonoBehaviour
         //AuthenticationService.Instance.SignedIn += BeginTaskPlacementProcess;
         BeginTaskPlacementProcess();
         
-        // TODO: REMOVE THIS SOON
-        //await AuthenticationService.Instance.SignInAnonymouslyAsync();
-        
         //_taskPlacer.ClearTaskPlacement();
     }
 
@@ -78,7 +75,7 @@ public class TaskManager : MonoBehaviour
         await Task.WhenAll(methodsToWait);
 
         // If no categories have been chosen yet, display the choose category screen
-        if (_taskPool.ChosenTaskCategories.Count <= 0)
+        if (_taskPool.ChosenTaskCategories == null || _taskPool.ChosenTaskCategories.Count <= 0)
         {
             categoriesScreen.SetActive(true);
         }

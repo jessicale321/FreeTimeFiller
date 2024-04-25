@@ -130,6 +130,8 @@ public class CategoryManager : MonoBehaviour
     {
         List<string> savedCategories = await DataManager.LoadData<List<string>>("chosenTaskCategories");
 
+        Debug.Log("category load was attempted");
+
         if(savedCategories != null)
         {
             // Loop through each serialized string and try to convert them back to TaskCategories

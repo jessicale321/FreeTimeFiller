@@ -36,7 +36,8 @@ public static class DataManager
         }
         else
         {
-            throw new Exception($"Data associated with '{dataName}' not found or retrieval failed.");
+            Debug.Log(($"Data associated with '{dataName}' not found or retrieval failed."));
+            return default(T);
         }
     }
 
