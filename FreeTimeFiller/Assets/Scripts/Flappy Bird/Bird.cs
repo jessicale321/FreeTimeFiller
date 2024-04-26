@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AdaptivePerformance.VisualScripting;
 
 public class Bird : MonoBehaviour
 {
@@ -18,6 +19,14 @@ public class Bird : MonoBehaviour
     private void Start()
     {
         InvokeRepeating(nameof(AnimateSprite), 0.15f, 0.15f);
+    }
+
+    private void OnEnable()
+    {
+        Vector3 position = transform.position;
+        position.y = 0f;
+        transform.position = position;
+        direction = Vector3.zero;
     }
 
     private void Update()
@@ -51,5 +60,17 @@ public class Bird : MonoBehaviour
         }
         
         spriteRenderer.sprite = sprites[spriteIndex];
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Obstacle")
+        {
+            FindObjectOfType<FlappyManager>().GameOver();
+        }
+        else if (collision.gameObject.tag == "Scoring")
+        {
+            FindObjectOfType<FlappyManager>().IncreaseScore();
+        }
     }
 }
