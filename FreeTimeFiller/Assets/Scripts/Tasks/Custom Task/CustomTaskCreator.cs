@@ -297,11 +297,13 @@ public class CustomTaskCreator : MonoBehaviour
     /// 
     private void SaveToAssetFolder(TaskData dataToSave)
     {
+#if  UNITY_EDITOR
         // Find location of where Task Data are saved, then place the data inside
         string path = $"Assets/Resources/Task Data/Custom/{dataToSave.taskName} Custom.asset";
         AssetDatabase.CreateAsset(dataToSave, path);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
+#endif
     }
     
     #endregion
