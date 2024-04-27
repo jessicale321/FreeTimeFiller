@@ -95,15 +95,6 @@ public class FriendsManager : MonoBehaviour
         SubscribeToFriendsEventCallbacks();
     }
 
-    // If the player signs in, call the OnUserSign in from UI manager, displaying what's needed. No longer needed
-  /*  public async void PlayerSignIn()
-    {
-        if (AuthenticationService.Instance.IsSignedIn)
-            OnUserSignIn?.Invoke();
-        else
-            Debug.Log("User was not signed in!");
-    }*/
-
     // Creates a relationship with the friend request sent to another user using memberID
     public async void SendFriendRequest_ID(string memberID)
     {
@@ -234,7 +225,7 @@ public class FriendsManager : MonoBehaviour
         m_Search.Clear();
 
         // originally written to take a list of users but now we are just doing one user that matches username
-        
+
         m_Search.Add(await userDatabase.SearchUsers(usernameInput.text));
 
 
@@ -242,36 +233,7 @@ public class FriendsManager : MonoBehaviour
 
         // Show on UI
         OnSearchRefresh?.Invoke(m_Search);
-        
-        
-
-        /* foreach (KeyValuePair<string, string> kvp in search)
-         {
-             Debug.Log("Username: " + kvp.Key + ", User ID: " + kvp.Value);
-             // You can add each result to your list or perform any other operation you need.
-             // For example:
-             // m_Search.Add(kvp);
-         }*/
-
-
-        // create PlayerProfiles for each friend request, easier for displaying in UI
-        /* foreach (Relationship request in requests)
-         {
-             m_Requests.Add(new PlayerProfile(request.Member.Profile.Name, request.Member.Id));
-
-         }*/
-        
     }
-
-    // code for realtime database
-    /*void OnSearchComplete(List<PlayerProfile> foundUsernames)
-    {
-        foreach (PlayerProfile player in foundUsernames)
-        {
-            Debug.Log("Found username: " + player.Name);
-            m_Search.Add(player);
-        }
-    }*/
 
     // friends list
     private IReadOnlyList<Relationship> friends;
