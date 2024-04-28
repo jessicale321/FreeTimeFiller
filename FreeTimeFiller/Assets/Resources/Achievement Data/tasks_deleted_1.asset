@@ -15,5 +15,6 @@ MonoBehaviour:
   achievementName: I'll do it next time
   conditionType: 1
   targetValue: 1
+  iconSprite: {fileID: 21300000, guid: d0ae304962cef9a449c915e78c76ac08, type: 3}
   description: Delete a task!
   taskCategory: 0

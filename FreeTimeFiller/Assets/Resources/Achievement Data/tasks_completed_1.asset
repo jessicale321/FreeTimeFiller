@@ -15,5 +15,6 @@ MonoBehaviour:
   achievementName: Newcomer
   conditionType: 2
   targetValue: 1
+  iconSprite: {fileID: 21300000, guid: 97b8126ee0138c348a0faf52b99f223b, type: 3}
   description: Complete 1 task!
   taskCategory: 0
