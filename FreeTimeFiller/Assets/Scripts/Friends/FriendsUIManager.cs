@@ -138,7 +138,7 @@ namespace UI
                 newFriendItem.gameObject.SetActive(true);
 
                 // set the data for the request CHANGED TO NAME
-                newFriendItem.SetData(fr.Id, fr.Name, OnDeleteFriend);
+                newFriendItem.SetData(fr.Id, fr.Name, OnDeleteFriend, OnViewProfile);
 
                 friendsUIs.Add(newFriendItem);
             }
@@ -189,6 +189,7 @@ namespace UI
 
         public void OnViewProfile(string username)
         {
+            Debug.Log("OnViewProfile calle");
             profileViewUsername.text = username;
         }
 

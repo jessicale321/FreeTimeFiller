@@ -11,10 +11,11 @@ namespace UI
     {
         public TMP_Text userIDDisplay;
         public Button deleteButton;
+        public Button viewProfileButton;
 
         private string m_userID;
 
-        public void SetData(string userID, string name, Action<string> OnDelete)
+        public void SetData(string userID, string name, Action<string> OnDelete, Action<string> OnViewProfile)
         {
             // save information
             m_userID = userID;
@@ -26,6 +27,11 @@ namespace UI
             deleteButton.onClick.AddListener(() =>
             {
                 OnDelete?.Invoke(m_userID);
+            });
+
+            viewProfileButton.onClick.AddListener(() =>
+            {
+                OnViewProfile?.Invoke(name);
             });
         }
     }

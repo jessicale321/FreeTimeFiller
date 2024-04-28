@@ -28,6 +28,7 @@ public class ScreenController : MonoBehaviour
     [SerializeField] private Button editProfilePicBtn;
     [SerializeField] private Button editCategoriesBtn;
     [SerializeField] private Button finishChoosingCategoriesBtn;
+    [SerializeField] private Button viewSearchProfileButton;
     [SerializeField] private Button viewFriendProfileButton;
 
     private MenuScreen lastShownScreen;
@@ -48,6 +49,7 @@ public class ScreenController : MonoBehaviour
         editProfilePicBtn.onClick.AddListener(OnEditProfilePicButtonClicked);
         editCategoriesBtn.onClick.AddListener(OnEditCategoriesButtonClicked);
         viewFriendProfileButton.onClick.AddListener(OnViewProfileClicked);
+        viewSearchProfileButton.onClick.AddListener(OnViewProfileClicked);
     }
 
     //-/////////////////////////////////////////////////////////////////////
