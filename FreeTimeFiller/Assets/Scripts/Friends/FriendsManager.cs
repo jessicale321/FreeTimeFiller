@@ -11,7 +11,6 @@ using Unity.Services.Friends.Exceptions;
 using System.Runtime.CompilerServices;
 using UnityEngine.SceneManagement;
 using Firebase.Firestore;
-using UnityEditor.PackageManager.Requests;
 
 public class FriendsManager : MonoBehaviour
 {
