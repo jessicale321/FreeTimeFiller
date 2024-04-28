@@ -74,10 +74,23 @@ namespace UI
         public void OnRequestsRefresh(List<PlayerProfile> requests)
         {
             // remove all former requests
-            for (int i = 0; i < requestUIs.Count; i++)
+            /*for (int i = 0; i < requestUIs.Count; i++)
             {
                 Destroy(requestUIs[i].gameObject);
                 requestUIs.RemoveAt(i);
+            }*/
+            int i = 0;
+            Transform panelRequest = GameObject.Find("DisplayPanelRequest").transform;
+            foreach (Transform child in panelRequest)
+            {
+                if (i == 0)
+                {
+                    i++;
+                }
+                else
+                {
+                    Destroy(child.gameObject);
+                }
             }
 
             // create a new request object for each request
@@ -135,23 +148,10 @@ namespace UI
         {
             userNotFoundPrefab.gameObject.SetActive(false);
             // remove all former requests
-            /*for (int i = 0; i < searchUIs.Count; i++)
+            for (int i = 0; i < searchUIs.Count; i++)
             {
                 Destroy(searchUIs[i].gameObject);
                 searchUIs.RemoveAt(i);
-            }*/
-            int i = 0;
-            Transform panelRequest = GameObject.Find("DisplayPanelRequest").transform;
-            foreach (Transform child in panelRequest)
-            {
-                if (i == 0)
-                {
-                    i++;
-                }
-                else
-                {
-                    Destroy(child.gameObject);
-                }
             }
             // create a new request object for each request
             if (friends[0] != null)
