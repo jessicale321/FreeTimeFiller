@@ -13,6 +13,8 @@ public class ProfileScreenController : MonoBehaviour
     [SerializeField] private Image profilePicture;
     [SerializeField] private TMP_Text username;
     [SerializeField] private UserDatabase userDatabase;
+    [SerializeField] private Transform achievementsPanel;
+    [SerializeField] private GameObject achievementPrefab;
 
     ///-///////////////////////////////////////////////////////////
     /// 
@@ -20,6 +22,8 @@ public class ProfileScreenController : MonoBehaviour
     {
         LoadImageFromCloudSave();
         SetUsername();
+        ClearAchievementIcons();
+        DisplayAchievements();
     }
     
     private async void SetUsername()
@@ -47,6 +51,35 @@ public class ProfileScreenController : MonoBehaviour
         catch (System.Exception e)
         {
             Debug.LogError($"Failed to load image from cloud save file: {e.Message}");
+        }
+    }
+
+    ///-///////////////////////////////////////////////////////////
+    /// Display completed achievements
+    ///
+    private void DisplayAchievements()
+    {
+        List<AchievementData> completedAchievements = AchievementManager.Instance.GetAllEarnedAchievements();
+
+        foreach (AchievementData achievement in completedAchievements)
+        {
+            GameObject achievementObj = Instantiate(achievementPrefab, achievementsPanel);
+
+            // Get Image component from the prefab
+            Image achievementImage = achievementObj.GetComponent<Image>();
+
+            // Set image sprite to the iconSprite of the achievement
+            achievementImage.sprite = achievement.iconSprite;
+        }
+    }
+
+    ///-///////////////////////////////////////////////////////////
+    ///
+    private void ClearAchievementIcons()
+    {
+        foreach (Transform child in achievementsPanel)
+        {
+            Destroy(child.gameObject);
         }
     }
 }
