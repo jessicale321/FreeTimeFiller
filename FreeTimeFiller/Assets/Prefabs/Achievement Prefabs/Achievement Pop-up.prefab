@@ -302,7 +302,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pathName: sharedAchievement
   subject: I earned an achievement!
-  description: Show your achievement to your friends!
+  description: Check it out!
   shareButton: {fileID: 3236503242483529890}
 --- !u!1 &3588110747862433304
 GameObject:
