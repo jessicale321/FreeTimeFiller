@@ -16,6 +16,7 @@ public class ScreenController : MonoBehaviour
     [SerializeField] private MenuScreen settingsScreen;
     [SerializeField] private MenuScreen profileSelectScreen;
     [SerializeField] private MenuScreen categoryChoiceScreen;
+    [SerializeField] private MenuScreen customTaskScreen;
     [SerializeField] private MenuScreen friendProfileScreen;
 
     [Header("NavBar Buttons")]
@@ -27,6 +28,8 @@ public class ScreenController : MonoBehaviour
     [SerializeField] private Button settingsBtn;
     [SerializeField] private Button editProfilePicBtn;
     [SerializeField] private Button editCategoriesBtn;
+    [SerializeField] private Button openCustomTaskBtn;
+    [SerializeField] private Button closeCustomTaskBtn;
     [SerializeField] private Button finishChoosingCategoriesBtn;
     [SerializeField] private Button viewFriendProfileButton;
 
@@ -47,6 +50,8 @@ public class ScreenController : MonoBehaviour
         finishChoosingCategoriesBtn.onClick.AddListener(OnFinishChoosingCategoriesButtonClicked);
         editProfilePicBtn.onClick.AddListener(OnEditProfilePicButtonClicked);
         editCategoriesBtn.onClick.AddListener(OnEditCategoriesButtonClicked);
+        openCustomTaskBtn.onClick.AddListener(OnOpenCustomTaskButtonClicked);
+        closeCustomTaskBtn.onClick.AddListener(OnCloseCustomTaskButtonClicked);
         viewFriendProfileButton.onClick.AddListener(OnViewProfileClicked);
     }
 
@@ -99,6 +104,20 @@ public class ScreenController : MonoBehaviour
     public void OnEditCategoriesButtonClicked()
     {
         SwitchScreen(categoryChoiceScreen);
+    }
+
+    //-/////////////////////////////////////////////////////////////////////
+    ///
+    public void OnOpenCustomTaskButtonClicked()
+    {
+        SwitchScreen(customTaskScreen);
+    }
+    
+    //-/////////////////////////////////////////////////////////////////////
+    ///
+    public void OnCloseCustomTaskButtonClicked()
+    {
+        SwitchScreen(homeScreen);
     }
 
     //-/////////////////////////////////////////////////////////////////////

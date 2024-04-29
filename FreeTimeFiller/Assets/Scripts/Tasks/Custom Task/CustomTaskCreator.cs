@@ -14,25 +14,18 @@ using UnityEngine.Serialization;
 
 public class CustomTaskCreator : MonoBehaviour
 {
-    // Two different modes that the user can interact with, when dealing with custom tasks
-    public enum MenuMode
-    {
-        // User is writing information to create a new, unique custom task
-        Create,
-        
-        // User is editing an existing custom task to override it
-        Edit
-    }
-    
     private MenuMode _currentMenuMode;
-    
+
     [Header("Input Fields")]
     [SerializeField] private TMP_InputField taskNameInputField;
     [SerializeField] private TMP_InputField taskDescriptionInputField;
+    
     [Header("Dropdown")]
     [SerializeField] private CategoryDropdown categoryDropdown;
+    
     [Header("Sliders")]
     [SerializeField] private DifficultySlider difficultySlider;
+    
     [Header("Buttons")]
     [SerializeField] private Button createButton;
     [SerializeField] private Button changeModeButton;
@@ -67,6 +60,16 @@ public class CustomTaskCreator : MonoBehaviour
     public event Action<string, TaskData> ExistingCustomTaskWasEdited;
     public event Action<TaskData> CustomTaskWasDeleted;
 
+    // Two different modes that the user can interact with, when dealing with custom tasks
+    public enum MenuMode
+    {
+        // User is writing information to create a new, unique custom task
+        Create,
+        
+        // User is editing an existing custom task to override it
+        Edit
+    }
+    
     private async void Awake()
     {
         await UnityServices.InitializeAsync();

@@ -236,6 +236,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &158270397 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2427519753784063662, guid: e284f064cb9960643a83794040d19e44, type: 3}
+  m_PrefabInstance: {fileID: 1349388459}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 510bbe17ff0568f41ace6b0cb6957f4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &158270398 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5592774268511703147, guid: e284f064cb9960643a83794040d19e44, type: 3}
+  m_PrefabInstance: {fileID: 1349388459}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &171084321 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4953661293454319402, guid: e284f064cb9960643a83794040d19e44, type: 3}
@@ -517,6 +539,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1329749962}
     - target: {fileID: 7073630200094953449, guid: 2373d6712405580488bed190e3758603, type: 3}
+      propertyPath: exitButton
+      value: 
+      objectReference: {fileID: 1052674907}
+    - target: {fileID: 7073630200094953449, guid: 2373d6712405580488bed190e3758603, type: 3}
+      propertyPath: menuScreen
+      value: 
+      objectReference: {fileID: 158270397}
+    - target: {fileID: 7073630200094953449, guid: 2373d6712405580488bed190e3758603, type: 3}
       propertyPath: resetButton
       value: 
       objectReference: {fileID: 1329749958}
@@ -593,6 +623,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2da0c512f12947e489f739169773d7ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1052674907 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7945376650072122879, guid: e284f064cb9960643a83794040d19e44, type: 3}
+  m_PrefabInstance: {fileID: 1349388459}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &1318935687
@@ -1145,6 +1186,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1698938194}
     - target: {fileID: 1825773299623807902, guid: 4aa6980bb11211448b166225185ab2b8, type: 3}
+      propertyPath: customTaskBtn
+      value: 
+      objectReference: {fileID: 158270398}
+    - target: {fileID: 1825773299623807902, guid: 4aa6980bb11211448b166225185ab2b8, type: 3}
       propertyPath: profileButton
       value: 
       objectReference: {fileID: 385830631}
@@ -1157,6 +1202,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1349388465}
     - target: {fileID: 1825773299623807902, guid: 4aa6980bb11211448b166225185ab2b8, type: 3}
+      propertyPath: customTaskScreen
+      value: 
+      objectReference: {fileID: 158270397}
+    - target: {fileID: 1825773299623807902, guid: 4aa6980bb11211448b166225185ab2b8, type: 3}
       propertyPath: editCategoriesBtn
       value: 
       objectReference: {fileID: 1631591543}
@@ -1164,6 +1213,14 @@ PrefabInstance:
       propertyPath: editProfilePicBtn
       value: 
       objectReference: {fileID: 1349388462}
+    - target: {fileID: 1825773299623807902, guid: 4aa6980bb11211448b166225185ab2b8, type: 3}
+      propertyPath: openCustomTaskBtn
+      value: 
+      objectReference: {fileID: 158270398}
+    - target: {fileID: 1825773299623807902, guid: 4aa6980bb11211448b166225185ab2b8, type: 3}
+      propertyPath: closeCustomTaskBtn
+      value: 
+      objectReference: {fileID: 1052674907}
     - target: {fileID: 1825773299623807902, guid: 4aa6980bb11211448b166225185ab2b8, type: 3}
       propertyPath: friendProfileScreen
       value: 

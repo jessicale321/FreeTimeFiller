@@ -18,8 +18,6 @@ public class TaskManager : MonoBehaviour
 
     [SerializeField] private GameObject categoriesScreen;
 
-    [SerializeField] private LoginAccount login;
-    
     private async void Awake()
     {
         Instance = this;
