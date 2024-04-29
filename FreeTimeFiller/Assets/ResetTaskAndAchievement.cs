@@ -27,12 +27,20 @@ public class ResetTaskAndAchievement : MonoBehaviour
         _button.onClick.RemoveListener(ResetOnClick);
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// Clear all data with task placement and achievement earning.
+    /// 
     private void ResetOnClick()
     {
-        if(taskPlacer != null)
+        if (taskPlacer != null)
+        {
             taskPlacer.ClearTaskPlacement();
+            taskPlacer.RefreshAllTasksWithTime();
+        }
         
-        if(achievementManager != null)
+        if (achievementManager != null)
+        {
             achievementManager.ClearAllAchievementProgress();
+        }
     }
 }
