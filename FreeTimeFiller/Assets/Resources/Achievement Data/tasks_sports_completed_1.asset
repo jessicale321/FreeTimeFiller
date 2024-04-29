@@ -15,6 +15,6 @@ MonoBehaviour:
   achievementName: Athlete
   conditionType: 3
   targetValue: 5
-  iconSprite: {fileID: 0}
+  iconSprite: {fileID: 21300000, guid: b36ff20870950df4f9c86710fe24b821, type: 3}
   description: Complete 5 sports tasks!
   taskCategory: 0

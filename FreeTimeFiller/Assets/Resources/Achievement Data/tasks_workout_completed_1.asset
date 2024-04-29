@@ -15,6 +15,6 @@ MonoBehaviour:
   achievementName: Getting Swole
   conditionType: 3
   targetValue: 5
-  iconSprite: {fileID: 0}
+  iconSprite: {fileID: 21300000, guid: 3f82b168b5a233d499849a9ad939ef03, type: 3}
   description: Complete 5 workout tasks!
   taskCategory: 6
