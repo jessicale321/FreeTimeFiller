@@ -219,7 +219,7 @@ public class AchievementManager : MonoBehaviour
         return await DataManager.LoadData<List<AchievementProgress>>("allAchievementProgress");
     }
 
-    private async void ClearAllAchievementProgress()
+    public async void ClearAllAchievementProgress()
     {
         _allAchievementProgress.Clear();
         _allEarnedAchievements.Clear();

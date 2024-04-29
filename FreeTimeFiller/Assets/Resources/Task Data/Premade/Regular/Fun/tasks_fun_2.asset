@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9a101af5d56ee3b4ab558bb3de1b5968, type: 3}
-  m_Name: Task Test 5
+  m_Name: tasks_fun_2
   m_EditorClassIdentifier: 
-  taskName: Study for a class
-  category: 5
-  difficultyLevel: 3
+  taskName: Schedule a party
+  category: 3
+  difficultyLevel: 2
   refreshCountdown: 1
-  description: Study for any class you feel needs focusing.
+  description: Invite your friends too!
