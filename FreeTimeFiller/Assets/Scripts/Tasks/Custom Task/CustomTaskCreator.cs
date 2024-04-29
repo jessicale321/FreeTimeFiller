@@ -32,10 +32,12 @@ public class CustomTaskCreator : MonoBehaviour
     private TMP_Text _changeModeButtonText;
     [SerializeField] private Button resetButton;
     [SerializeField] private Button deleteButton;
-
     [SerializeField] private Transform creationPanel;
     [SerializeField] private Transform editPanel;
     [SerializeField] private GameObject existingCustomTaskPrefab;
+
+    [Header("Animation")] 
+    [SerializeField] private ErrorAnimation errorAnimation;
 
     // The current custom task the user is editing
     private CustomTaskButton _currentCustomTaskEditing;
@@ -116,6 +118,10 @@ public class CustomTaskCreator : MonoBehaviour
         if (string.IsNullOrEmpty(taskName) || taskName == "")
         {
             Debug.Log("Task name is empty!");
+            
+            if(errorAnimation != null) 
+                errorAnimation.PlayAnimation(taskNameInputField.gameObject);
+            
             return;
         }
         
