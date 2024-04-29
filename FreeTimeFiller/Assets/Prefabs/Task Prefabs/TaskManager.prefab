@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 7073630200094953449}
   - component: {fileID: 6411565594699745052}
   - component: {fileID: 4126836180022038905}
-  - component: {fileID: 320402100071537344}
   m_Layer: 0
   m_Name: TaskManager
   m_TagString: Untagged
@@ -49,7 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc613e234f5f0f04cb389ffff408504e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  categoriesScreen: {fileID: 0}
+  login: {fileID: 0}
 --- !u!114 &7393821257441908569
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -91,7 +90,6 @@ MonoBehaviour:
   creationPanel: {fileID: 0}
   editPanel: {fileID: 0}
   existingCustomTaskPrefab: {fileID: 537113763781564285, guid: 46d6ca63414b56546aa0edbfa450762f, type: 3}
-  errorAnimation: {fileID: 320402100071537344}
 --- !u!114 &6411565594699745052
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -104,7 +102,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cbdc13095f4bcc4594e35fbbfb9aa5b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  categoryScreen: {fileID: 0}
   categoryPanel: {fileID: 0}
   taskCategoryButton: {fileID: 5826458050106275573, guid: f562d74845b9d4e40883c6d071608fe6, type: 3}
   finalizeChoicesButton: {fileID: 0}
@@ -122,17 +119,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   refreshTimerDisplay: {fileID: 0}
---- !u!114 &320402100071537344
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7651838313973276776}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0335e3a0e979e4040bfe055ee5b43de3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  errorShakeDirection: {x: 0.3, y: 0, z: 0}
-  errorShakeDuration: 0.09

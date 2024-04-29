@@ -1033,7 +1033,6 @@ GameObject:
   - component: {fileID: 781223793237194443}
   - component: {fileID: 2755020186292879476}
   - component: {fileID: 5990260938356263038}
-  - component: {fileID: 5935917463394159464}
   m_Layer: 5
   m_Name: Delete Swipe
   m_TagString: Untagged
@@ -1115,22 +1114,6 @@ MonoBehaviour:
   deletePriceText: {fileID: 6445682234447829132}
   deleteButtonStretchX: 4
   stretchTimer: 0.15
-  errorAnimation: {fileID: 5935917463394159464}
   errorShakeDirection: {x: 0.3, y: 0, z: 0}
   errorShakeDuration: 0.09
   swipeThreshold: 10
---- !u!114 &5935917463394159464
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8729392745440279898}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0335e3a0e979e4040bfe055ee5b43de3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gameObjectToShake: {fileID: 7422696577987121108}
-  errorShakeDirection: {x: 0.3, y: 0, z: 0}
-  errorShakeDuration: 0.09

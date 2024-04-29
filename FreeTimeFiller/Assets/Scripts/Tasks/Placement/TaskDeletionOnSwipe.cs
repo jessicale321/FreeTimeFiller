@@ -20,8 +20,9 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
     [SerializeField, Range(0.1f, .5f)] private float stretchTimer = 0.25f;
     // Set the delete button's X scale to 0 when we swipe right
     private float _rightSwipeScaleX = 0f;
-    
-    [SerializeField] private ErrorAnimation errorAnimation;
+    [SerializeField] private Vector3 errorShakeDirection;
+    [SerializeField, Range(0.05f, 0.5f)] private float errorShakeDuration;
+    private bool _performingErrorAnimation;
 
     private Vector2 _pointerStartPosition;
     private bool _isDragging;
@@ -172,9 +173,31 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
         else
         {
             // Don't let animation play more than one at a time
-            if (errorAnimation != null)
-                errorAnimation.PlayAnimation(_myTask.gameObject);
+            if (!_performingErrorAnimation)
+                ErrorAnimation();
         }
+    }
+
+    ///-///////////////////////////////////////////////////////////
+    /// Animation of the task shaking left and right when the user doesn't have enough currency to delete the task.
+    /// 
+    private void ErrorAnimation()
+    {
+        // Position that the task should go back after performing an error animation
+        Vector3 originalPosition = _myTask.transform.position;
+            
+        _performingErrorAnimation = true;
+            
+        // Move the task button around to showcase that an error occurred
+        LeanTween.move(_myTask.gameObject, originalPosition + errorShakeDirection, errorShakeDuration)
+            .setEase(LeanTweenType.easeInOutQuad)
+            .setLoopPingPong(3)
+            .setOnComplete(() => {
+                // Return to original position
+                Vector3 returnPosition = originalPosition;
+                LeanTween.move(_myTask.gameObject, returnPosition, 0f);
+                _performingErrorAnimation = false;
+            });
     }
 
     ///-///////////////////////////////////////////////////////////
