@@ -224,8 +224,9 @@ public class AchievementManager : MonoBehaviour
             achievementProgress.currentValue = 0;
             achievementProgress.completed = false;
         }
+        
         _allEarnedAchievements.Clear();
 
-        await DataManager.SaveData("allAchievementProgress", _allAchievementProgress);
+        SaveAllAchievementProgress();
     }
 }

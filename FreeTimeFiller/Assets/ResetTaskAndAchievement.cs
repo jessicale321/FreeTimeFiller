@@ -34,7 +34,6 @@ public class ResetTaskAndAchievement : MonoBehaviour
     {
         if (taskPlacer != null)
         {
-            taskPlacer.ClearTaskPlacement();
             taskPlacer.RefreshAllTasksWithTime();
         }
         
