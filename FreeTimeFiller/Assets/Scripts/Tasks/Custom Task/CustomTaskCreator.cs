@@ -14,35 +14,30 @@ using UnityEngine.Serialization;
 
 public class CustomTaskCreator : MonoBehaviour
 {
-    // Two different modes that the user can interact with, when dealing with custom tasks
-    public enum MenuMode
-    {
-        // User is writing information to create a new, unique custom task
-        Create,
-        
-        // User is editing an existing custom task to override it
-        Edit
-    }
-    
     private MenuMode _currentMenuMode;
-    
+
     [Header("Input Fields")]
     [SerializeField] private TMP_InputField taskNameInputField;
     [SerializeField] private TMP_InputField taskDescriptionInputField;
+    
     [Header("Dropdown")]
     [SerializeField] private CategoryDropdown categoryDropdown;
+    
     [Header("Sliders")]
     [SerializeField] private DifficultySlider difficultySlider;
+    
     [Header("Buttons")]
     [SerializeField] private Button createButton;
     [SerializeField] private Button changeModeButton;
     private TMP_Text _changeModeButtonText;
     [SerializeField] private Button resetButton;
     [SerializeField] private Button deleteButton;
-
     [SerializeField] private Transform creationPanel;
     [SerializeField] private Transform editPanel;
     [SerializeField] private GameObject existingCustomTaskPrefab;
+
+    [Header("Animation")] 
+    [SerializeField] private ErrorAnimation errorAnimation;
 
     // The current custom task the user is editing
     private CustomTaskButton _currentCustomTaskEditing;
@@ -67,6 +62,16 @@ public class CustomTaskCreator : MonoBehaviour
     public event Action<string, TaskData> ExistingCustomTaskWasEdited;
     public event Action<TaskData> CustomTaskWasDeleted;
 
+    // Two different modes that the user can interact with, when dealing with custom tasks
+    public enum MenuMode
+    {
+        // User is writing information to create a new, unique custom task
+        Create,
+        
+        // User is editing an existing custom task to override it
+        Edit
+    }
+    
     private async void Awake()
     {
         await UnityServices.InitializeAsync();
@@ -113,6 +118,10 @@ public class CustomTaskCreator : MonoBehaviour
         if (string.IsNullOrEmpty(taskName) || taskName == "")
         {
             Debug.Log("Task name is empty!");
+            
+            if(errorAnimation != null) 
+                errorAnimation.PlayAnimation(taskNameInputField.gameObject);
+            
             return;
         }
         
@@ -297,11 +306,13 @@ public class CustomTaskCreator : MonoBehaviour
     /// 
     private void SaveToAssetFolder(TaskData dataToSave)
     {
+#if  UNITY_EDITOR
         // Find location of where Task Data are saved, then place the data inside
         string path = $"Assets/Resources/Task Data/Custom/{dataToSave.taskName} Custom.asset";
         AssetDatabase.CreateAsset(dataToSave, path);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
+#endif
     }
     
     #endregion

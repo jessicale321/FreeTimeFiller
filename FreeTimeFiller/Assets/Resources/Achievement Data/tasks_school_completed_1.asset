@@ -15,6 +15,6 @@ MonoBehaviour:
   achievementName: Scholar
   conditionType: 3
   targetValue: 5
-  iconSprite: {fileID: 0}
+  iconSprite: {fileID: 21300000, guid: 475c0e9186f699f48b6c22c7e582cfe3, type: 3}
   description: Complete 5 school tasks!
   taskCategory: 5

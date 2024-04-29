@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class DisplayableAchievement : MonoBehaviour
 {
     [SerializeField] private Button exitButton;
-    
+
     [Header("Achievement Details")]
     [SerializeField] private Image icon;
     [SerializeField] private TMP_Text achievementName;

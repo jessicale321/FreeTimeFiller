@@ -30,5 +30,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Minigames/Flappy Bird.unity
     guid: 1d8e499442d93e74da4a9bb08c6271ee
   m_configObjects:
+    com.unity.adaptiveperformance.google.android.provider_settings: {fileID: 11400000, guid: dc7d0a263ba26c3498e66eb36623c961, type: 2}
     com.unity.adaptiveperformance.loader_settings: {fileID: 11400000, guid: beb17f49b4c0ff64c8005bb1ec1ace65, type: 2}
+    com.unity.adaptiveperformance.samsung.android.provider_settings: {fileID: 11400000, guid: a61f15d5f475b8640a11bde9c172135d, type: 2}
     com.unity.adaptiveperformance.simulator.provider_settings: {fileID: 11400000, guid: 13c4cc5e87ad53941a0efb1f6759fdc5, type: 2}

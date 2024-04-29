@@ -13,5 +13,8 @@ MonoBehaviour:
   m_Name: earned_coins_1
   m_EditorClassIdentifier: 
   achievementName: Broke Boy
+  conditionType: 0
   targetValue: 50
+  iconSprite: {fileID: 21300000, guid: f2c8e9823f747c94ba0044158d1e374e, type: 3}
   description: Earn 50 coins!
+  taskCategory: 0
