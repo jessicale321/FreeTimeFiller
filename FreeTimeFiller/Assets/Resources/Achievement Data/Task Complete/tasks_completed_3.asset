@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f08f3d124223ddc4998c4bf2ad382100, type: 3}
+  m_Name: tasks_completed_3
+  m_EditorClassIdentifier: 
+  achievementName: Amateur
+  conditionType: 2
+  targetValue: 10
+  iconSprite: {fileID: 21300000, guid: 727bd4f7a6af85e46ab9d42303b1b8dc, type: 3}
+  description: Complete 10 tasks!
+  taskCategory: 0

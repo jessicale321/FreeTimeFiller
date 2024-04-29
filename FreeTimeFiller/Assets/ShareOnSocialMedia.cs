@@ -37,10 +37,13 @@ public class ShareOnSocialMedia : MonoBehaviour
     private IEnumerator TakeScreenShotAndShare()
     {
         _isSharing = true;
-        yield return new WaitForEndOfFrame();
         
         // Hide share button before screenshotting
         shareButton.gameObject.SetActive(false);
+        
+        yield return new WaitForEndOfFrame();
+        
+        // Texture of the entire screen
         Texture2D tx = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
         tx.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
         tx.Apply();
