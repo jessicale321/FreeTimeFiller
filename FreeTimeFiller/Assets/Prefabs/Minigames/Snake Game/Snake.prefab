@@ -173,8 +173,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   minigameManager: {fileID: 0}
+  respawnText: {fileID: 0}
+  deathAnimation: {fileID: 0}
   segmentPrefab: {fileID: 8959691581425314150, guid: ad20d6f22491a8a4a933c9bad70650be, type: 3}
-  speed: 2.5
 --- !u!1 &4527718244093233353
 GameObject:
   m_ObjectHideFlags: 0

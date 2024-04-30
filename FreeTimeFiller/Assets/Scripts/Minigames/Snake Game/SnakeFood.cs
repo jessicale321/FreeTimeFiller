@@ -7,6 +7,7 @@ using Random = UnityEngine.Random;
 public class SnakeFood : MonoBehaviour
 {
     [SerializeField] private MinigameScore minigameScore;
+    [SerializeField] private CheckmarkAnimation checkmarkAnimation;
     private void Start()
     {
         SetRandomPosition();
@@ -30,6 +31,9 @@ public class SnakeFood : MonoBehaviour
             // Update score when collecting this
             minigameScore.ModifyScore(1);
             SetRandomPosition();
+            
+            if(checkmarkAnimation != null)
+                checkmarkAnimation.PlayAnimation();
         }
     }
 }
