@@ -808,6 +808,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1776734969}
+    - target: {fileID: 1693457409938928618, guid: e284f064cb9960643a83794040d19e44, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1958152405211063988, guid: e284f064cb9960643a83794040d19e44, type: 3}
       propertyPath: m_Name
       value: ScreenVisual
