@@ -58,8 +58,6 @@ public class AchievementManager : MonoBehaviour
     /// 
     private async void LoadAchievements()
     {
-        //ClearAllAchievementProgress();
-        
         // Load all previous achievement progress
         AchievementData[] loadedAchievementData = Resources.LoadAll<AchievementData>(_resourceDirectory);
         

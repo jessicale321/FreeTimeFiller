@@ -10,7 +10,6 @@ using UnityEngine.UI;
 /// 
 public class ProfileScreenController : MonoBehaviour
 {
-    [SerializeField] private ProfilePicData defaultProfilePicture;
     [SerializeField] private Image profilePicture;
     [SerializeField] private TMP_Text username;
     [SerializeField] private UserDatabase userDatabase;
@@ -38,11 +37,7 @@ public class ProfileScreenController : MonoBehaviour
     public void LoadImageFromCloudSave()
     {
         Sprite loadedSprite = ProfilePictureManager.instance.GetCurrentProfilePicture();
-
-        if (loadedSprite == null)
-            profilePicture.sprite = defaultProfilePicture.sprite;
-        else
-            profilePicture.sprite = loadedSprite;
+        profilePicture.sprite = loadedSprite;
     }
 
     ///-///////////////////////////////////////////////////////////

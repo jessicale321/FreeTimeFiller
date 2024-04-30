@@ -32,8 +32,6 @@ public class TaskManager : MonoBehaviour
         await UnityServices.InitializeAsync();
         //AuthenticationService.Instance.SignedIn += BeginTaskPlacementProcess;
         BeginTaskPlacementProcess();
-        
-        //_taskPlacer.ClearTaskPlacement();
     }
 
     private void OnEnable()

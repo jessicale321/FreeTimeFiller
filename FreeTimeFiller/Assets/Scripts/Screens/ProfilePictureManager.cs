@@ -15,6 +15,7 @@ public class ProfilePictureManager : MonoBehaviour
 {
     public static ProfilePictureManager instance { get; private set; }
 
+    [SerializeField] private ProfilePicData defaultProfilePicture;
     [SerializeField] private Image tempProfilePic;
     [SerializeField] private GameObject unlockablePicPrefab;
     [SerializeField] private Transform picPanel;
@@ -41,27 +42,55 @@ public class ProfilePictureManager : MonoBehaviour
             instance = this;
         }
 
+        // Load all profile pictures, then user saved data
         LoadProfilePictures();
         LoadCurrentPicFromCloudSave();
+
+        //ClearProfilePictureUnlocks();
     }
 
 
     private async void LoadProfilePictures()
     {
+        // Find all profile picture scriptableObjects created
         ProfilePicData[] profilePicDatas = Resources.LoadAll<ProfilePicData>(resourceDirectory);
 
         foreach (ProfilePicData profilePicData in profilePicDatas)
         {
             Debug.Log("Profile picture loaded: " + profilePicData.pictureName);
 
+            // Map the picture's name to whether or not it has been unlocked
             _profilePicStates.Add(profilePicData.pictureName, false);
+            // Map the picture's name to it's scriptableObject
             _profilePicsByName.Add(profilePicData.pictureName, profilePicData);
+            // Map the picture's sprite to it's scriptableObject
             _profilePicsBySprite.Add(profilePicData.sprite, profilePicData);
 
+            // Spawn in the profile picture 
             DisplayProfilePic(profilePicData);
         }
 
+        // Load in all previously unlocked profile pictures
         LoadProfilePictureUnlocks();
+    }
+
+    private async void LoadProfilePictureUnlocks()
+    {
+        // Find previously saved profile pic state data
+        List<Tuple<string, bool>> statesListOfTuples =
+            await DataManager.LoadData<List<Tuple<string, bool>>>("profilePicStates");
+
+        if (statesListOfTuples != null)
+        {
+            // Override unlock progress with previously saved unlocks (i.e. re-unlock profile pictures that were unlocked)
+            foreach (var (pictureName, isUnlocked) in statesListOfTuples)
+            {
+                _profilePicStates[pictureName] = isUnlocked;
+
+                if (isUnlocked)
+                    Debug.Log($"{pictureName} was already unlocked!");
+            }
+        }
     }
 
     public void PicClicked(ProfilePicData picData)
@@ -71,38 +100,23 @@ public class ProfilePictureManager : MonoBehaviour
         // TODO: UNLOCKS PIC FOR DEBUGGING PURPOSES
         _profilePicStates[picData.pictureName] = true;
         SaveProfilePictureUnlocks();
-
         SetProfilePic(picData);
     }
 
     private async void SaveProfilePictureUnlocks()
     {
+        // Convert dictionary to a list of KeyValuePairs
+        List<KeyValuePair<string, bool>> picStatesList = _profilePicStates.ToList();
+
         // Convert the list to a serializable data structure (e.g., a list of tuples)
         List<Tuple<string, bool>> statesListOfTuples = new List<Tuple<string, bool>>();
-
-        // Add each key value pair to the list of tuples
-        foreach (KeyValuePair<string, bool> pair in _profilePicStates)
+        foreach (var pair in picStatesList)
         {
             statesListOfTuples.Add(new Tuple<string, bool>(pair.Key, pair.Value));
         }
 
         // Save list of tuples
-        await DataManager.SaveData("profilePicStates", _profilePicStates);
-    }
-
-    private async void LoadProfilePictureUnlocks()
-    {
-        // Find previously saved profile pic state data
-        List<Tuple<string, bool>> statesListOfTuples =  
-            await DataManager.LoadData<List<Tuple<string, bool>>>("profilePicStates");
-
-        if(statesListOfTuples != null)
-        {
-            foreach (Tuple<string, bool> pair in statesListOfTuples)
-            {
-                _profilePicStates[pair.Item1] = pair.Item2;
-            }
-        }
+        await DataManager.SaveData("profilePicStates", statesListOfTuples);
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -133,8 +147,15 @@ public class ProfilePictureManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Current profile picture was null or empty!");
+            Debug.LogError("Current profile picture was null or empty! Will use default profile picture");
+            _currentProfilePicture = defaultProfilePicture.sprite;
         }
+    }
+
+    private async void ClearProfilePictureUnlocks()
+    {
+        await DataManager.DeleteAllDataByName("profilePicStates");
+        await DataManager.DeleteAllDataByName("currentProfilePictureName");
     }
 
     private void DisplayProfilePic(ProfilePicData picData)
