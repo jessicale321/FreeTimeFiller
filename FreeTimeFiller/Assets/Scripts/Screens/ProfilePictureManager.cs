@@ -98,8 +98,13 @@ public class ProfilePictureManager : MonoBehaviour
         Debug.Log($"Clicked on {picData.pictureName} picture");
 
         // TODO: UNLOCKS PIC FOR DEBUGGING PURPOSES
-        _profilePicStates[picData.pictureName] = true;
-        SaveProfilePictureUnlocks();
+        if (!_profilePicStates[picData.pictureName])
+        {
+            _profilePicStates[picData.pictureName] = true;
+            // Only save unlocks when a profile picture was unlocked for the first time
+            SaveProfilePictureUnlocks();
+        }
+
         SetProfilePic(picData);
     }
 
