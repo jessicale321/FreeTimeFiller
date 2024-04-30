@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 930a32c90bbcade489470dc03c76d42f, type: 3}
   m_Name: Penguin
   m_EditorClassIdentifier: 
-  name: penguin
+  pictureName: Penguin
   sprite: {fileID: 21300000, guid: 6b885c0bfc04f1b4cb9acd85ab6ba927, type: 3}
   isUnlocked: 0

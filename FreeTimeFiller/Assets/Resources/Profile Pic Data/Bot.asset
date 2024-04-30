@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 930a32c90bbcade489470dc03c76d42f, type: 3}
   m_Name: Bot
   m_EditorClassIdentifier: 
+  pictureName: Bot
   sprite: {fileID: 21300000, guid: b68cc614f24c73e4d846f2da69874ec0, type: 3}
   isUnlocked: 1

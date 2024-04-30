@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 930a32c90bbcade489470dc03c76d42f, type: 3}
   m_Name: Panda
   m_EditorClassIdentifier: 
-  name: panda
+  pictureName: Panda
   sprite: {fileID: 21300000, guid: aab33e742d2a8a6409ff0af06a0ba761, type: 3}
   isUnlocked: 0

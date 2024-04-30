@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "NewProfilePicture", menuName = "ScriptableObjects/ProfilePicData/GenericPic")]
 public class ProfilePicData : ScriptableObject
 {
-    //public string name;
+    public string pictureName;
+
     public Sprite sprite;
-    public bool isUnlocked;
 }

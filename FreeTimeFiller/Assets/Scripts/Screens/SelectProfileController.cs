@@ -6,6 +6,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using Unity.Services.CloudSave;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 ///-///////////////////////////////////////////////////////////
 /// 
@@ -16,9 +17,15 @@ public class SelectProfileController : MonoBehaviour
     [SerializeField] private Image tempProfilePic;
     [SerializeField] private GameObject unlockablePicPrefab;
     [SerializeField] private Transform picPanel;
-    private string resourceDirectory = "Profile Pic Data";
-    private Dictionary<ProfilePicData, bool> profilePicStates = new Dictionary<ProfilePicData, bool>();
 
+    private string resourceDirectory = "Profile Pic Data";
+
+    private Dictionary<string, ProfilePicData> _profilePicsByName = new Dictionary<string, ProfilePicData>();
+    private Dictionary<Sprite, ProfilePicData> _profilePicsBySprite = new Dictionary<Sprite, ProfilePicData>();
+    private Dictionary<string, bool> _profilePicStates = new Dictionary<string, bool>();
+
+    // The current profile picture the user has equipped
+    private Image _currentProfilePicture;
 
     ///-///////////////////////////////////////////////////////////
     /// 
@@ -38,70 +45,89 @@ public class SelectProfileController : MonoBehaviour
     /// 
     private void OnEnable()
     {
+        LoadProfilePictures();
         LoadCurrentPicFromCloudSave(); // use Russell's data manager?
-        LoadProfilePicUnlockedStatus();
+        //LoadProfilePicUnlockedStatus();
         DisplayProfilePics();
     }
 
-    ///-///////////////////////////////////////////////////////////
-    /// Called from UnlockableProfilePic instances when button is clicked 
-    ///
-    public void PicClicked(Image picture)
+    private async void LoadProfilePictures()
     {
-        Debug.Log("clicked");
+        ProfilePicData[] profilePicDatas = Resources.LoadAll<ProfilePicData>(resourceDirectory);
 
-        ProfilePicData picData = GetProfilePicDataFromImage(picture.sprite);
-        if (picData != null)
+        foreach (var profilePicData in profilePicDatas)
         {
-            bool isUnlocked = profilePicStates[picData];
+            Debug.Log("Profile picture loaded: " + profilePicData.pictureName);
 
-            if (isUnlocked)
-            {
-                Debug.Log("unlocked");
-            }
-            else
-            {
-                Debug.Log("locked");
-            }
+            _profilePicStates.Add(profilePicData.pictureName, false);
+            _profilePicsByName.Add(profilePicData.pictureName, profilePicData);
+            _profilePicsBySprite.Add(profilePicData.sprite, profilePicData);
         }
+
+        LoadProfilePictureUnlocks();
     }
 
-    private ProfilePicData GetProfilePicDataFromImage(Sprite sprite)
+    public void PicClicked(Image picture)
     {
-        ProfilePicData[] loadedPics = Resources.LoadAll<ProfilePicData>(resourceDirectory);
-        foreach (ProfilePicData picData in loadedPics)
+        ProfilePicData picData = _profilePicsBySprite[picture.sprite];
+
+        Debug.Log($"Clicked on {picData.pictureName} picture");
+    }
+
+    private async void SaveProfilePictureUnlocks()
+    {
+        // Convert the list to a serializable data structure (e.g., a list of tuples)
+        List<Tuple<string, bool>> statesListOfTuples = new List<Tuple<string, bool>>();
+
+        // Add each key value pair to the list of tuples
+        foreach (KeyValuePair<string, bool> pair in _profilePicStates)
         {
-            if (picData.sprite == sprite)
+            statesListOfTuples.Add(new Tuple<string, bool>(pair.Key, pair.Value));
+        }
+
+        // Save list of tuples
+        await DataManager.SaveData("profilePicStates", _profilePicStates);
+    }
+
+    private async void LoadProfilePictureUnlocks()
+    {
+        // Find previously saved profile pic state data
+        List<Tuple<string, bool>> statesListOfTuples =  
+            await DataManager.LoadData<List<Tuple<string, bool>>>("profilePicStates");
+
+        if(statesListOfTuples != null)
+        {
+            foreach (Tuple<string, bool> pair in statesListOfTuples)
             {
-                return picData;
+                _profilePicStates[pair.Item1] = pair.Item2;
             }
         }
-        return null;
     }
 
     ///-///////////////////////////////////////////////////////////
     /// 
-/*    public async void SetProfilePic(Image newProfilePic)
+    public async void SetProfilePic(ProfilePicData newPicData)
     {
+        await DataManager.SaveData("currentProfilePicture", newPicData.pictureName);
         // current bug: might have duplicate with temp and in the grid
-        Image currentProfile = tempProfilePic.GetComponent<Image>(); // might not need this line?
+        //Image currentProfile = tempProfilePic.GetComponent<Image>(); // might not need this line?
 
-        tempProfilePic.sprite = newProfilePic.sprite;
+        //tempProfilePic.sprite = newProfilePic.sprite;
 
-        Texture2D texture = ImageToTexture2D(currentProfile);
+        //Texture2D texture = ImageToTexture2D(currentProfile);
 
-        byte[] imageData = texture.EncodeToPNG();
+        //byte[] imageData = texture.EncodeToPNG();
 
-        // Save the byte array as a cloud save file
-        try
-        {
-            await CloudSaveService.Instance.Files.Player.SaveAsync("profileImage.png", imageData);
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogError($"Failed to save image as cloud save file: {e.Message}");
-        }
-    }*/
+        //// Save the byte array as a cloud save file
+        //try
+        //{
+        //    await CloudSaveService.Instance.Files.Player.SaveAsync("profileImage.png", imageData);
+        //}
+        //catch (System.Exception e)
+        //{
+        //    Debug.LogError($"Failed to save image as cloud save file: {e.Message}");
+        //}
+    }
 
     ///-///////////////////////////////////////////////////////////
     /// Convert Image to Texture2D 
@@ -122,22 +148,17 @@ public class SelectProfileController : MonoBehaviour
     ///
     public async void LoadCurrentPicFromCloudSave()
     {
-        try
-        {
-            // Load the cloud save file data
-            byte[] imageData = await CloudSaveService.Instance.Files.Player.LoadBytesAsync("profileImage.png");
+        string currentProfilePicString = await DataManager.LoadData<string>("currentProfilePicture");
 
-            // Convert the byte array to a Texture2D
-            Texture2D texture = new Texture2D(1, 1);
-            texture.LoadImage(imageData);
+        Debug.Log($"The user's current profile pic is {currentProfilePicString}");
 
-            // Set the loaded texture to the Image component
-            tempProfilePic.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.one * 0.5f);
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogError($"Failed to load image from cloud save file: {e.Message}");
-        }
+        //    // Set the loaded texture to the Image component
+        //    tempProfilePic.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.one * 0.5f);
+        //}
+        //catch (System.Exception e)
+        //{
+        //    Debug.LogError($"Failed to load image from cloud save file: {e.Message}");
+        //}
     }
 
     private void DisplayProfilePics()
@@ -149,73 +170,6 @@ public class SelectProfileController : MonoBehaviour
 
             Image picImage = picInstance.GetComponentInChildren<Image>();
             picImage.sprite = pic.sprite;
-        }
-    }
-
-    private async void LoadProfilePicUnlockedStatus()
-    {
-        try
-        {
-            // Load the cloud save file data
-            byte[] savedData = await CloudSaveService.Instance.Files.Player.LoadBytesAsync("profilePicStates.dat");
-
-            // Deserialize the saved data back into a list of tuples
-            List<Tuple<string, bool>> serializedData = ByteArrayToObject<List<Tuple<string, bool>>>(savedData);
-
-            // Convert the deserialized data back into the dictionary format
-            foreach (var item in serializedData)
-            {
-                ProfilePicData picData = Resources.Load<ProfilePicData>(item.Item1);
-                profilePicStates[picData] = item.Item2;
-            }
-        }
-        catch (Exception e)
-        {
-            Debug.LogError($"Failed to load profile pic unlocked status from cloud save file: {e.Message}");
-        }
-    }
-
-    private async void SaveProfilePicUnlockedStatus()
-    {
-        try
-        {
-            // Convert the dictionary into a list of tuples for serialization
-            List<Tuple<string, bool>> serializedData = new List<Tuple<string, bool>>();
-            foreach (var kvp in profilePicStates)
-            {
-                serializedData.Add(new Tuple<string, bool>(kvp.Key.name, kvp.Value));
-            }
-
-            // Serialize the data
-            byte[] data = ObjectToByteArray(serializedData);
-
-            // Save the serialized data to Unity Cloud Save
-            await CloudSaveService.Instance.Files.Player.SaveAsync("profilePicStates.dat", data);
-        }
-        catch (Exception e)
-        {
-            Debug.LogError($"Failed to save profile pic unlocked status to cloud save file: {e.Message}");
-        }
-    }
-
-    // Convert object to byte array for serialization
-    private byte[] ObjectToByteArray(object obj)
-    {
-        BinaryFormatter bf = new BinaryFormatter();
-        using (var ms = new MemoryStream())
-        {
-            bf.Serialize(ms, obj);
-            return ms.ToArray();
-        }
-    }
-
-    // Convert byte array to object for deserialization
-    private T ByteArrayToObject<T>(byte[] bytes)
-    {
-        BinaryFormatter bf = new BinaryFormatter();
-        using (var ms = new MemoryStream(bytes))
-        {
-            return (T)bf.Deserialize(ms);
         }
     }
 }

@@ -9,7 +9,6 @@ using UnityEngine.UI;
 /// 
 public class UnlockableProfilePic : MonoBehaviour
 {
-    //[SerializeField] private bool isLocked;
     public GameObject lockedMask;
     [SerializeField] private Button button;
 
@@ -27,7 +26,6 @@ public class UnlockableProfilePic : MonoBehaviour
     ///
     public void OnProfilePicClicked()
     {
-        //Debug.Log("clicked");
         Image image = this.gameObject.GetComponentInChildren<Image>();
         SelectProfileController.instance.PicClicked(image);
     }
