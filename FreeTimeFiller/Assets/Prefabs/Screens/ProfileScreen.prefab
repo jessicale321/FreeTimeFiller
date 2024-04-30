@@ -289,6 +289,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f931a4975d21cb94b9bbdb34915dd217, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  defaultProfilePicture: {fileID: 11400000, guid: 852a8c3548e0f2041bef0c52c2e8c44d, type: 2}
   profilePicture: {fileID: 8295249202377228335}
   username: {fileID: 3128121748142738817}
   userDatabase: {fileID: 0}

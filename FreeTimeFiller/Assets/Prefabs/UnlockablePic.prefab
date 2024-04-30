@@ -444,6 +444,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lockedMask: {fileID: 1305916633749077515}
   button: {fileID: 8575314408034876287}
+  image: {fileID: 6451140075746148410}
 --- !u!222 &5792337343246533077
 CanvasRenderer:
   m_ObjectHideFlags: 0

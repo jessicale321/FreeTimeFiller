@@ -12,6 +12,10 @@ public class UnlockableProfilePic : MonoBehaviour
     public GameObject lockedMask;
     [SerializeField] private Button button;
 
+    private ProfilePicData _myPicData;
+
+    [SerializeField] private Image image;
+
     public Action OnPictureClicked;
 
     ///-///////////////////////////////////////////////////////////
@@ -26,7 +30,14 @@ public class UnlockableProfilePic : MonoBehaviour
     ///
     public void OnProfilePicClicked()
     {
-        Image image = this.gameObject.GetComponentInChildren<Image>();
-        SelectProfileController.instance.PicClicked(image);
+        ProfilePictureManager.instance.PicClicked(_myPicData);
+    }
+
+    ///-///////////////////////////////////////////////////////////
+    /// 
+    public void SetProfilePictureData(ProfilePicData profilePicData)
+    {
+        _myPicData = profilePicData;
+        image.sprite = profilePicData.sprite;
     }
 }

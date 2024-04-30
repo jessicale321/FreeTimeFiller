@@ -7,12 +7,13 @@ using Unity.Services.CloudSave;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
+using UnityEngine.Rendering;
 
 ///-///////////////////////////////////////////////////////////
 /// 
-public class SelectProfileController : MonoBehaviour
+public class ProfilePictureManager : MonoBehaviour
 {
-    public static SelectProfileController instance { get; private set; }
+    public static ProfilePictureManager instance { get; private set; }
 
     [SerializeField] private Image tempProfilePic;
     [SerializeField] private GameObject unlockablePicPrefab;
@@ -25,7 +26,7 @@ public class SelectProfileController : MonoBehaviour
     private Dictionary<string, bool> _profilePicStates = new Dictionary<string, bool>();
 
     // The current profile picture the user has equipped
-    private Image _currentProfilePicture;
+    private Sprite _currentProfilePicture;
 
     ///-///////////////////////////////////////////////////////////
     /// 
@@ -39,39 +40,39 @@ public class SelectProfileController : MonoBehaviour
         {
             instance = this;
         }
+
+        LoadProfilePictures();
+        LoadCurrentPicFromCloudSave();
     }
 
-    ///-///////////////////////////////////////////////////////////
-    /// 
-    private void OnEnable()
-    {
-        LoadProfilePictures();
-        LoadCurrentPicFromCloudSave(); // use Russell's data manager?
-        //LoadProfilePicUnlockedStatus();
-        DisplayProfilePics();
-    }
 
     private async void LoadProfilePictures()
     {
         ProfilePicData[] profilePicDatas = Resources.LoadAll<ProfilePicData>(resourceDirectory);
 
-        foreach (var profilePicData in profilePicDatas)
+        foreach (ProfilePicData profilePicData in profilePicDatas)
         {
             Debug.Log("Profile picture loaded: " + profilePicData.pictureName);
 
             _profilePicStates.Add(profilePicData.pictureName, false);
             _profilePicsByName.Add(profilePicData.pictureName, profilePicData);
             _profilePicsBySprite.Add(profilePicData.sprite, profilePicData);
+
+            DisplayProfilePic(profilePicData);
         }
 
         LoadProfilePictureUnlocks();
     }
 
-    public void PicClicked(Image picture)
+    public void PicClicked(ProfilePicData picData)
     {
-        ProfilePicData picData = _profilePicsBySprite[picture.sprite];
-
         Debug.Log($"Clicked on {picData.pictureName} picture");
+
+        // TODO: UNLOCKS PIC FOR DEBUGGING PURPOSES
+        _profilePicStates[picData.pictureName] = true;
+        SaveProfilePictureUnlocks();
+
+        SetProfilePic(picData);
     }
 
     private async void SaveProfilePictureUnlocks()
@@ -108,39 +109,11 @@ public class SelectProfileController : MonoBehaviour
     /// 
     public async void SetProfilePic(ProfilePicData newPicData)
     {
-        await DataManager.SaveData("currentProfilePicture", newPicData.pictureName);
-        // current bug: might have duplicate with temp and in the grid
-        //Image currentProfile = tempProfilePic.GetComponent<Image>(); // might not need this line?
+        _currentProfilePicture = newPicData.sprite;
 
-        //tempProfilePic.sprite = newProfilePic.sprite;
+        tempProfilePic.sprite = _currentProfilePicture;
 
-        //Texture2D texture = ImageToTexture2D(currentProfile);
-
-        //byte[] imageData = texture.EncodeToPNG();
-
-        //// Save the byte array as a cloud save file
-        //try
-        //{
-        //    await CloudSaveService.Instance.Files.Player.SaveAsync("profileImage.png", imageData);
-        //}
-        //catch (System.Exception e)
-        //{
-        //    Debug.LogError($"Failed to save image as cloud save file: {e.Message}");
-        //}
-    }
-
-    ///-///////////////////////////////////////////////////////////
-    /// Convert Image to Texture2D 
-    ///
-    private Texture2D ImageToTexture2D(Image image)
-    {
-        Texture2D texture = new Texture2D((int)image.rectTransform.rect.width, (int)image.rectTransform.rect.height);
-        RenderTexture renderTexture = new RenderTexture((int)image.rectTransform.rect.width, (int)image.rectTransform.rect.height, 32);
-        Graphics.Blit(image.sprite.texture, renderTexture);
-        RenderTexture.active = renderTexture;
-        texture.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
-        texture.Apply();
-        return texture;
+        await DataManager.SaveData("currentProfilePictureName", newPicData.pictureName);
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -148,29 +121,32 @@ public class SelectProfileController : MonoBehaviour
     ///
     public async void LoadCurrentPicFromCloudSave()
     {
-        string currentProfilePicString = await DataManager.LoadData<string>("currentProfilePicture");
+        string currentProfilePicString = await DataManager.LoadData<string>("currentProfilePictureName");
 
-        Debug.Log($"The user's current profile pic is {currentProfilePicString}");
+        if (!String.IsNullOrEmpty(currentProfilePicString))
+        {
+            _currentProfilePicture = _profilePicsByName[currentProfilePicString].sprite;
 
-        //    // Set the loaded texture to the Image component
-        //    tempProfilePic.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.one * 0.5f);
-        //}
-        //catch (System.Exception e)
-        //{
-        //    Debug.LogError($"Failed to load image from cloud save file: {e.Message}");
-        //}
+            tempProfilePic.sprite = _currentProfilePicture;
+
+            Debug.Log($"The user's current profile pic is {currentProfilePicString}");
+        }
+        else
+        {
+            Debug.LogError("Current profile picture was null or empty!");
+        }
     }
 
-    private void DisplayProfilePics()
+    private void DisplayProfilePic(ProfilePicData picData)
     {
-        ProfilePicData[] loadedPics = Resources.LoadAll<ProfilePicData>(resourceDirectory);
-        foreach (ProfilePicData pic in loadedPics)
-        {
-            GameObject picInstance = Instantiate(unlockablePicPrefab, picPanel);
+        GameObject picInstance = Instantiate(unlockablePicPrefab, picPanel);
 
-            Image picImage = picInstance.GetComponentInChildren<Image>();
-            picImage.sprite = pic.sprite;
-        }
+        picInstance.GetComponent<UnlockableProfilePic>().SetProfilePictureData(picData);
+    }
+
+    public Sprite GetCurrentProfilePicture()
+    {
+        return _currentProfilePicture;
     }
 }
 
