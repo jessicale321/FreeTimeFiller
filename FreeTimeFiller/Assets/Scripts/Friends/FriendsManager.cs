@@ -202,6 +202,7 @@ public class FriendsManager : MonoBehaviour
     // Refershes the friends list of user
     public async void RefreshFriends()
     {
+        Debug.Log("Refreshing Friends");
         // clear previous list to not show old data
         m_Friends.Clear();
         // get friends list
