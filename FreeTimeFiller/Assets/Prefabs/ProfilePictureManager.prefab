@@ -44,6 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32367b63e03d7754aa393df169b33251, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  defaultProfilePicture: {fileID: 11400000, guid: 852a8c3548e0f2041bef0c52c2e8c44d, type: 2}
   tempProfilePic: {fileID: 0}
   unlockablePicPrefab: {fileID: 8114784875964139079, guid: 8e8340ab79199664c9810bca240eb6d1, type: 3}
   picPanel: {fileID: 0}
