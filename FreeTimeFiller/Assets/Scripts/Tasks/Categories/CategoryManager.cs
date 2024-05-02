@@ -99,7 +99,7 @@ public class CategoryManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("Please choose at least 1 category");
+            Debug.Log("Please choose at least 2 categories");
         }       
     }
 
