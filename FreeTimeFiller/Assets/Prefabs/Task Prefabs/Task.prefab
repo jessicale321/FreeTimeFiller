@@ -350,8 +350,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.0000009536743, y: 0.000000059604645}
-  m_SizeDelta: {x: 4.8190994, y: 27.156502}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 8.17804, y: 46.0847}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5637372338996769872
 CanvasRenderer:
@@ -704,6 +704,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scaleFactor: 2
   duration: 0.15
+  disableOnAnimationFinish: 0
 --- !u!1 &6773745107981149549
 GameObject:
   m_ObjectHideFlags: 0
@@ -733,12 +734,13 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.0625, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 7480565355324797412}
   m_Father: {fileID: 7748334069417738900}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -2.6, y: -30}
+  m_AnchoredPosition: {x: -2.6, y: -34.8}
   m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!222 &391985451476921278
@@ -769,7 +771,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: $15
+  m_text: 15
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -899,6 +901,81 @@ MonoBehaviour:
   crossOutImage: {fileID: 562226970384664679}
   difficultyLevelPanel: {fileID: 5466846729764156817}
   difficultyStar: {fileID: 530224997194326478, guid: 3b94b81594def24428df2903f1e16a94, type: 3}
+--- !u!1 &8241853933895909761
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7480565355324797412}
+  - component: {fileID: 7366907045406936610}
+  - component: {fileID: 8866487378281888927}
+  m_Layer: 5
+  m_Name: Coin Image
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &7480565355324797412
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8241853933895909761}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1997135660607903941}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 1, y: 0.5}
+  m_AnchorMax: {x: 1, y: 0.5}
+  m_AnchoredPosition: {x: -48.37, y: -0.0000019073486}
+  m_SizeDelta: {x: 20, y: 20}
+  m_Pivot: {x: 1, y: 0.5}
+--- !u!222 &7366907045406936610
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8241853933895909761}
+  m_CullTransparentMesh: 1
+--- !u!114 &8866487378281888927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8241853933895909761}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: f2c8e9823f747c94ba0044158d1e374e, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &8608607588920503060
 GameObject:
   m_ObjectHideFlags: 0
@@ -1116,8 +1193,6 @@ MonoBehaviour:
   deleteButtonStretchX: 4
   stretchTimer: 0.15
   errorAnimation: {fileID: 5935917463394159464}
-  errorShakeDirection: {x: 0.3, y: 0, z: 0}
-  errorShakeDuration: 0.09
   swipeThreshold: 10
 --- !u!114 &5935917463394159464
 MonoBehaviour:
@@ -1131,6 +1206,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0335e3a0e979e4040bfe055ee5b43de3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameObjectToShake: {fileID: 7422696577987121108}
   errorShakeDirection: {x: 0.3, y: 0, z: 0}
   errorShakeDuration: 0.09

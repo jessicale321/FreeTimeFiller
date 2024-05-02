@@ -137,7 +137,7 @@ public class TaskDeletionOnSwipe : MonoBehaviour, IPointerDownHandler, IPointerU
             deletePriceText.gameObject.SetActive(true);
         });
 
-        deletePriceText.text = "$" + _myTaskData.GetDeletePrice().ToString();
+        deletePriceText.text = _myTaskData.GetDeletePrice().ToString();
     }
 
     ///-///////////////////////////////////////////////////////////
