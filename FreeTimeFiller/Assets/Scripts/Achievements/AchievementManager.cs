@@ -96,8 +96,6 @@ public class AchievementManager : MonoBehaviour
                 // If the achievement was already completed, add it to a list
                 if(achievementProgress.completed)
                     _allEarnedAchievements.Add(data);
-                
-                //Debug.Log($"Found and loaded {achievementProgress.achievementName} from previous achievement progress save! \n It has {achievementProgress.currentValue} / {data.targetValue}");
             }
         }
     }
@@ -121,7 +119,7 @@ public class AchievementManager : MonoBehaviour
                 /* Check if the condition matches the achievement's condition type
                 If the condition type is TasksOfTypeCompleted, then...
                 Only make progress for achievements of the correct task category type (i.e. Completing a sports task doesn't progress achievements for other achievements with different categories such as School) */
-                if (conditionType != AchievementConditionType.TasksOfTypeCompleted || completedTaskCategory == achievement.taskCategory)
+                if (_allAchievementProgress.ContainsKey(achievement) && (conditionType != AchievementConditionType.TasksOfTypeCompleted || completedTaskCategory == achievement.taskCategory))
                 {
                     AchievementProgress achievementProgress = _allAchievementProgress[achievement];
                     
@@ -217,11 +215,16 @@ public class AchievementManager : MonoBehaviour
         return await DataManager.LoadData<List<AchievementProgress>>("allAchievementProgress");
     }
 
-    private async void ClearAllAchievementProgress()
+    public async void ClearAllAchievementProgress()
     {
-        _allAchievementProgress.Clear();
+        foreach (AchievementProgress achievementProgress in _allAchievementProgress.Values)
+        {
+            achievementProgress.currentValue = 0;
+            achievementProgress.completed = false;
+        }
+        
         _allEarnedAchievements.Clear();
 
-        await DataManager.SaveData("allAchievementProgress", _allAchievementProgress);
+        SaveAllAchievementProgress();
     }
 }

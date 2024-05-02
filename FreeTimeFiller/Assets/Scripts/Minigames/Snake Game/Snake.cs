@@ -1,14 +1,19 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 
 public class Snake : MonoBehaviour
 {
     [SerializeField] private MinigameManager minigameManager;
+
+    [Header("Animations")]
+    [SerializeField] private GameObject respawnText;
     
     private Vector2 _direction;
     private SnakeMovementDirection _currentDirectionType;
@@ -74,6 +79,9 @@ public class Snake : MonoBehaviour
         _canMove = true;
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// Remove all segments from the snake.
+    /// 
     private void ResetSegments()
     {
         for (int i = 1; i < _segments.Count; i++) 
@@ -92,6 +100,9 @@ public class Snake : MonoBehaviour
         }
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// Spawn a segment behind the snake.
+    /// 
     private void AddSegment()
     {
         GameObject newSegment = Instantiate(segmentPrefab);
@@ -100,7 +111,10 @@ public class Snake : MonoBehaviour
         
         _segments.Add(newSegment);
     }
-    
+
+    ///-///////////////////////////////////////////////////////////
+    /// WASD controls for the snake.
+    /// 
     private void GetKeyboardInput()
     {
         if (Input.GetKeyDown(KeyCode.W))
@@ -134,6 +148,9 @@ public class Snake : MonoBehaviour
         transform.position = new Vector2(x, y);
     }
 
+    ///-///////////////////////////////////////////////////////////
+    /// The segments of the snake will lag behind the snake.
+    /// 
     private void MoveSegments()
     {
         if (!_canMove) return;
@@ -192,6 +209,7 @@ public class Snake : MonoBehaviour
         if (other.gameObject.CompareTag("Obstacle") && _snakeIsMoving)
         {
             Debug.Log("Snake collided with obstacle! Reset the user.");
+
             StartCoroutine(LoseDelay());
         }
         // When snake touches collectable, add a segment
@@ -207,6 +225,11 @@ public class Snake : MonoBehaviour
     private IEnumerator LoseDelay()
     {
         _canMove = false;
+
+        // Show "Respawning text" with animation
+        if (respawnText != null)
+            respawnText.SetActive(true);
+                
         yield return new WaitForSecondsRealtime(2f);
         Reset();
     }

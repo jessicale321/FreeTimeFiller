@@ -11,9 +11,17 @@ public class RockingAnimation : MonoBehaviour
     [SerializeField] private float rockingAngle = 15f;    // Maximum angle to rock
     [SerializeField] private float rockingDuration = 1f;  // Time taken for each rock
 
-    private void Start()
+    [SerializeField] private bool playOnAwake = true;
+
+    private void Awake()
     {
         // Start rocking
+        if(playOnAwake)
+            Invoke(nameof(RockRight), startDelay);
+    }
+
+    public void PlayAnimation()
+    {
         Invoke(nameof(RockRight), startDelay);
     }
 

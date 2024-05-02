@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TaskManager : MonoBehaviour
 {
@@ -17,7 +18,7 @@ public class TaskManager : MonoBehaviour
     private TaskRefreshWithTime _taskRefreshWithTime;
 
     [SerializeField] private GameObject categoriesScreen;
-
+    
     private async void Awake()
     {
         Instance = this;
@@ -146,4 +147,6 @@ public class TaskManager : MonoBehaviour
     {
         _taskPlacer.RefreshAllTasksWithTime();
     }
+    
+    
 }

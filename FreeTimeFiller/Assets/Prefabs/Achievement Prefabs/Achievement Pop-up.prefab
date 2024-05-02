@@ -178,7 +178,6 @@ GameObject:
   - component: {fileID: 6036760700854191828}
   - component: {fileID: 4255463255331739219}
   - component: {fileID: 3236503242483529890}
-  - component: {fileID: 3348034537741733306}
   m_Layer: 5
   m_Name: Share Button
   m_TagString: Untagged
@@ -288,22 +287,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &3348034537741733306
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 628195686842305464}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee20c4fea37af9443973c3459c5dc9fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  pathName: sharedAchievement
-  subject: I earned an achievement!
-  description: Check it out!
-  shareButton: {fileID: 3236503242483529890}
 --- !u!1 &3588110747862433304
 GameObject:
   m_ObjectHideFlags: 0
@@ -779,6 +762,7 @@ GameObject:
   - component: {fileID: 4859821214879322742}
   - component: {fileID: -206643123643355622}
   - component: {fileID: 1106534641406826124}
+  - component: {fileID: 2127639053485598155}
   m_Layer: 5
   m_Name: Achievement Pop-up
   m_TagString: Untagged
@@ -854,6 +838,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6373920086673110579}
   m_CullTransparentMesh: 1
+--- !u!114 &2127639053485598155
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6373920086673110579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee20c4fea37af9443973c3459c5dc9fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pathName: sharedAchievement
+  subject: I earned an achievement!
+  description: Check it out!
+  shareButton: {fileID: 3236503242483529890}
 --- !u!1 &7705036153894055567
 GameObject:
   m_ObjectHideFlags: 0

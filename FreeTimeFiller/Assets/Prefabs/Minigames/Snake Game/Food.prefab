@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4323500452438912783}
   - component: {fileID: 5690876481687912045}
   - component: {fileID: 1358571379996683515}
+  - component: {fileID: 1186875025240623717}
   - component: {fileID: 4945624954357985246}
   m_Layer: 0
   m_Name: Food
@@ -98,6 +99,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f5b960fed0eb4d4c85c6ba3b7dec190, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  minigameScore: {fileID: 0}
+  checkmarkAnimation: {fileID: 1186875025240623717}
+--- !u!114 &1186875025240623717
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1841789004624780147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e24a3fe33eacde34e9563aea1850b6a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scaleFactor: 1.25
+  duration: 0.1
+  disableOnAnimationFinish: 0
 --- !u!61 &4945624954357985246
 BoxCollider2D:
   m_ObjectHideFlags: 0
