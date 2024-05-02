@@ -34,6 +34,9 @@ namespace UserTask
 
         private bool _isCompleted = false;
 
+        // Did this task already give some achievement progress?
+        private bool _gaveAchievementProgress;
+
         public Action onCompletion;
         public Action onUncompletion;
 
@@ -123,9 +126,13 @@ namespace UserTask
             // Give coins 
             CoinManager.instance.EarnCoins(taskData.GetRewardAmount());
             
-            // A task was completed, progress towards any achievements
-            AchievementManager.Instance.UpdateProgress(AchievementConditionType.TasksCompleted, 1);
-            AchievementManager.Instance.UpdateProgress(AchievementConditionType.TasksOfTypeCompleted, 1, taskData.category);
+            // A task was completed, progress towards any achievements (only once)
+            if (!_gaveAchievementProgress)
+            {
+                AchievementManager.Instance.UpdateProgress(AchievementConditionType.TasksCompleted, 1);
+                AchievementManager.Instance.UpdateProgress(AchievementConditionType.TasksOfTypeCompleted, 1, taskData.category);
+                _gaveAchievementProgress = true;
+            }
         }
 
         ///-///////////////////////////////////////////////////////////
