@@ -12,11 +12,9 @@ public class UnlockableProfilePic : MonoBehaviour
     public GameObject lockedMask;
     [SerializeField] private Button button;
 
-    private ProfilePicData _myPicData;
+    public ProfilePicData _myPicData;
 
     [SerializeField] private Image image;
-
-    public Action OnPictureClicked;
 
     ///-///////////////////////////////////////////////////////////
     /// 
@@ -26,7 +24,6 @@ public class UnlockableProfilePic : MonoBehaviour
     }
 
     ///-///////////////////////////////////////////////////////////
-    /// Checks if picture is currently locked and behaves accordingly 
     ///
     public void OnProfilePicClicked()
     {
@@ -39,5 +36,19 @@ public class UnlockableProfilePic : MonoBehaviour
     {
         _myPicData = profilePicData;
         image.sprite = profilePicData.sprite;
+    }
+
+    ///-///////////////////////////////////////////////////////////
+    /// 
+    public void SetLockedMask(bool isUnlocked)
+    {
+        if (isUnlocked == false)
+        {
+            lockedMask.SetActive(true);
+        }
+        else
+        {
+            lockedMask.SetActive(false);
+        }
     }
 }
