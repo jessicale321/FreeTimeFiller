@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Unity.Services.Authentication;
+using UnityEngine.UI;
 using JetBrains.Annotations;
 using System;
+using UnityEngine.SocialPlatforms;
 
 namespace UI
 {
@@ -17,6 +19,7 @@ namespace UI
         [SerializeField] private TMP_Text playerInfo;
         // Player username of profile being viewed
         [SerializeField] private TMP_Text profileViewUsername;
+        [SerializeField] private Button sendFriendRequestButton;
         // This is the search bar for who the friend request is being sent to
         [Header("From Control Area")]
         [SerializeField] private TMP_InputField friendRecipientID;
@@ -189,7 +192,7 @@ namespace UI
 
         public void OnViewProfile(string username)
         {
-            Debug.Log("OnViewProfile calle");
+            Debug.Log("OnViewProfile called");
             profileViewUsername.text = username;
         }
 
