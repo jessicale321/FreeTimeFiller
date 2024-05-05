@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9a101af5d56ee3b4ab558bb3de1b5968, type: 3}
-  m_Name: tasks_healthy_2
+  m_Name: tasks_fun_8
   m_EditorClassIdentifier: 
-  taskName: Night/Day skincare routine
-  category: 4
-  difficultyLevel: 1
+  taskName: Do some birdwatching
+  category: 3
+  difficultyLevel: 2
   refreshCountdown: 1
   description: 
