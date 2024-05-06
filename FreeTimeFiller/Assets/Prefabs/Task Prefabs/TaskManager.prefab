@@ -104,6 +104,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cbdc13095f4bcc4594e35fbbfb9aa5b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  categoryIcons: {fileID: 11400000, guid: a925a946f36dd154b84e534c1bd1ebc5, type: 2}
   categoryScreen: {fileID: 0}
   categoryPanel: {fileID: 0}
   taskCategoryButton: {fileID: 5826458050106275573, guid: f562d74845b9d4e40883c6d071608fe6, type: 3}

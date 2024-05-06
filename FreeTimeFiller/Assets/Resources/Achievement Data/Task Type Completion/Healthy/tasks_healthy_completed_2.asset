@@ -15,6 +15,6 @@ MonoBehaviour:
   achievementName: Keep the Doctor Away
   conditionType: 3
   targetValue: 10
-  iconSprite: {fileID: 21300000, guid: d89637e16579ea1479e9390839483796, type: 3}
+  iconSprite: {fileID: 21300000, guid: ba5212aeeb5131848ae63ed9d03650f5, type: 3}
   description: Complete 10 healthy tasks!
   taskCategory: 4

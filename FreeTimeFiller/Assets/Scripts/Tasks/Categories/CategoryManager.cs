@@ -11,6 +11,8 @@ using UnityEngine.UI;
 
 public class CategoryManager : MonoBehaviour
 {
+    [SerializeField] private CategoryIcon categoryIcons;
+    
     [Header("UI Components")]
     [SerializeField] private MenuScreen categoryScreen;
     // Where to place buttons under
@@ -75,7 +77,7 @@ public class CategoryManager : MonoBehaviour
 
             // In the new button, give it a reference for this TaskPool and give it a TaskCategory
             categoryButtonComponent.SetCustomTaskCreator(this);
-            categoryButtonComponent.UpdateDisplayedCategory(category);
+            categoryButtonComponent.UpdateDisplayedCategory(category, categoryIcons.GetCategoryIcon(category));
 
             _taskButtons.Add(category, categoryButtonComponent);
         }

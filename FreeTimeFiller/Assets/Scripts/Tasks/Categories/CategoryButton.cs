@@ -11,8 +11,8 @@ public class CategoryButton : MonoBehaviour
     private TaskCategory _displayedCategory;
 
     private Button _buttonComponent;
+    [SerializeField] private Image categoryImage;
     [SerializeField] private TMP_Text textBox;
-
     [SerializeField] private GameObject selectedBox;
 
     // Did the user already click on this button (they want this category to show in the task pool)
@@ -39,10 +39,16 @@ public class CategoryButton : MonoBehaviour
     ///-///////////////////////////////////////////////////////////
     /// Set the TaskCategory that this button will display on screen.
     /// 
-    public void UpdateDisplayedCategory(TaskCategory category)
+    public void UpdateDisplayedCategory(TaskCategory category, Sprite sprite)
     {
         _displayedCategory = category;
 
+        // Display a icon for the category
+        if (sprite != null)
+            categoryImage.sprite = sprite;
+        else
+            categoryImage.enabled = false;
+        
         textBox.text = category.ToString();
     }
 

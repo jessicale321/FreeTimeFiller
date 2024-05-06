@@ -15,6 +15,6 @@ MonoBehaviour:
   achievementName: Pastime Lover
   conditionType: 3
   targetValue: 10
-  iconSprite: {fileID: 21300000, guid: 4ccfb5b25a69a984eb7a45ebac712457, type: 3}
+  iconSprite: {fileID: 21300000, guid: c320be4c2e364d84e95f8e63e5c29a7e, type: 3}
   description: Complete 10 hobby tasks!
   taskCategory: 2
