@@ -15,6 +15,6 @@ MonoBehaviour:
   achievementName: Parents Would Be Proud
   conditionType: 3
   targetValue: 10
-  iconSprite: {fileID: 21300000, guid: c7a64150d8ba7ef4388e6e7ac4cf88f7, type: 3}
+  iconSprite: {fileID: 21300000, guid: 2d7a168a99793bf4683a98e381d921bc, type: 3}
   description: Complete 10 chores tasks!
   taskCategory: 1

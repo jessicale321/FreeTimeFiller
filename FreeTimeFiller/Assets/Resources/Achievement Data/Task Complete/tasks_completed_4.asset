@@ -15,6 +15,6 @@ MonoBehaviour:
   achievementName: Intermediate
   conditionType: 2
   targetValue: 20
-  iconSprite: {fileID: 21300000, guid: 727bd4f7a6af85e46ab9d42303b1b8dc, type: 3}
+  iconSprite: {fileID: 21300000, guid: ea98908f04824c142b537e3c9bd7d5ec, type: 3}
   description: Complete 20 tasks!
   taskCategory: 0

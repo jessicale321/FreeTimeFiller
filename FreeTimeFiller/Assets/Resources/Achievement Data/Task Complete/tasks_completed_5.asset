@@ -15,6 +15,6 @@ MonoBehaviour:
   achievementName: Advanced
   conditionType: 2
   targetValue: 30
-  iconSprite: {fileID: 21300000, guid: 727bd4f7a6af85e46ab9d42303b1b8dc, type: 3}
+  iconSprite: {fileID: 21300000, guid: d8e6b991e45712740af5deffaeee3eab, type: 3}
   description: Complete 30 tasks!
   taskCategory: 0

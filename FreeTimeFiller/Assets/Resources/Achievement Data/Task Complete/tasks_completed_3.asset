@@ -15,6 +15,6 @@ MonoBehaviour:
   achievementName: Amateur
   conditionType: 2
   targetValue: 10
-  iconSprite: {fileID: 21300000, guid: 727bd4f7a6af85e46ab9d42303b1b8dc, type: 3}
+  iconSprite: {fileID: 21300000, guid: f5150461a184a3342b5e904f496249c8, type: 3}
   description: Complete 10 tasks!
   taskCategory: 0
