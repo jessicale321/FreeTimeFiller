@@ -15,6 +15,6 @@ MonoBehaviour:
   achievementName: Task Legend
   conditionType: 2
   targetValue: 100
-  iconSprite: {fileID: 21300000, guid: 727bd4f7a6af85e46ab9d42303b1b8dc, type: 3}
+  iconSprite: {fileID: 21300000, guid: f6e983ed46921c74b902ea4e1fc6c830, type: 3}
   description: Complete 100 tasks!
   taskCategory: 0

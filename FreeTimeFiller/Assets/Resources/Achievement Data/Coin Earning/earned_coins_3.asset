@@ -15,6 +15,6 @@ MonoBehaviour:
   achievementName: Making Paper
   conditionType: 0
   targetValue: 250
-  iconSprite: {fileID: 21300000, guid: a69b7e812d3698842a7dc33defd86289, type: 3}
+  iconSprite: {fileID: 21300000, guid: 3fba145a583b7c649b31561acb3dc922, type: 3}
   description: Earn 250 coins!
   taskCategory: 0
