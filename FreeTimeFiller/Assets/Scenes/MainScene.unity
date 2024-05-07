@@ -211,6 +211,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cbdc13095f4bcc4594e35fbbfb9aa5b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  categoryIcons: {fileID: 0}
   categoryScreen: {fileID: 0}
   categoryPanel: {fileID: 0}
   taskCategoryButton: {fileID: 5826458050106275573, guid: f562d74845b9d4e40883c6d071608fe6, type: 3}
@@ -864,6 +865,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 783104280167319271, guid: e284f064cb9960643a83794040d19e44, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1042432251270814617, guid: e284f064cb9960643a83794040d19e44, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -880,10 +885,6 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1693457409938928618, guid: e284f064cb9960643a83794040d19e44, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 1958152405211063988, guid: e284f064cb9960643a83794040d19e44, type: 3}
       propertyPath: m_Name
       value: ScreenVisual
@@ -892,6 +893,10 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 519420031}
+    - target: {fileID: 2984139096039808205, guid: e284f064cb9960643a83794040d19e44, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3427248975367412898, guid: e284f064cb9960643a83794040d19e44, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -916,10 +921,6 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1780677335}
-    - target: {fileID: 4241197795204497067, guid: e284f064cb9960643a83794040d19e44, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -65.000046
-      objectReference: {fileID: 0}
     - target: {fileID: 5254276259821552542, guid: e284f064cb9960643a83794040d19e44, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -1024,10 +1025,6 @@ PrefabInstance:
       propertyPath: userDatabase
       value: 
       objectReference: {fileID: 2045963457}
-    - target: {fileID: 8636594664514025974, guid: e284f064cb9960643a83794040d19e44, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -224.00006
-      objectReference: {fileID: 0}
     - target: {fileID: 8753664748803275006, guid: e284f064cb9960643a83794040d19e44, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -1125,6 +1122,10 @@ PrefabInstance:
       propertyPath: picPanel
       value: 
       objectReference: {fileID: 1329138472}
+    - target: {fileID: 4322993563330065037, guid: d572a8eb2b24ec54a9fc1bcf298b64cc, type: 3}
+      propertyPath: userDataBase
+      value: 
+      objectReference: {fileID: 2045963457}
     - target: {fileID: 4322993563330065037, guid: d572a8eb2b24ec54a9fc1bcf298b64cc, type: 3}
       propertyPath: tempProfilePic
       value: 
@@ -1450,6 +1451,7 @@ MonoBehaviour:
   friendPrefab: {fileID: 0}
   searchPrefab: {fileID: 0}
   userNotFoundPrefab: {fileID: 0}
+  friendProfileScreenController: {fileID: 0}
 --- !u!114 &1827935695 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5186319522137090542, guid: e284f064cb9960643a83794040d19e44, type: 3}

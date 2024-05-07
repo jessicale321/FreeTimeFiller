@@ -31,6 +31,9 @@ namespace UI
         [SerializeField] private SearchObject searchPrefab;
         [SerializeField] private SearchObject userNotFoundPrefab;
 
+        [Header("Required Scripts")]
+        [SerializeField] private FriendProfileScreenController friendProfileScreenController;
+
         // Start is called before the first frame update
         /* private void Awake()
          {
@@ -194,6 +197,7 @@ namespace UI
         {
             Debug.Log("OnViewProfile called");
             profileViewUsername.text = username;
+            friendProfileScreenController.LoadFriendData(username);
         }
 
         List<RequestObjects> requestUIs = new List<RequestObjects>();

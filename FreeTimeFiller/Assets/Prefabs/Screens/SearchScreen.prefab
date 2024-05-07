@@ -204,6 +204,7 @@ MonoBehaviour:
   playerUserID: {fileID: 1386906228127755408}
   playerInfo: {fileID: 2022049885393080375}
   profileViewUsername: {fileID: 0}
+  sendFriendRequestButton: {fileID: 0}
   friendRecipientID: {fileID: 0}
   friendUsername: {fileID: 0}
   requestPrefab: {fileID: 0}
