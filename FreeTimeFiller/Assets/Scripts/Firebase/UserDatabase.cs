@@ -202,6 +202,38 @@ public class UserDatabase : MonoBehaviour
     ///-///////////////////////////////////////////////////////////
     /// Return a saved item from Firestore given a username. 
     ///
+    public async Task<T> GetDataFromUserId<T>(string userId, string dataName)
+    {
+        QuerySnapshot snapshot = await db.Collection("user_data")
+                                        .WhereEqualTo("user_id", userId)
+                                        .GetSnapshotAsync();
+
+        if (snapshot != null && snapshot.Count > 0)
+        {
+            DocumentSnapshot document = snapshot.Documents.ElementAt(0);
+
+            // Check if the document contains the specified dataName field
+            if (document.ContainsField(dataName))
+            {
+                T data = document.GetValue<T>(dataName);
+                return data;
+            }
+            else
+            {
+                Debug.LogError($"Field '{dataName}' not found in document for user: {userId}");
+                return default;
+            }
+        }
+        else
+        {
+            Debug.LogError($"No document found for user: {userId}");
+            return default;
+        }
+    }
+
+    ///-///////////////////////////////////////////////////////////
+    /// Return a saved item from Firestore given a username. 
+    ///
     public async Task<T> GetDataFromUserName<T>(string userName, string dataName)
     {
         QuerySnapshot snapshot = await db.Collection("user_data")
