@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95c96087c462e2b47994fb5ee8eb766f, type: 3}
   m_Name: Category Icons
   m_EditorClassIdentifier: 
-  sports: {fileID: 21300000, guid: b36ff20870950df4f9c86710fe24b821, type: 3}
-  chores: {fileID: 21300000, guid: c7a64150d8ba7ef4388e6e7ac4cf88f7, type: 3}
-  hobby: {fileID: 21300000, guid: 4ccfb5b25a69a984eb7a45ebac712457, type: 3}
-  fun: {fileID: 21300000, guid: de909a267bdf2b04cbfe7197ce70903a, type: 3}
-  healthy: {fileID: 21300000, guid: d89637e16579ea1479e9390839483796, type: 3}
-  school: {fileID: 21300000, guid: 475c0e9186f699f48b6c22c7e582cfe3, type: 3}
-  workout: {fileID: 21300000, guid: 3f82b168b5a233d499849a9ad939ef03, type: 3}
+  sports: {fileID: 21300000, guid: 7abfaabf70ff7ce42a585114e4faefe1, type: 3}
+  chores: {fileID: 21300000, guid: ea150afe2df4a3045997aeaca55ae4ff, type: 3}
+  hobby: {fileID: 21300000, guid: f1307fdbbeab840479da6b663abd8e17, type: 3}
+  fun: {fileID: 21300000, guid: 7d28f0e0598914142a672abbfbecd4f8, type: 3}
+  healthy: {fileID: 21300000, guid: f5de75e9109729f40822d1aa27bdcd4a, type: 3}
+  school: {fileID: 21300000, guid: f503b1454177e9a44bf9569f4088718f, type: 3}
+  workout: {fileID: 21300000, guid: d347c6f5cd2ea3b4fad1245e333e3840, type: 3}
   other: {fileID: 0}
