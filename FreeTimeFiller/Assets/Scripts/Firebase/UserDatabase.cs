@@ -8,6 +8,7 @@ using Firebase.Database;
 using Firebase.Extensions;
 using Firebase.Firestore;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class UserDatabase : MonoBehaviour
 {
@@ -116,6 +117,7 @@ public class UserDatabase : MonoBehaviour
         QuerySnapshot snapshot = await db.Collection("user_data")
                                         .WhereEqualTo("username", username)
                                         .GetSnapshotAsync();
+        Debug.LogFormat("The username we are looking for: {0}", username);
 
         if (snapshot != null)
         {
@@ -138,4 +140,13 @@ public class UserDatabase : MonoBehaviour
         }
         else { return null; }
     }
+
+    /*public async void AddProfilePicture(string username, string picture)
+    {
+        QuerySnapshot snapshot = await db.Collection("user_data")
+                                    .WhereEqualTo("username", username)
+                                    .GetSnapshotAsync();
+
+
+    }*/
 }

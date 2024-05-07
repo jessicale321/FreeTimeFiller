@@ -236,5 +236,14 @@ public class ProfilePictureManager : MonoBehaviour
     {
         return _currentProfilePicture;
     }
+
+    public Sprite GetProfilePictureByString(string pictureName)
+    {
+        if (_profilePicsByName.ContainsKey(pictureName))
+        {
+            return _profilePicsByName[pictureName].sprite;
+        }
+        return null;
+    }
 }
 
