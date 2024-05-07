@@ -67,9 +67,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   profilePicture: {fileID: 5997974416272426903}
-  userDatabase: {fileID: 0}
   achievementsPanel: {fileID: 3111331604749051179}
-  achievementPrefab: {fileID: 6706759037922133430, guid: 6da4fcd7dfb42f64eac7b6d9147ed919, type: 3}
+  reactableAchievementPrefab: {fileID: 6706759037922133430, guid: 45fd1951b4998c84c942db8e1a6f209b, type: 3}
 --- !u!1 &222594594631332991
 GameObject:
   m_ObjectHideFlags: 0
