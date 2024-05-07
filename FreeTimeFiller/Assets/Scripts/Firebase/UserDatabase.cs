@@ -234,7 +234,7 @@ public class UserDatabase : MonoBehaviour
     ///-///////////////////////////////////////////////////////////
     /// Return a saved item from Firestore given a username. 
     ///
-    public async Task<T> GetDataFromUserName<T>(string userName, string dataName)
+    public async Task<T> GetDataFromUsername<T>(string userName, string dataName)
     {
         QuerySnapshot snapshot = await db.Collection("user_data")
                                         .WhereEqualTo("username", userName)

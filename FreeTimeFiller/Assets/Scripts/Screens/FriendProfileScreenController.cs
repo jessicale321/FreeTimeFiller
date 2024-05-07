@@ -32,14 +32,14 @@ public class FriendProfileScreenController : MonoBehaviour
     public async void LoadFriendData(string userName)
     {
         _currentUserName = userName;
-        _achievementReactionCount = await UserDatabase.Instance.GetDataFromUserName<int>(userName, "number_of_achievement_reactions");
+        _achievementReactionCount = await UserDatabase.Instance.GetDataFromUsername<int>(userName, "number_of_achievement_reactions");
 
         // Load the other user's profile picture
-        string profilePictureName = await UserDatabase.Instance.GetDataFromUserName<string>(userName, "current_profile_picture_name");
+        string profilePictureName = await UserDatabase.Instance.GetDataFromUsername<string>(userName, "current_profile_picture_name");
         profilePicture.sprite = ProfilePictureManager.instance.GetProfilePictureByString(profilePictureName);
 
         // Load the other user's completed achievements and place them on the panel
-        List<string> completedAchievements = await UserDatabase.Instance.GetDataFromUserName<List<string>>(userName, "completed_achievements");
+        List<string> completedAchievements = await UserDatabase.Instance.GetDataFromUsername<List<string>>(userName, "completed_achievements");
 
         foreach(string achievementName in completedAchievements)
         {
