@@ -11,51 +11,12 @@ using UnityEngine.UI;
 public class FriendProfileScreenController : MonoBehaviour
 {
     [SerializeField] private Image profilePicture;
-    [SerializeField] private TMP_Text username;
-    [SerializeField] private UserDatabase userDatabase;
     [SerializeField] private Transform achievementsPanel;
     [SerializeField] private GameObject achievementPrefab;
 
-    private void OnEnable()
+    public async void LoadFriendData(string userName)
     {
-        Invoke(nameof(GetPlayerData), 2f);
-    }
-    /*public async void getPlayerData()
-    {
-        Debug.Log("We are running the getPlayerData code");
-        var playerData = await CloudSaveService.Instance.Data.Player.LoadAsync(
-            new HashSet<string> { "currentProfilePictureName" }, new LoadOptions(new PublicReadAccessClassOptions(
-               await userDatabase.GetUseridByUsername(username.text))));
-        if(playerData.TryGetValue("currentProfilePictureName", out var dataLoaded) )
-        {
-            Debug.Log($"This is the player profile {dataLoaded.Value.GetAs<string>()}");
-        }
-        else
-        {
-            Debug.Log("Found nothing");
-        }
-    }*/
-    public async void GetPlayerData()
-    {
-        //Debug.Log("We are running the getPlayerData code");
-        //var playerData = await CloudSaveService.Instance.Data.Player.LoadAsync(
-        //    new HashSet<string> { "currentProfilePictureName" }, new LoadOptions(new PublicReadAccessClassOptions(
-        //       await userDatabase.GetUseridByUsername(username.text))));
-
-        //foreach (var entry in playerData)
-        //{
-        //    Debug.Log($"Key: {entry.Key}, Value: {entry.Value}");
-        //}
-
-        //if (playerData.TryGetValue("currentProfilePictureName", out var dataLoaded))
-        //{
-        //    Debug.Log($"This is the player profile {dataLoaded.Value.GetAs<string>()}");
-        //}
-        //else
-        //{
-        //    Debug.Log("Found nothing");
-        //}
-
-        Debug.Log(await UserDatabase.Instance.GetProfilePicture(username.text));
+        string profilePictureName = await UserDatabase.Instance.GetProfilePicture(userName);
+        profilePicture.sprite = ProfilePictureManager.instance.GetProfilePictureByString(profilePictureName);
     }
 }
