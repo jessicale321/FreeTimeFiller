@@ -857,6 +857,7 @@ MonoBehaviour:
   playerUserID: {fileID: 2818316692426068865}
   playerInfo: {fileID: 2894733105286983462}
   profileViewUsername: {fileID: 2507205760298167404}
+  sendFriendRequestButton: {fileID: 0}
   friendRecipientID: {fileID: 0}
   friendUsername: {fileID: 101911357081251822}
   requestPrefab: {fileID: 2887963033926106922}
@@ -4697,18 +4698,6 @@ PrefabInstance:
     - target: {fileID: 205156822235469562, guid: b057bafe04544684593559d798b27a9f, type: 3}
       propertyPath: m_Name
       value: Friends
-      objectReference: {fileID: 0}
-    - target: {fileID: 1456452490286211373, guid: b057bafe04544684593559d798b27a9f, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1806135773079700939, guid: b057bafe04544684593559d798b27a9f, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: DeleteFriend
-      objectReference: {fileID: 0}
-    - target: {fileID: 1806135773079700939, guid: b057bafe04544684593559d798b27a9f, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: FriendsManager, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 7559534158305090325, guid: b057bafe04544684593559d798b27a9f, type: 3}
       propertyPath: m_Pivot.x
