@@ -12,7 +12,23 @@ using UnityEngine.Tilemaps;
 
 public class UserDatabase : MonoBehaviour
 {
+    public static UserDatabase Instance { get; private set; }
+
     private FirebaseFirestore db;
+
+    ///-///////////////////////////////////////////////////////////
+    /// 
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            Instance = this;
+        }
+    }
 
     //DatabaseReference databaseReference;
     private void Start()
@@ -141,12 +157,35 @@ public class UserDatabase : MonoBehaviour
         else { return null; }
     }
 
-    /*public async void AddProfilePicture(string username, string picture)
+    public async void AddProfilePicture(string userId, string pictureName)
     {
         QuerySnapshot snapshot = await db.Collection("user_data")
-                                    .WhereEqualTo("username", username)
+                                    .WhereEqualTo("user_id", userId)
                                     .GetSnapshotAsync();
+        // Check if the query returned any documents
+        if (snapshot != null && snapshot.Count > 0)
+        {
+            // Update the profile picture for the first user document found (assuming username is unique)
+            DocumentReference userRef = snapshot.Documents.ElementAt(0).Reference;
+            await userRef.UpdateAsync("current_profile_picture_name", pictureName);
+            Debug.Log("Profile picture updated for user: " + userId);
+        }
+        else
+        {
+            Debug.LogError("User not found: " + userId);
+        }
+    }
+    public async Task<string> GetProfilePicture(string userName)
+    {
+        QuerySnapshot snapshot = await db.Collection("user_data")
+                                        .WhereEqualTo("username", userName)
+                                        .GetSnapshotAsync();
 
-
-    }*/
+        if (snapshot != null)
+        {
+            DocumentSnapshot document = snapshot.Documents.ElementAt(0);
+            return document.GetValue<string>("current_profile_picture_name");
+        }
+        else { return null; }
+    }
 }

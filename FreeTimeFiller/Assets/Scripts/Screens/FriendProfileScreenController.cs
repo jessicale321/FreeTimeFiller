@@ -18,7 +18,7 @@ public class FriendProfileScreenController : MonoBehaviour
 
     private void OnEnable()
     {
-        Invoke(nameof(getPlayerData), 2f);
+        Invoke(nameof(GetPlayerData), 2f);
     }
     /*public async void getPlayerData()
     {
@@ -35,25 +35,27 @@ public class FriendProfileScreenController : MonoBehaviour
             Debug.Log("Found nothing");
         }
     }*/
-    public async void getPlayerData()
+    public async void GetPlayerData()
     {
-        Debug.Log("We are running the getPlayerData code");
-        var playerData = await CloudSaveService.Instance.Data.Player.LoadAsync(
-            new HashSet<string> { "currentProfilePictureName" }, new LoadOptions(new PublicReadAccessClassOptions(
-               await userDatabase.GetUseridByUsername(username.text))));
+        //Debug.Log("We are running the getPlayerData code");
+        //var playerData = await CloudSaveService.Instance.Data.Player.LoadAsync(
+        //    new HashSet<string> { "currentProfilePictureName" }, new LoadOptions(new PublicReadAccessClassOptions(
+        //       await userDatabase.GetUseridByUsername(username.text))));
 
-        foreach (var entry in playerData)
-        {
-            Debug.Log($"Key: {entry.Key}, Value: {entry.Value}");
-        }
+        //foreach (var entry in playerData)
+        //{
+        //    Debug.Log($"Key: {entry.Key}, Value: {entry.Value}");
+        //}
 
-        if (playerData.TryGetValue("currentProfilePictureName", out var dataLoaded))
-        {
-            Debug.Log($"This is the player profile {dataLoaded.Value.GetAs<string>()}");
-        }
-        else
-        {
-            Debug.Log("Found nothing");
-        }
+        //if (playerData.TryGetValue("currentProfilePictureName", out var dataLoaded))
+        //{
+        //    Debug.Log($"This is the player profile {dataLoaded.Value.GetAs<string>()}");
+        //}
+        //else
+        //{
+        //    Debug.Log("Found nothing");
+        //}
+
+        Debug.Log(await UserDatabase.Instance.GetProfilePicture(username.text));
     }
 }
