@@ -179,7 +179,7 @@ public class ProfilePictureManager : MonoBehaviour
         tempProfilePic.sprite = _currentProfilePicture;
 
         await DataManager.SaveData("currentProfilePictureName", newPicData.pictureName);
-        UserDatabase.Instance.AddProfilePicture(AuthenticationService.Instance.PlayerId, newPicData.pictureName);
+        UserDatabase.Instance.SaveDataToUserId(AuthenticationService.Instance.PlayerId,"current_profile_picture_name" ,newPicData.pictureName);
     }
 
     ///-///////////////////////////////////////////////////////////

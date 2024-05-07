@@ -157,7 +157,10 @@ public class UserDatabase : MonoBehaviour
         else { return null; }
     }
 
-    public async void AddProfilePicture(string userId, string pictureName)
+    ///-///////////////////////////////////////////////////////////
+    /// Save an item to the userId under dataName (ex. saving a list of completed achievements to "completed_achievements)
+    ///
+    public async void SaveDataToUserId<T>(string userId, string dataName, T dataToSave)
     {
         QuerySnapshot snapshot = await db.Collection("user_data")
                                     .WhereEqualTo("user_id", userId)
@@ -167,15 +170,18 @@ public class UserDatabase : MonoBehaviour
         {
             // Update the profile picture for the first user document found (assuming username is unique)
             DocumentReference userRef = snapshot.Documents.ElementAt(0).Reference;
-            await userRef.UpdateAsync("current_profile_picture_name", pictureName);
-            Debug.Log("Profile picture updated for user: " + userId);
+            await userRef.UpdateAsync(dataName, dataToSave);
         }
         else
         {
             Debug.LogError("User not found: " + userId);
         }
     }
-    public async Task<string> GetProfilePicture(string userName)
+
+    ///-///////////////////////////////////////////////////////////
+    /// Return a saved item from Firestore given a username. 
+    ///
+    public async Task<T> GetDataFromUserName<T>(string userName, string dataName)
     {
         QuerySnapshot snapshot = await db.Collection("user_data")
                                         .WhereEqualTo("username", userName)
@@ -184,8 +190,8 @@ public class UserDatabase : MonoBehaviour
         if (snapshot != null)
         {
             DocumentSnapshot document = snapshot.Documents.ElementAt(0);
-            return document.GetValue<string>("current_profile_picture_name");
+            return document.GetValue<T>(dataName);
         }
-        else { return null; }
+        else { return default; }
     }
 }
