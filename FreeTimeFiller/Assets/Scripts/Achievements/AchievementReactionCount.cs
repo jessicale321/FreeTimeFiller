@@ -15,6 +15,6 @@ public class AchievementReactionCount : MonoBehaviour
         int reactionCount = await UserDatabase.Instance.GetDataFromUserId<int>(AuthenticationService.Instance.PlayerId,
             "number_of_achievement_reactions");
 
-        reactionText.text = $"Reactions: {reactionCount}";
+        reactionText.text = $": {reactionCount}";
     }
 }
