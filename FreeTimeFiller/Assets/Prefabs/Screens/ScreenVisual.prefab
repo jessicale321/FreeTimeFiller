@@ -425,7 +425,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &8786771166040109209
 RectTransform:
   m_ObjectHideFlags: 0
@@ -858,8 +858,6 @@ MonoBehaviour:
   playerInfo: {fileID: 2894733105286983462}
   profileViewUsername: {fileID: 2507205760298167404}
   sendFriendRequestButton: {fileID: 6340422454301426160}
-  sendFriendRequestImage: {fileID: 255502070653540215}
-  sendFriendRequestSpriteOnClick: {fileID: 21300000, guid: 729f5fd5486fe7449b74677203f420b6, type: 3}
   friendRecipientID: {fileID: 0}
   friendUsername: {fileID: 101911357081251822}
   requestPrefab: {fileID: 2887963033926106922}
@@ -1820,7 +1818,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: 72.49994}
+  m_AnchoredPosition: {x: 0, y: 72.5}
   m_SizeDelta: {x: 0, y: 145}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2492601343003219211
@@ -3354,6 +3352,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FriendProfileScreen
       objectReference: {fileID: 0}
+    - target: {fileID: 65383560543058584, guid: 6de0cfc8b2b24b34f9ddb8aaa9a554ec, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3780937779755065311, guid: 6de0cfc8b2b24b34f9ddb8aaa9a554ec, type: 3}
       propertyPath: m_SortingLayer
       value: 0
@@ -3447,17 +3449,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6de0cfc8b2b24b34f9ddb8aaa9a554ec, type: 3}
---- !u!114 &255502070653540215 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3029296876570620194, guid: 6de0cfc8b2b24b34f9ddb8aaa9a554ec, type: 3}
-  m_PrefabInstance: {fileID: 2990813129671140949}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &2507205760298167404 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 813712172897913401, guid: 6de0cfc8b2b24b34f9ddb8aaa9a554ec, type: 3}
@@ -3600,6 +3591,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Task Screen
       objectReference: {fileID: 0}
+    - target: {fileID: 2716920513259950818, guid: b0d098b8d7e0cdb478d2680261b70148, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -659
+      objectReference: {fileID: 0}
     - target: {fileID: 2842385507457217714, guid: b0d098b8d7e0cdb478d2680261b70148, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -3622,7 +3617,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4520048948068158570, guid: b0d098b8d7e0cdb478d2680261b70148, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -550
+      value: -685
       objectReference: {fileID: 0}
     - target: {fileID: 6794493927394520005, guid: b0d098b8d7e0cdb478d2680261b70148, type: 3}
       propertyPath: m_Type
@@ -3684,7 +3679,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1078657365913207226, guid: a21337f25c42e7c4fa1e4dcf56485ff3, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -65.000046
+      value: -65.00006
       objectReference: {fileID: 0}
     - target: {fileID: 1318069332763571428, guid: a21337f25c42e7c4fa1e4dcf56485ff3, type: 3}
       propertyPath: m_Name
@@ -4377,7 +4372,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2840664590123798003, guid: 6fa0e6db64469f14fbf6b5a06768b9f0, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -224.00006
+      value: -224
       objectReference: {fileID: 0}
     - target: {fileID: 5131595557412915183, guid: 6fa0e6db64469f14fbf6b5a06768b9f0, type: 3}
       propertyPath: m_Name
@@ -4413,6 +4408,30 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 98c65b6f224242e498ab9d6683f68b00, type: 3}
+    - target: {fileID: 2946671055822823334, guid: d41f26f107d67b14ab7ba1dcd012feeb, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2946671055822823334, guid: d41f26f107d67b14ab7ba1dcd012feeb, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2946671055822823334, guid: d41f26f107d67b14ab7ba1dcd012feeb, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2946671055822823334, guid: d41f26f107d67b14ab7ba1dcd012feeb, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: RefreshRequests
+      objectReference: {fileID: 0}
+    - target: {fileID: 2946671055822823334, guid: d41f26f107d67b14ab7ba1dcd012feeb, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: FriendsManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2946671055822823334, guid: d41f26f107d67b14ab7ba1dcd012feeb, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 5532044513460596017, guid: d41f26f107d67b14ab7ba1dcd012feeb, type: 3}
       propertyPath: m_Name
       value: SearchButton
