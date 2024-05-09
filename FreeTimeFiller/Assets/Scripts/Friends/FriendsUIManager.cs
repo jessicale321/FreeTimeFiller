@@ -19,6 +19,7 @@ namespace UI
         [SerializeField] private TMP_Text playerInfo;
         // Player username of profile being viewed
         [SerializeField] private TMP_Text profileViewUsername;
+        [Header("Send Friend Request")]
         [SerializeField] private Button sendFriendRequestButton;
         // This is the search bar for who the friend request is being sent to
         [Header("From Control Area")]

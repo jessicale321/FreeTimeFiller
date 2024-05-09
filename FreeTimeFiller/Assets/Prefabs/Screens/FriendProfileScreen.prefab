@@ -69,6 +69,9 @@ MonoBehaviour:
   profilePicture: {fileID: 5997974416272426903}
   achievementsPanel: {fileID: 3111331604749051179}
   reactableAchievementPrefab: {fileID: 6706759037922133430, guid: 45fd1951b4998c84c942db8e1a6f209b, type: 3}
+  sendFriendRequestButton: {fileID: 9114217002453657509}
+  sendFriendRequestImage: {fileID: 3029296876570620194}
+  sendFriendRequestSpriteOnClick: {fileID: 21300000, guid: 729f5fd5486fe7449b74677203f420b6, type: 3}
 --- !u!1 &222594594631332991
 GameObject:
   m_ObjectHideFlags: 0

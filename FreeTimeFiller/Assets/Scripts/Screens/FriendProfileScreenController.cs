@@ -15,6 +15,10 @@ public class FriendProfileScreenController : MonoBehaviour
     [SerializeField] private Image profilePicture;
     [SerializeField] private Transform achievementsPanel;
     [SerializeField] private GameObject reactableAchievementPrefab;
+    [SerializeField] private Button sendFriendRequestButton;
+    [SerializeField] private Image sendFriendRequestImage;
+    private Sprite _originalSendFriendRequestSprite;
+    [SerializeField] private Sprite sendFriendRequestSpriteOnClick;
 
     // Locally saved data for user we're viewing
     private string _currentUserName;
@@ -22,11 +26,26 @@ public class FriendProfileScreenController : MonoBehaviour
 
     private List<Button> _allReactableAchievementButtons = new List<Button>();
 
+    private void Awake()
+    {
+        // Cache the original sprite for the send friend request image
+        _originalSendFriendRequestSprite = sendFriendRequestImage.sprite;
+    }
+
     private void OnEnable()
     {
         ClearAchievementIcons();
         _currentUserName = string.Empty;
         _achievementReactionCount = 0;
+
+        sendFriendRequestButton.onClick.AddListener(ChangeFriendRequestSprite);
+    }
+
+    private void OnDisable()
+    {
+        // Reset friend request sprite 
+        sendFriendRequestImage.sprite = _originalSendFriendRequestSprite;
+        sendFriendRequestButton.onClick.RemoveListener(ChangeFriendRequestSprite);
     }
 
     public async void LoadFriendData(string userName)
@@ -59,6 +78,13 @@ public class FriendProfileScreenController : MonoBehaviour
             // Set image sprite to the iconSprite of the achievement
             achievementImage.sprite = achievementData.iconSprite;
         }
+    }
+
+    ///-///////////////////////////////////////////////////////////
+    ///
+    private void ChangeFriendRequestSprite()
+    {
+        sendFriendRequestImage.sprite = sendFriendRequestSpriteOnClick;
     }
 
     ///-///////////////////////////////////////////////////////////
