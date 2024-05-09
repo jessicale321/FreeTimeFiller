@@ -425,7 +425,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &8786771166040109209
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3352,6 +3352,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FriendProfileScreen
       objectReference: {fileID: 0}
+    - target: {fileID: 65383560543058584, guid: 6de0cfc8b2b24b34f9ddb8aaa9a554ec, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3780937779755065311, guid: 6de0cfc8b2b24b34f9ddb8aaa9a554ec, type: 3}
       propertyPath: m_SortingLayer
       value: 0
@@ -3437,9 +3441,25 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9114217002453657509, guid: 6de0cfc8b2b24b34f9ddb8aaa9a554ec, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9114217002453657509, guid: 6de0cfc8b2b24b34f9ddb8aaa9a554ec, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 8127018555792887037}
+      objectReference: {fileID: 5744684215195975035}
+    - target: {fileID: 9114217002453657509, guid: 6de0cfc8b2b24b34f9ddb8aaa9a554ec, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: SendFriendRequestButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 9114217002453657509, guid: 6de0cfc8b2b24b34f9ddb8aaa9a554ec, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: FriendsManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 9114217002453657509, guid: 6de0cfc8b2b24b34f9ddb8aaa9a554ec, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
