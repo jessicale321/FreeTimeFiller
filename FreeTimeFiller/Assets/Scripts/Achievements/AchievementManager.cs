@@ -237,7 +237,9 @@ public class AchievementManager : MonoBehaviour
             achievementProgress.completed = false;
         }
         
+        // Delete all earned achievements
         _allEarnedAchievements.Clear();
+        UserDatabase.Instance.SaveDataToUserId(AuthenticationService.Instance.PlayerId, "completed_achievements", _allEarnedAchievements);
 
         SaveAllAchievementProgress();
     }
