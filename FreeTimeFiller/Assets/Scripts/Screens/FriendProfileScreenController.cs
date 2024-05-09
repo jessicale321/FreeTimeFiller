@@ -15,8 +15,6 @@ public class FriendProfileScreenController : MonoBehaviour
     [SerializeField] private Image profilePicture;
     [SerializeField] private Transform achievementsPanel;
     [SerializeField] private GameObject reactableAchievementPrefab;
-    [SerializeField] private Image buttonImage;
-    [SerializeField] private Sprite newImage;
 
     // Locally saved data for user we're viewing
     private string _currentUserName;
@@ -27,9 +25,8 @@ public class FriendProfileScreenController : MonoBehaviour
     private void OnEnable()
     {
         ClearAchievementIcons();
-        //_currentUserName = string.Empty;
+        _currentUserName = string.Empty;
         _achievementReactionCount = 0;
-        buttonImage = GetComponent<Image>();
     }
 
     public async void LoadFriendData(string userName)
@@ -82,14 +79,6 @@ public class FriendProfileScreenController : MonoBehaviour
         {
             button.onClick.RemoveAllListeners();
             Destroy(button.gameObject);
-        }
-    }
-
-    public void OnSendFriendRequestClicked()
-    {
-        if (buttonImage != null && newImage != null)
-        {
-            buttonImage.sprite = newImage;
         }
     }
 }

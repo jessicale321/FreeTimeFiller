@@ -47,7 +47,6 @@ namespace UI
             FriendsManager.Active.OnRequestsRefresh += OnRequestsRefresh;
             FriendsManager.Active.OnFriendsRefresh += OnFriendsRefresh;
             FriendsManager.Active.OnSearchRefresh += OnSearchRefresh;
-            sendFriendRequestButton.onClick.AddListener(SendFriendRequestButton);
         }
 
         // 
@@ -68,7 +67,6 @@ namespace UI
 
         public void SendFriendRequestButton()
         {
-            Debug.Log("Profile View Username contains: " + profileViewUsername.text);
             FriendsManager.Active.SendFriendRequestButton(profileViewUsername.text);
         }
 
@@ -197,7 +195,7 @@ namespace UI
 
         public void OnViewProfile(string username)
         {
-            Debug.Log($"OnViewProfile called for {username}");
+            Debug.Log("OnViewProfile called");
             profileViewUsername.text = username;
             friendProfileScreenController.LoadFriendData(username);
         }

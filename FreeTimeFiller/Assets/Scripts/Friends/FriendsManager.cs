@@ -112,8 +112,8 @@ public class FriendsManager : MonoBehaviour
 
     public async void SendFriendRequestButton(string username)
     {
-        Debug.LogFormat("Sending friend request to username: {0}", username);
         string userID = await userDatabase.GetUseridByUsername(username);
+        Debug.LogFormat("Username: {0}, UserID: {1}", username, userID);
         SendFriendRequest_ID(userID);
     }
 
