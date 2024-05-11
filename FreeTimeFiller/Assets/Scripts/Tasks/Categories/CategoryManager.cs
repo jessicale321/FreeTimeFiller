@@ -89,7 +89,7 @@ public class CategoryManager : MonoBehaviour
     /// 
     private void FinishChoosing()
     {
-        // Only attempt to save the task categories if they have atleast two categories selected
+        // Only attempt to save the task categories if they have at least two categories selected
         if (_unsavedTaskCategories.Count > 1)
         {
             Debug.Log("User finished picking categories!");
@@ -101,6 +101,7 @@ public class CategoryManager : MonoBehaviour
         }
         else
         {
+            
             Debug.Log("Please choose at least 2 categories");
         }       
     }
@@ -206,7 +207,7 @@ public class CategoryManager : MonoBehaviour
         if (!_unsavedTaskCategories.Contains(clickedCategory)) return;
 
         _unsavedTaskCategories.Remove(clickedCategory);
-
+        
         Debug.Log($"User has removed: {clickedCategory}");
     }
 
