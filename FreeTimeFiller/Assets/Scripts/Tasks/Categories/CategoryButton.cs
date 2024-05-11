@@ -108,18 +108,20 @@ public class CategoryButton : MonoBehaviour
         selectedBox.SetActive(true);
         _myCreator.AddClickedButton(this);
     }
-
+    
     ///-///////////////////////////////////////////////////////////
     /// A button was clicked on after it was already selected, therefore the user
     /// doesn't want this category anymore.
     /// 
     private void UnselectButtonOnCommand()
     {
+        // Don't allow unselecting of a button, if the user won't have enough to save with
+        if (!_myCreator.HasEnoughCategoriesToUnselect()) return;
+        
         _selected = false;
         selectedBox.SetActive(false);
         _myCreator.RemoveClickedButton(this);
     }
-    
 
     ///-///////////////////////////////////////////////////////////
     /// Return the task category that is displayed by this button
