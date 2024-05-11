@@ -350,6 +350,7 @@ GameObject:
   - component: {fileID: 8023612772472998716}
   - component: {fileID: 8087142430320394278}
   - component: {fileID: 8974813578103326304}
+  - component: {fileID: 2977931659323064509}
   m_Layer: 5
   m_Name: Completion Message
   m_TagString: Untagged
@@ -364,16 +365,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2092606619848483691}
-  m_LocalRotation: {x: 0, y: 0, z: 0.074630655, w: 0.9972113}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.25, y: 1.25, z: 1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2621807561232833991}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 8.56}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -43.8}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 436.84, y: 137.68}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8087142430320394278
@@ -404,7 +405,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: All tasks have been completed! Come back tomorrow for more!
+  m_text: All done!\n Come back tomorrow for more!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8857c2ffe9a1c4f4e913ad2402243f84, type: 2}
   m_sharedMaterial: {fileID: -4922784241819257021, guid: 8857c2ffe9a1c4f4e913ad2402243f84, type: 2}
@@ -473,6 +474,22 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &2977931659323064509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2092606619848483691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e24a3fe33eacde34e9563aea1850b6a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scaleFactor: 1.25
+  duration: 0.2
+  playOnAwake: 1
+  disableOnAnimationFinish: 0
 --- !u!1 &2272819444900484917
 GameObject:
   m_ObjectHideFlags: 0
@@ -636,11 +653,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1636922958865955160}
-  - {fileID: 8023612772472998716}
   - {fileID: 6050779439155874058}
   - {fileID: 7344140623008501372}
   - {fileID: 4520048948068158570}
   - {fileID: 2716920513259950818}
+  - {fileID: 8023612772472998716}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
