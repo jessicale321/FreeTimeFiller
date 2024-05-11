@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Unity.Services.Authentication;
+using UnityEngine.UI;
 using JetBrains.Annotations;
 using System;
+using UnityEngine.SocialPlatforms;
 
 namespace UI
 {
@@ -17,6 +19,8 @@ namespace UI
         [SerializeField] private TMP_Text playerInfo;
         // Player username of profile being viewed
         [SerializeField] private TMP_Text profileViewUsername;
+        [Header("Send Friend Request")]
+        [SerializeField] private Button sendFriendRequestButton;
         // This is the search bar for who the friend request is being sent to
         [Header("From Control Area")]
         [SerializeField] private TMP_InputField friendRecipientID;
@@ -27,6 +31,9 @@ namespace UI
         [SerializeField] private FriendObject friendPrefab;
         [SerializeField] private SearchObject searchPrefab;
         [SerializeField] private SearchObject userNotFoundPrefab;
+
+        [Header("Required Scripts")]
+        [SerializeField] private FriendProfileScreenController friendProfileScreenController;
 
         // Start is called before the first frame update
         /* private void Awake()
@@ -189,8 +196,9 @@ namespace UI
 
         public void OnViewProfile(string username)
         {
-            Debug.Log("OnViewProfile calle");
+            Debug.Log("OnViewProfile called");
             profileViewUsername.text = username;
+            friendProfileScreenController.LoadFriendData(username);
         }
 
         List<RequestObjects> requestUIs = new List<RequestObjects>();

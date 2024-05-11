@@ -11,8 +11,8 @@ public class CategoryButton : MonoBehaviour
     private TaskCategory _displayedCategory;
 
     private Button _buttonComponent;
+    [SerializeField] private Image categoryImage;
     [SerializeField] private TMP_Text textBox;
-
     [SerializeField] private GameObject selectedBox;
 
     // Did the user already click on this button (they want this category to show in the task pool)
@@ -39,10 +39,16 @@ public class CategoryButton : MonoBehaviour
     ///-///////////////////////////////////////////////////////////
     /// Set the TaskCategory that this button will display on screen.
     /// 
-    public void UpdateDisplayedCategory(TaskCategory category)
+    public void UpdateDisplayedCategory(TaskCategory category, Sprite sprite)
     {
         _displayedCategory = category;
 
+        // Display a icon for the category
+        if (sprite != null)
+            categoryImage.sprite = sprite;
+        else
+            categoryImage.enabled = false;
+        
         textBox.text = category.ToString();
     }
 
@@ -102,18 +108,20 @@ public class CategoryButton : MonoBehaviour
         selectedBox.SetActive(true);
         _myCreator.AddClickedButton(this);
     }
-
+    
     ///-///////////////////////////////////////////////////////////
     /// A button was clicked on after it was already selected, therefore the user
     /// doesn't want this category anymore.
     /// 
     private void UnselectButtonOnCommand()
     {
+        // Don't allow unselecting of a button, if the user won't have enough to save with
+        if (!_myCreator.HasEnoughCategoriesToUnselect()) return;
+        
         _selected = false;
         selectedBox.SetActive(false);
         _myCreator.RemoveClickedButton(this);
     }
-    
 
     ///-///////////////////////////////////////////////////////////
     /// Return the task category that is displayed by this button

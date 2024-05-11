@@ -15,6 +15,6 @@ MonoBehaviour:
   achievementName: Big Time
   conditionType: 0
   targetValue: 500
-  iconSprite: {fileID: 21300000, guid: a69b7e812d3698842a7dc33defd86289, type: 3}
+  iconSprite: {fileID: 21300000, guid: b30b91fea739a984ab4be053d23a7221, type: 3}
   description: Earn 500 coins!
   taskCategory: 0

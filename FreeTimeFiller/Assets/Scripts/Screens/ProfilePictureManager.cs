@@ -8,6 +8,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 using UnityEngine.Rendering;
+using Unity.Services.Core;
+using Unity.Services.Authentication;
 
 ///-///////////////////////////////////////////////////////////
 /// 
@@ -126,10 +128,6 @@ public class ProfilePictureManager : MonoBehaviour
                 // Only save unlocks when a profile picture was unlocked for the first time
                 SaveProfilePictureUnlocks();
             }
-            else
-            {
-                // do nothing
-            }
         }
         else
         {
@@ -181,6 +179,7 @@ public class ProfilePictureManager : MonoBehaviour
         tempProfilePic.sprite = _currentProfilePicture;
 
         await DataManager.SaveData("currentProfilePictureName", newPicData.pictureName);
+        UserDatabase.Instance.SaveDataToUserId(AuthenticationService.Instance.PlayerId,"current_profile_picture_name" ,newPicData.pictureName);
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -235,6 +234,15 @@ public class ProfilePictureManager : MonoBehaviour
     public Sprite GetCurrentProfilePicture()
     {
         return _currentProfilePicture;
+    }
+
+    public Sprite GetProfilePictureByString(string pictureName)
+    {
+        if (_profilePicsByName.ContainsKey(pictureName))
+        {
+            return _profilePicsByName[pictureName].sprite;
+        }
+        return null;
     }
 }
 

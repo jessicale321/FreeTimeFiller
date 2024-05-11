@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a101af5d56ee3b4ab558bb3de1b5968, type: 3}
   m_Name: tasks_healthy_2
   m_EditorClassIdentifier: 
-  taskName: Brush Teeth
+  taskName: Night/Day skincare routine
   category: 4
   difficultyLevel: 1
   refreshCountdown: 1
-  description: Brush your teeth in the morning, and before bed.
+  description: 

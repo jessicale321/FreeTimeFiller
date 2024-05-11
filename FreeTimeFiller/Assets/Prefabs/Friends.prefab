@@ -70,8 +70,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8857c2ffe9a1c4f4e913ad2402243f84, type: 2}
+  m_sharedMaterial: {fileID: -4922784241819257021, guid: 8857c2ffe9a1c4f4e913ad2402243f84, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -204,8 +204,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Friends
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8857c2ffe9a1c4f4e913ad2402243f84, type: 2}
+  m_sharedMaterial: {fileID: -4922784241819257021, guid: 8857c2ffe9a1c4f4e913ad2402243f84, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -441,8 +441,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Refresh
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8857c2ffe9a1c4f4e913ad2402243f84, type: 2}
+  m_sharedMaterial: {fileID: -4922784241819257021, guid: 8857c2ffe9a1c4f4e913ad2402243f84, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -736,6 +736,18 @@ PrefabInstance:
     - target: {fileID: 7784036420562164444, guid: b48ba892bf0c2bc40bafa0bacda7e45d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8558727054766674239, guid: b48ba892bf0c2bc40bafa0bacda7e45d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: DeleteFriend
+      objectReference: {fileID: 0}
+    - target: {fileID: 8558727054766674239, guid: b48ba892bf0c2bc40bafa0bacda7e45d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: FriendsManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 8926206828792002009, guid: b48ba892bf0c2bc40bafa0bacda7e45d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

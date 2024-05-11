@@ -15,6 +15,6 @@ MonoBehaviour:
   achievementName: Party Starter
   conditionType: 3
   targetValue: 5
-  iconSprite: {fileID: 21300000, guid: a7cd782df55ac8f4ca798232176e9368, type: 3}
+  iconSprite: {fileID: 21300000, guid: de909a267bdf2b04cbfe7197ce70903a, type: 3}
   description: Complete 5 fun tasks!
   taskCategory: 3

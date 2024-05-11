@@ -8,10 +8,27 @@ using Firebase.Database;
 using Firebase.Extensions;
 using Firebase.Firestore;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class UserDatabase : MonoBehaviour
 {
+    public static UserDatabase Instance { get; private set; }
+
     private FirebaseFirestore db;
+
+    ///-///////////////////////////////////////////////////////////
+    /// 
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            Instance = this;
+        }
+    }
 
     //DatabaseReference databaseReference;
     private void Start()
@@ -116,6 +133,7 @@ public class UserDatabase : MonoBehaviour
         QuerySnapshot snapshot = await db.Collection("user_data")
                                         .WhereEqualTo("username", username)
                                         .GetSnapshotAsync();
+        Debug.LogFormat("The username we are looking for: {0}", username);
 
         if (snapshot != null)
         {
@@ -137,5 +155,111 @@ public class UserDatabase : MonoBehaviour
             return document.GetValue<string>("username");
         }
         else { return null; }
+    }
+
+    ///-///////////////////////////////////////////////////////////
+    /// Save an item to the userId under dataName (ex. saving a list of completed achievements to "completed_achievements)
+    ///
+    public async void SaveDataToUserId<T>(string userId, string dataName, T dataToSave)
+    {
+        QuerySnapshot snapshot = await db.Collection("user_data")
+                                    .WhereEqualTo("user_id", userId)
+                                    .GetSnapshotAsync();
+        // Check if the query returned any documents
+        if (snapshot != null && snapshot.Count > 0)
+        {
+            // Update the profile picture for the first user document found (assuming username is unique)
+            DocumentReference userRef = snapshot.Documents.ElementAt(0).Reference;
+            await userRef.UpdateAsync(dataName, dataToSave);
+        }
+        else
+        {
+            Debug.LogError("User not found: " + userId);
+        }
+    }
+
+    ///-///////////////////////////////////////////////////////////
+    /// Save an item to the userId under dataName (ex. saving a list of completed achievements to "completed_achievements)
+    ///
+    public async void SaveDataToUsername<T>(string userName, string dataName, T dataToSave)
+    {
+        QuerySnapshot snapshot = await db.Collection("user_data")
+                                    .WhereEqualTo("username", userName)
+                                    .GetSnapshotAsync();
+        // Check if the query returned any documents
+        if (snapshot != null && snapshot.Count > 0)
+        {
+            // Update the profile picture for the first user document found (assuming username is unique)
+            DocumentReference userRef = snapshot.Documents.ElementAt(0).Reference;
+            await userRef.UpdateAsync(dataName, dataToSave);
+        }
+        else
+        {
+            Debug.LogError("User not found: " + userName);
+        }
+    }
+
+    ///-///////////////////////////////////////////////////////////
+    /// Return a saved item from Firestore given a username. 
+    ///
+    public async Task<T> GetDataFromUserId<T>(string userId, string dataName)
+    {
+        QuerySnapshot snapshot = await db.Collection("user_data")
+                                        .WhereEqualTo("user_id", userId)
+                                        .GetSnapshotAsync();
+
+        if (snapshot != null && snapshot.Count > 0)
+        {
+            DocumentSnapshot document = snapshot.Documents.ElementAt(0);
+
+            // Check if the document contains the specified dataName field
+            if (document.ContainsField(dataName))
+            {
+                T data = document.GetValue<T>(dataName);
+                return data;
+            }
+            else
+            {
+                Debug.LogError($"Field '{dataName}' not found in document for user: {userId}");
+                return default;
+            }
+        }
+        else
+        {
+            Debug.LogError($"No document found for user: {userId}");
+            return default;
+        }
+    }
+
+    ///-///////////////////////////////////////////////////////////
+    /// Return a saved item from Firestore given a username. 
+    ///
+    public async Task<T> GetDataFromUsername<T>(string userName, string dataName)
+    {
+        QuerySnapshot snapshot = await db.Collection("user_data")
+                                        .WhereEqualTo("username", userName)
+                                        .GetSnapshotAsync();
+
+        if (snapshot != null && snapshot.Count > 0)
+        {
+            DocumentSnapshot document = snapshot.Documents.ElementAt(0);
+
+            // Check if the document contains the specified dataName field
+            if (document.ContainsField(dataName))
+            {
+                T data = document.GetValue<T>(dataName);
+                return data;
+            }
+            else
+            {
+                Debug.LogError($"Field '{dataName}' not found in document for user: {userName}");
+                return default;
+            }
+        }
+        else
+        {
+            Debug.LogError($"No document found for user: {userName}");
+            return default;
+        }
     }
 }

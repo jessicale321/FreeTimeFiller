@@ -15,6 +15,6 @@ MonoBehaviour:
   achievementName: Genius
   conditionType: 3
   targetValue: 20
-  iconSprite: {fileID: 21300000, guid: 475c0e9186f699f48b6c22c7e582cfe3, type: 3}
+  iconSprite: {fileID: 21300000, guid: f12b5e47d26d91c47897c450ff399f95, type: 3}
   description: Complete 20 school tasks!
   taskCategory: 5

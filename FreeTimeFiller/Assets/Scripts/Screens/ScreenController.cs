@@ -33,6 +33,7 @@ public class ScreenController : MonoBehaviour
     [SerializeField] private Button finishChoosingCategoriesBtn;
     [SerializeField] private Button viewSearchProfileButton;
     [SerializeField] private Button viewFriendProfileButton;
+    [SerializeField] private Button sendFriendRequestButton;
 
     private MenuScreen lastShownScreen;
 
@@ -53,7 +54,7 @@ public class ScreenController : MonoBehaviour
         editCategoriesBtn.onClick.AddListener(OnEditCategoriesButtonClicked);
         openCustomTaskBtn.onClick.AddListener(OnOpenCustomTaskButtonClicked);
         closeCustomTaskBtn.onClick.AddListener(OnCloseCustomTaskButtonClicked);
-        viewFriendProfileButton.onClick.AddListener(OnViewProfileClicked);
+        viewFriendProfileButton.onClick.AddListener(OnFriendViewProfileClicked);
         viewSearchProfileButton.onClick.AddListener(OnViewProfileClicked);
     }
 
@@ -134,5 +135,12 @@ public class ScreenController : MonoBehaviour
     public void OnViewProfileClicked()
     {
         SwitchScreen(friendProfileScreen);
+        sendFriendRequestButton.gameObject.SetActive(true);
+    }
+
+    public void OnFriendViewProfileClicked()
+    {
+        SwitchScreen(friendProfileScreen);
+        sendFriendRequestButton.gameObject.SetActive(false);
     }
 }

@@ -29,7 +29,7 @@ public class AchievementManager : MonoBehaviour
     private Dictionary<AchievementData, AchievementProgress> _allAchievementProgress =
         new Dictionary<AchievementData, AchievementProgress>();
 
-    private List<AchievementData> _allEarnedAchievements = new List<AchievementData>();
+    private List<string> _allEarnedAchievements = new List<string>();
 
     [SerializeField] private Transform achievementPanel;
     [SerializeField] private GameObject displayableAchievementPrefab;
@@ -95,7 +95,7 @@ public class AchievementManager : MonoBehaviour
 
                 // If the achievement was already completed, add it to a list
                 if(achievementProgress.completed)
-                    _allEarnedAchievements.Add(data);
+                    _allEarnedAchievements.Add(data.achievementName);
             }
         }
     }
@@ -152,7 +152,9 @@ public class AchievementManager : MonoBehaviour
         
         achievementProgress.completed = true;
 
-        _allEarnedAchievements.Add(achievementData);
+        _allEarnedAchievements.Add(achievementData.achievementName);
+
+        UserDatabase.Instance.SaveDataToUserId(AuthenticationService.Instance.PlayerId,"completed_achievements" ,_allEarnedAchievements);
 
         Debug.Log($"Achievement unlocked: {achievementData.achievementName}");
 
@@ -178,7 +180,19 @@ public class AchievementManager : MonoBehaviour
 
     public List<AchievementData> GetAllEarnedAchievements()
     {
-        return _allEarnedAchievements;
+        List<AchievementData > result = new List<AchievementData>();
+
+        foreach(string achievementName in _allEarnedAchievements)
+        {
+            result.Add(_allAchievementsByName[achievementName]);
+        }
+
+        return result;
+    }
+
+    public AchievementData GetAchievementByName(string achievementName)
+    {
+        return _allAchievementsByName[achievementName];
     }
 
     ///-///////////////////////////////////////////////////////////
@@ -223,7 +237,9 @@ public class AchievementManager : MonoBehaviour
             achievementProgress.completed = false;
         }
         
+        // Delete all earned achievements
         _allEarnedAchievements.Clear();
+        UserDatabase.Instance.SaveDataToUserId(AuthenticationService.Instance.PlayerId, "completed_achievements", _allEarnedAchievements);
 
         SaveAllAchievementProgress();
     }

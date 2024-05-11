@@ -9,6 +9,7 @@ public class CheckmarkAnimation : MonoBehaviour
 
     private Vector3 _originalScale;
 
+    [SerializeField] private bool playOnAwake = true;
     [SerializeField] private bool disableOnAnimationFinish;
 
     private void Awake()
@@ -19,7 +20,8 @@ public class CheckmarkAnimation : MonoBehaviour
 
     private void OnEnable()
     {
-        PlayAnimation();
+        if(playOnAwake)
+            PlayAnimation();
     }
 
     public void PlayAnimation()
