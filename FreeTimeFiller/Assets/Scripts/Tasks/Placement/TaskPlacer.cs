@@ -214,22 +214,22 @@ public class TaskPlacer : MonoBehaviour
         if(_allDisplayableTaskDataByCategory.ContainsKey(dataToRemove.category))
             _allDisplayableTaskDataByCategory[dataToRemove.category].Remove(dataToRemove);
 
-        if (_tasksDisplayed.ContainsKey(dataToRemove))
-        {
-            Destroy((_tasksDisplayed[dataToRemove].gameObject));
-            _tasksDisplayed.Remove(dataToRemove);
-        }
-        
         // Remove task from all containers
         _displayableTasks.Remove(dataToRemove);
         _allDisplayableTaskDataByName.Remove(dataToRemove.taskName);
         _activeTaskData.Remove(dataToRemove);
         _taskDataOnHold.Remove(dataToRemove);
         
-        _amountCurrentlyDisplayed--;
-        
-        // Replace the deleted task with a different one
-        ReplaceDeletedTask();
+        // Remove the task off the screen, and replace it with a new one (if currently displayed)
+        if (_tasksDisplayed.ContainsKey(dataToRemove))
+        {
+            Destroy((_tasksDisplayed[dataToRemove].gameObject));
+            _tasksDisplayed.Remove(dataToRemove);
+            
+            _amountCurrentlyDisplayed--; 
+            
+            ReplaceDeletedTask();
+        }
         
         // Task name could have been edited, therefore we must save again
         SaveTaskPlacement();
@@ -242,7 +242,6 @@ public class TaskPlacer : MonoBehaviour
     /// 
     private void ReplaceDeletedTask()
     {
-        // TODO: Check if the replaced task was completed, if so then un-complete it!
         TaskData newTaskData = GetInactiveTask();
 
         SpawnTask(newTaskData);

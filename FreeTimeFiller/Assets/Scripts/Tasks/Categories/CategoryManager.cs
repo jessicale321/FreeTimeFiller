@@ -34,12 +34,17 @@ public class CategoryManager : MonoBehaviour
 
     private List<TaskCategory> _unsavedTaskCategories = new List<TaskCategory>();
 
+    public int _minimumCategoryRequirement = 2;
+
+    public int _amountCategoriesCurrentlySelected;
+
     public event Action<List<TaskCategory>> TaskCategoriesChanged;
 
     private async void Awake()
     {
         // Sign in to account anonymously (* should use actual account login *)
         await UnityServices.InitializeAsync();
+        
 
         ChosenTaskCategories = new List<TaskCategory>();
     }
@@ -89,13 +94,13 @@ public class CategoryManager : MonoBehaviour
     /// 
     private void FinishChoosing()
     {
-        // Only attempt to save the task categories if they have atleast two categories selected
-        if (_unsavedTaskCategories.Count > 1)
+        // Only attempt to save the task categories if they have at least two categories selected
+        if (HasEnoughCategoriesToFinish())
         {
             Debug.Log("User finished picking categories!");
 
             SaveCategoriesToCloud();
-
+            
             // Close menu upon finalizing choices
             categoryScreen.Hide();
         }
@@ -143,7 +148,7 @@ public class CategoryManager : MonoBehaviour
                 if (Enum.TryParse(categoryAsJson, out TaskCategory category))
                 {
                     ChosenTaskCategories.Add(category);
-
+                    
                     // Re-select all buttons that the user selected in the past
                     if (_taskButtons.TryGetValue(category, out CategoryButton button))
                     {
@@ -190,6 +195,7 @@ public class CategoryManager : MonoBehaviour
         if (_unsavedTaskCategories.Contains(clickedCategory)) return;
 
         _unsavedTaskCategories.Add(clickedCategory);
+        _amountCategoriesCurrentlySelected++;
 
         Debug.Log($"User has chosen: {clickedCategory}");
     }
@@ -206,7 +212,8 @@ public class CategoryManager : MonoBehaviour
         if (!_unsavedTaskCategories.Contains(clickedCategory)) return;
 
         _unsavedTaskCategories.Remove(clickedCategory);
-
+        _amountCategoriesCurrentlySelected--;
+        
         Debug.Log($"User has removed: {clickedCategory}");
     }
 
@@ -216,5 +223,15 @@ public class CategoryManager : MonoBehaviour
     public bool IsCategorySaved(TaskCategory categoryToCheck)
     {
         return ChosenTaskCategories.Contains(categoryToCheck);
+    }
+    
+    public bool HasEnoughCategoriesToFinish()
+    {
+        return _amountCategoriesCurrentlySelected >= _minimumCategoryRequirement;
+    }
+
+    public bool HasEnoughCategoriesToUnselect()
+    {
+        return _amountCategoriesCurrentlySelected > _minimumCategoryRequirement;
     }
 }
