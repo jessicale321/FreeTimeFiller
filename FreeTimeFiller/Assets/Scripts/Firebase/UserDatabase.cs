@@ -9,6 +9,37 @@ using Firebase.Extensions;
 using Firebase.Firestore;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+/// <summary>
+/// How to set up Firebase with Unity
+/// https://firebase.google.com/docs/unity/setup
+/// Step 1: Create a Firebase project
+/// 
+/// Step 2: Register your app with Firebase
+/// 1. Go to the Firebase console.
+/// 2. In the center of the project overview page, click the Unity icon (plat_unity) to launch the setup workflow.If you've already added an app to your Firebase project, click Add app to display the platform options.
+/// 3. Select which build target of your Unity project that you’d like to register, or you can even select to register both targets now at the same time.
+/// 4. Enter your Unity project’s platform-specific ID(s).
+///     For iOS — Enter your Unity project’s iOS ID in the iOS bundle ID field
+///     For Android — Enter your Unity project’s Android ID in the Android package name field
+///     The terms package name and application ID are often used interchangeably.
+/// 5. (Optional) Enter your Unity project’s platform-specific nickname(s). These nicknames are internal, convenience identifiers and are only visible to you in the Firebase console.
+/// 6. Click Register app.
+/// 
+/// Step 3: Add Firebase configuration files
+/// 
+/// 1. Obtain your platform-specific Firebase configuration file(s) in the Firebase console setup workflow.
+/// 2. Open the Project window of your Unity project, then move your config file(s) into the Assets folder.
+/// 3. Back in the Firebase console, in the setup workflow, click Next.
+/// 
+/// Step 4: Add Firebase Unity SDKs
+/// 1. In the Firebase console, click Download Firebase Unity SDK, then unzip the SDK somewhere convenient.
+/// 2. In your open Unity project, navigate to Assets > Import Package > Custom Package
+/// 3. From the unzipped SDK, select the supported Firebase products that you want to use in your app.
+/// 4. In the Import Unity Package window, click Import.
+/// 5. Back in the Firebase console, in the setup workflow, click Next.
+/// 
+/// Step 5: Confirm Google Play services version requirements
+/// </summary>
 
 public class UserDatabase : MonoBehaviour
 {
