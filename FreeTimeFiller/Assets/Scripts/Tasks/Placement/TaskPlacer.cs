@@ -8,6 +8,8 @@ using Unity.Services.CloudSave;
 using UnityEngine;
 using Random = System.Random;
 
+/* To use the LeanTween library, go to the Unity Asset Store and download the free "LeanTween" asset and import it your project. https://assetstore.unity.com/packages/tools/animation/leantween-3595 */
+
 public class TaskPlacer : MonoBehaviour
 {
     // UI text that tells user they finished all the tasks they can do

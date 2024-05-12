@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/* To use the LeanTween library, go to the Unity Asset Store and download the free "LeanTween" asset and import it your project. https://assetstore.unity.com/packages/tools/animation/leantween-3595 */
 public class RockingAnimation : MonoBehaviour
 {
     // Time to wait until starting the idle animation

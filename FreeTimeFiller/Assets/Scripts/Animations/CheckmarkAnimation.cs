@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/* To use the LeanTween library, go to the Unity Asset Store and download the free "LeanTween" asset and import it your project. https://assetstore.unity.com/packages/tools/animation/leantween-3595 */
 public class CheckmarkAnimation : MonoBehaviour
 {
     [SerializeField] private float scaleFactor = 2f; // Scale factor for how big the object should get

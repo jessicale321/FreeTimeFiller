@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Services.Core;
+// To use Unity's official account authentication service, go to Window < Package Manager < Unity Registry < then download and import Authentication into your project.
 using Unity.Services.Authentication;
 using System.Threading.Tasks;
 using TMPro;
@@ -9,6 +10,7 @@ using UnityEngine.SceneManagement;
 using Firebase.Firestore;
 using Firebase.Extensions;
 using System.Linq;
+// To use Unity's official cloud save service, go to Window < Package Manager < Unity Registry < then download and import Cloud Save into your project.
 using Unity.Services.CloudSave;
 
 public class TestScript : MonoBehaviour

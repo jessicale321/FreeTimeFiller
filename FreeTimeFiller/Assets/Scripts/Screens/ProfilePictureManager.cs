@@ -9,6 +9,7 @@ using UnityEngine.UI;
 using System.Linq;
 using UnityEngine.Rendering;
 using Unity.Services.Core;
+// To use Unity's official account authentication service, go to Window < Package Manager < Unity Registry < then download and import Authentication into your project.
 using Unity.Services.Authentication;
 
 ///-///////////////////////////////////////////////////////////

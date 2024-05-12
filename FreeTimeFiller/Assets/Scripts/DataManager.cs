@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Unity.Services.CloudSave;
 using UnityEngine;
 
+/* To use Unity's official cloud save service, go to Window < Package Manager < Unity Registry < then download and import Cloud Save into your project. */
 public static class DataManager
 {
     ///-///////////////////////////////////////////////////////////

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.Services.Core;
 using UnityEngine;
 using TMPro;
+// To use Unity's official account authentication service, go to Window < Package Manager < Unity Registry < then download and import Authentication into your project.
 using Unity.Services.Authentication;
 using Unity.Services.Friends;
 using Unity.Services.Friends.Models;
